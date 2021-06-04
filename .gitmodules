@@ -1,0 +1,12 @@
+[submodule "cwipc_util"]
+	path = cwipc_util
+	url = ../cwipc_util
+[submodule "cwipc_codec"]
+	path = cwipc_codec
+	url = ../cwipc_codec
+[submodule "cwipc_realsense2"]
+	path = cwipc_realsense2
+	url = ../cwipc_realsense2
+[submodule "cwipc_kinect"]
+	path = cwipc_kinect
+	url = ../cwipc_kinect
