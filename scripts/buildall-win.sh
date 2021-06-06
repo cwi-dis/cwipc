@@ -9,7 +9,14 @@ trap errorexit ERR
 dirname=`dirname $0`
 dirname=`cd $dirname/..; pwd`
 cd $dirname
-mkdir -p installed
+instdir=installed
+case x$1 in
+x--vrtogether)
+	instdir=../installed
+	shift
+	;;
+esac
+mkdir -p $instdir
 instdir=`cd installed; pwd`
 instdir=`cygpath -w "$instdir"`
 
