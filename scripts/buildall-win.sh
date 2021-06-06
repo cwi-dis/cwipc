@@ -17,7 +17,7 @@ x--vrtogether)
 	;;
 esac
 mkdir -p $instdir
-instdir=`cd installed; pwd`
+instdir=`cd $instdir; pwd`
 instdir=`cygpath -w "$instdir"`
 
 notest=
