@@ -22,8 +22,8 @@ build_linux:
     - apt-get install -y python3-venv
   script:
     - export DESTDIR="`pwd`/installed"
-    - bash ./scripts/buildall.sh
-    - tar --directory installed/usr/local -cvaf cwipc_ubuntu2004_$CI_COMMIT_TAG.tgz .
+    - bash ./scripts/buildall.sh --cicd
+    - tar --directory installed -cvaf cwipc_ubuntu2004_$CI_COMMIT_TAG.tgz .
 #    - touch successful.tmp
 #  after_script:
 #    - if [ ! -e successful.tmp -a -e build/Testing/Temporary/LastTest.log ]; then cat build/Testing/Temporary/LastTest.log; fi
@@ -43,9 +43,8 @@ build_osx:
 #    - brew install pcl || brew upgrade pcl
 #    - brew install python3 || brew upgrade python3
   script:
-    - export DESTDIR="`pwd`/installed"
-    - bash ./scripts/buildall.sh
-    - tar --directory installed/usr/local -z -cvf cwipc_osx1014_$CI_COMMIT_TAG.tgz .
+    - bash ./scripts/buildall.sh --cicd
+    - tar --directory installed -z -cvf cwipc_osx1014_$CI_COMMIT_TAG.tgz .
 #    - touch successful.tmp
 #  after_script:
 #    - if [ ! -e successful.tmp -a -e build/Testing/Temporary/LastTest.log ]; then cat build/Testing/Temporary/LastTest.log; fi
@@ -64,7 +63,7 @@ build_win:
     - export ziplocation=$(pwd)/cwipc_win1064_$CI_COMMIT_TAG.zip
     - export PATH="`pwd`/installed/bin:$PATH"
     - bash ./scripts/buildall-win.sh
-    - (cd installed && zip -r $ziplocation installed)
+    - zip -r $ziplocation installed
 #    - touch successful.tmp
 #  after_script:
 #    - if [ ! -e successful.tmp -a -e build/Testing/Temporary/LastTest.log ]; then cat build/Testing/Temporary/LastTest.log; fi
