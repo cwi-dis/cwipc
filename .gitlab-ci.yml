@@ -21,6 +21,7 @@ build_linux:
     - apt-get install -y python3-pip
     - apt-get install -y python3-venv
   script:
+    - export LD_LIBRARY_PATH="`pwd`/installed/lib:$LD_LIBRARY_PATH"
     - bash ./scripts/buildall.sh --cicd
     - tar --directory installed -cvaf cwipc_ubuntu2004_$CI_COMMIT_TAG.tgz .
     - touch successful.tmp
@@ -42,6 +43,7 @@ build_osx:
 #    - brew install pcl || brew upgrade pcl
 #    - brew install python3 || brew upgrade python3
   script:
+    - export DYLD_LIBRARY_PATH="`pwd`/installed/lib:$DYLD_LIBRARY_PATH"
     - bash ./scripts/buildall.sh --cicd
     - tar --directory installed -z -cvf cwipc_osx1014_$CI_COMMIT_TAG.tgz .
     - touch successful.tmp
