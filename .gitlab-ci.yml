@@ -75,6 +75,7 @@ build_win:
   - win10
   - vrtogether
   script:
+    - export PATH="`pwd`/installed/bin:$PATH"
     - bash ./scripts/buildall-win.sh
 #    - mkdir -p build
 #    - rm -rf /cygdrive/c/dist-win
