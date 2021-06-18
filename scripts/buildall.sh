@@ -18,6 +18,13 @@ x--sudo)
 	shift
 	;;
 esac
+cmakeargs=
+case x$1 in
+x--cicd)
+	cmakeargs="-DCMAKE_INSTALL_PREFIX=$dirname/installed"
+	shift
+	;;
+esac
 case x$1 in
 x)
 	all="cwipc_util cwipc_realsense2 cwipc_codec"
@@ -38,7 +45,7 @@ if [ -d $i ]; then
 	(
 		mkdir -p build
 		cd build
-		cmake ..
+		cmake .. $cmakeargs
 		make
 		if [ "$notest" != "notest" ]; then
 			make test
