@@ -60,7 +60,8 @@ build_win:
   script:
     - export PATH="`pwd`/installed/bin:$PATH"
     - bash ./scripts/buildall-win.sh
-    - zip -r cwipc_win1064_$CI_COMMIT_TAG.zip installed
+    - zip -r cwipc_win1064_${CI_COMMIT_TAG}.zip installed
+    - ls -l
     - touch successful.tmp
   after_script:
     - if [ ! -e successful.tmp ]; then cat cwipc_*/build/Testing/Temporary/LastTest.log; fi
