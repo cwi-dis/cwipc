@@ -21,8 +21,16 @@ build_linux:
     - apt-get install -y python3-pip
     - apt-get install -y python3-venv
   script:
+    - mkdir -p installed/lib
     - export LD_LIBRARY_PATH="`pwd`/installed/lib:$LD_LIBRARY_PATH"
-    - bash ./scripts/buildall.sh --cicd
+    - instdir=`cd installed ; pwd`
+    - rm -rf build
+    - mkdir build
+    - cd build
+    - cmake .. -DCMAKE_INSTALL_PREFIX=$instdir
+    - make
+    - make test
+    - make install 
     - tar --directory installed -cvaf cwipc_ubuntu2004_$CI_COMMIT_TAG.tgz .
     - touch successful.tmp
   after_script:
@@ -40,8 +48,15 @@ build_osx:
   - vrtogether
   script:
     - mkdir -p installed/lib
+    - instdir=`cd installed ; pwd`
     - ln -Ffs `pwd`/installed/lib ~/lib # Nasty hack: OSX SIP doesn't allow setting DYLD_LIBRARY_PATH anymore
-    - bash ./scripts/buildall.sh --cicd
+    - rm -rf build
+    - mkdir build
+    - cd build
+    - cmake .. -DCMAKE_INSTALL_PREFIX=$instdir
+    - make
+    - make test
+    - make install 
     - tar --directory installed -z -cvf cwipc_osx1014_$CI_COMMIT_TAG.tgz .
     - touch successful.tmp
   after_script:
@@ -58,8 +73,17 @@ build_win:
   - win10
   - vrtogether
   script:
+    - mkdir -p installed/bin
     - export PATH="`pwd`/installed/bin:$PATH"
-    - bash ./scripts/buildall-win.sh
+    - instdir=`cd installed ; pwd`
+    - instdir=`cygpath -w "$instdir"`
+    - rm -rf build
+    - mkdir build
+    - cd build
+    - cmake .. -G "Visual Studio 16 2019" -DCMAKE_INSTALL_PREFIX="$instdir" -DJPEG_Turbo_ROOT="C:/libjpeg-turbo64"
+    - cmake --build . --config Release
+    - cmake --build . --config Release --target RUN_TESTS
+    - cmake --build . --config Release --target INSTALL
     - zip -r cwipc_win1064_${CI_COMMIT_TAG}.zip installed
     - touch successful.tmp
   after_script:
