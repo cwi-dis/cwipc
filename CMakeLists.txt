@@ -1,0 +1,45 @@
+cmake_minimum_required(VERSION 3.16.0)
+
+project(cwipc)
+
+include(CTest)
+include(GNUInstallDirs)
+
+# Ensure all executable, dll/so and link-library outputs end up in the same directories
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
+
+#
+# Packages required by all submodules
+#
+
+# see here: https://github.com/PointCloudLibrary/pcl/issues/3680
+# when this is fixed, we can remove the following 3 lines.
+if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
+     set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
+endif()
+
+find_package(PCL 1.10 REQUIRED COMPONENTS common io octree visualization filters features)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+#
+# Packages required by submodules cwipc_util and cwipc_codec (which are non-optional
+#
+# Disabled for now (will be found by submodules) find_package(JPEG_Turbo REQUIRED)
+find_package(Boost 1.47.0 ${QUIET_FLAG} REQUIRED COMPONENTS system filesystem thread date_time iostreams chrono program_options)
+find_package(Eigen 4.3 ${QUIET_FLAG} REQUIRED)
+
+#
+# Optional packages, required by some submodules
+#
+find_package(KINECT)
+find_package(REALSENSE2)
+
+add_subdirectory("cwipc_util")
+add_subdirectory("cwipc_codec")
+if(REALSENSE2_FOUND)
+	add_subdirectory("cwipc_realsense2")
+endif()
+if(KINECT_FOUND)
+	add_subdirectory("cwipc_kinect")
+endif()
