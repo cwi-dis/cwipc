@@ -30,11 +30,12 @@ build_linux:
     - cmake .. -DCMAKE_INSTALL_PREFIX=$instdir
     - make
     - make test
-    - make install 
+    - make install
+    - cd ..
     - tar --directory installed -cvaf cwipc_ubuntu2004_$CI_COMMIT_TAG.tgz .
     - touch successful.tmp
   after_script:
-    - if [ ! -e successful.tmp ]; then cat cwipc_*/build/Testing/Temporary/LastTest.log; fi
+    - if [ ! -e successful.tmp ]; then cat build/Testing/Temporary/LastTest.log; fi
   artifacts:
     paths:
       - cwipc_ubuntu2004_$CI_COMMIT_TAG.tgz
@@ -57,10 +58,11 @@ build_osx:
     - make
     - make test
     - make install 
+    - cd ..
     - tar --directory installed -z -cvf cwipc_osx1014_$CI_COMMIT_TAG.tgz .
     - touch successful.tmp
   after_script:
-    - if [ ! -e successful.tmp ]; then cat cwipc_*/build/Testing/Temporary/LastTest.log; fi
+    - if [ ! -e successful.tmp ]; then cat build/Testing/Temporary/LastTest.log; fi
   artifacts:
     paths:
       - cwipc_osx1014_$CI_COMMIT_TAG.tgz
@@ -84,10 +86,11 @@ build_win:
     - cmake --build . --config Release
     - cmake --build . --config Release --target RUN_TESTS
     - cmake --build . --config Release --target INSTALL
+    - cd ..
     - zip -r cwipc_win1064_${CI_COMMIT_TAG}.zip installed
     - touch successful.tmp
   after_script:
-    - if [ ! -e successful.tmp ]; then cat cwipc_*/build/Testing/Temporary/LastTest.log; fi
+    - if [ ! -e successful.tmp ]; then cat build/Testing/Temporary/LastTest.log; fi
   artifacts:
     paths:
       - cwipc_win1064_$CI_COMMIT_TAG.zip
