@@ -27,27 +27,13 @@ x--notest)
 	shift
 	;;
 esac
-case x$1 in
-x)
-	all="cwipc_util cwipc_realsense2 cwipc_codec cwipc_kinect"
-	;;
-*)
-	all=$@
-	;;
-esac
 
-for i in $all ; do
-(
-	cd $i
-	(
-		mkdir -p build
-		cd build
-		cmake .. -G "Visual Studio 16 2019" -DCMAKE_INSTALL_PREFIX="$instdir" -DJPEG_Turbo_ROOT="C:/libjpeg-turbo64"
-		cmake --build . --config Release
-		if [ "$notest" != "notest" ]; then
-			cmake --build . --config Release --target RUN_TESTS
-		fi
-		cmake --build . --config Release --target INSTALL
-	)	
-)
-done
+mkdir -p build
+cd build
+cmake .. -G "Visual Studio 16 2019" -DCMAKE_INSTALL_PREFIX="$instdir" -DJPEG_Turbo_ROOT="C:/libjpeg-turbo64"
+cmake --build . --config Release
+if [ "$notest" != "notest" ]; then
+	cmake --build . --config Release --target RUN_TESTS
+fi
+cmake --build . --config Release --target INSTALL
+
