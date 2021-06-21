@@ -5,6 +5,16 @@ project(cwipc)
 include(CTest)
 include(GNUInstallDirs)
 
+# Add extension directories (for things like Find<package>)
+set(CMAKE_MODULE_PATH
+	${CMAKE_CURRENT_LIST_DIR}/CMakeFiles
+	${CMAKE_CURRENT_LIST_DIR}/cwipc_util/CMakeFiles
+	${CMAKE_CURRENT_LIST_DIR}/cwipc_codec/CMakeFiles
+	${CMAKE_CURRENT_LIST_DIR}/cwipc_realsense2/CMakeFiles
+	${CMAKE_CURRENT_LIST_DIR}/cwipc_kinect/CMakeFiles
+	${CMAKE_MODULE_PATH}
+	)
+
 # Ensure all executable, dll/so and link-library outputs end up in the same directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
