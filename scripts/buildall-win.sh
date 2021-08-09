@@ -5,6 +5,8 @@ errorexit() {
 	echo '** Error: your buildall-win did not succeed. Check error log above.'
 	exit 1
 }
+# Alternative: config=Release. But having the .PDB files is good for debugging.
+config=RelWithDebInfo
 trap errorexit ERR
 dirname=`dirname $0`
 dirname=`cd $dirname/..; pwd`
@@ -31,9 +33,9 @@ esac
 mkdir -p build
 cd build
 cmake .. -G "Visual Studio 16 2019" -DCMAKE_INSTALL_PREFIX="$instdir" -DJPEG_Turbo_ROOT="C:/libjpeg-turbo64"
-cmake --build . --config Release
+cmake --build . --config $config
 if [ "$notest" != "notest" ]; then
-	cmake --build . --config Release --target RUN_TESTS
+	cmake --build . --config $config --target RUN_TESTS
 fi
-cmake --build . --config Release --target INSTALL
+cmake --build . --config $config --target INSTALL
 
