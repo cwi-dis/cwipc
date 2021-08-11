@@ -2,15 +2,19 @@
 	path = cwipc_util
 	url = ../cwipc_util
 	branch = .
+	update = merge
 [submodule "cwipc_codec"]
 	path = cwipc_codec
 	url = ../cwipc_codec
 	branch = .
+	update = merge
 [submodule "cwipc_realsense2"]
 	path = cwipc_realsense2
 	url = ../cwipc_realsense2
 	branch = .
+	update = merge
 [submodule "cwipc_kinect"]
 	path = cwipc_kinect
 	url = ../cwipc_kinect
 	branch = .
+	update = merge
