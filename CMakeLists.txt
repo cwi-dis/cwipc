@@ -30,7 +30,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
 #     set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
 #endif()
 
-find_package(PCL 1.11 REQUIRED COMPONENTS common io octree filters features)
+find_package(PCL 1.10 REQUIRED COMPONENTS common io octree filters features)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 #
 # Packages required by submodules cwipc_util and cwipc_codec (which are non-optional
