@@ -1,5 +1,6 @@
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+  GIT_STRATEGY: clone   # Only enable this line to fix problems with multiple branches in submodules
   
 stages:
   - build
