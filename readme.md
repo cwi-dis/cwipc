@@ -82,3 +82,20 @@ Packages required:
 - _Azure Kinect SDK_ <https://github.com/microsoft/Azure-Kinect-Sensor-SDK>. 1.4.1 is known to work.
 - _Azure Kinect Body Tracking SDK_. To be provided.
 
+## Debugging
+
+A note here on how to debug the cwipc code, because it needs to go somewhere. When debugging it is easiest to build the whole package not with the command line tools but with Visual Studio (Windows) or Xcode (Mac). To debug with XCode create a toplevel folder `build-xcode` and in that folder run
+
+```
+cmake .. -G Xcode
+open cwipc.xcodeproj
+```
+
+Some issues can then be debugged with the C or C++ command line utilities (by putting breakpoints at the right location and running them with the correct command line arguments).
+
+Some issues are easier to debug with the Python scripts. There are some hooks in place to help with this:
+
+- all Python scripts accept a `--pausefordebug` command line option. This will pause the script at begin of run (and end of run), waiting for you to press `Y`. While the script is paused you can obtain the process ID and attach the XCode or Visual Studio debugger to the process.
+- all Python scripts accept a `--debuglibrary NAME=PATH` argument, for example `--debuglibrary cwipc_util=/tmp/libcwipc_util.dylib` to load the given cwipc library from the given path. This allows you to load the library that you have just built in Xcode or Visual Studio so you can set breakpoints in the library code.
+
+Additionally, you can send SIGQUIT to all the Python scripts to cause them to dump the Python stacktraces of all threads.
