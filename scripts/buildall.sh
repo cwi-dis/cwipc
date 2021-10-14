@@ -22,6 +22,7 @@ x--sudo)
 esac
 
 cmakeargs=
+makeargs=
 case x$1 in
 x--cicd)
 	cmakeargs="$cmakeargs -DCMAKE_INSTALL_PREFIX=$dirname/installed"
@@ -43,11 +44,23 @@ x*)
 	;;
 esac
 
+# See if we can parallelize the build
+if sysctl -n hw.physicalcpu 2>&1 >/dev/null; then
+	ncpu=`sysctl -n hw.physicalcpu`
+	makeargs="$makeargs -j $ncpu"
+	export CTEST_PARALLEL_LEVEL=$ncpu
+fi
+if nproc 2>&1 >/dev/null; then
+	ncpu=`nproc`
+	makeargs="$makeargs -j $ncpu"
+	export CTEST_PARALLEL_LEVEL=$ncpu
+fi
+
 mkdir -p build
 cd build
 cmake .. $cmakeargs
 
-make
+make $makeargs
 
 if [ "$notest" != "notest" ]; then
 	make test
