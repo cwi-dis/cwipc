@@ -1,6 +1,7 @@
 #!/bin/bash
-if [[ $(git diff --stat) != "" ]]; then
-	echo Repo is dirty
+if [[ "$1" != "-f" && $(git diff --stat) != "" ]]; then
+	echo Repo is dirty:
+	git diff
 	exit
 fi
 set -x

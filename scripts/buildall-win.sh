@@ -30,6 +30,13 @@ x--notest)
 	;;
 esac
 
+if nproc 2>&1 >/dev/null; then
+	ncpu=`nproc`
+	makeargs="$makeargs -j $ncpu"
+	export CTEST_PARALLEL_LEVEL=$ncpu
+	export CMAKE_BUILD_PARALLEL_LEVEL=$ncpu
+fi
+
 mkdir -p build
 cd build
 cmake .. -G "Visual Studio 16 2019" -DCMAKE_INSTALL_PREFIX="$instdir" -DJPEG_Turbo_ROOT="C:/libjpeg-turbo64"
