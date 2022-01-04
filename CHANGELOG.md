@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+This release is not backwards compatible with older releases, therefore `CWIPC_API_VERSION` and `CWIPC_API_VERSION_OLD` have been updated.
+
 ### Added
 
 - Compatible with Python 3.9 (mainly DLL search path fixes for Windows)
@@ -16,7 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- `tileinfo` structure changed
+- natural pointcloud orientation has changed: positive z-axis now points forward from subject point of view. This is in line with standard practice (camera looks in negative z direction). Incompatible change.
+- `tileinfo` structure changed. Incompatible change.
 - K4ABT 1.1.0 supported
 - Got rid of `abort()` calls in capturers
 - Code resutructuring in `cwipc_codec`
@@ -28,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added compressed pointcloud support to `cwipc_grab` and --playback.
+- Added compressed pointcloud support to `cwipc_grab` and `--playback`.
 - Added methods `cwipc_colormap`, `cwipc_tilemap` and `cwipc_join`.
 
 ### Changed
