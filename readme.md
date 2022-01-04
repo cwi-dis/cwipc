@@ -99,3 +99,23 @@ Some issues are easier to debug with the Python scripts. There are some hooks in
 - all Python scripts accept a `--debuglibrary NAME=PATH` argument, for example `--debuglibrary cwipc_util=/tmp/libcwipc_util.dylib` to load the given cwipc library from the given path. This allows you to load the library that you have just built in Xcode or Visual Studio so you can set breakpoints in the library code.
 
 Additionally, you can send SIGQUIT to all the Python scripts to cause them to dump the Python stacktraces of all threads.
+
+## Creating a release
+
+These instructions are primarily for our own benefit. Lest we forget.
+
+When creating a new release, ensure the following have been done
+
+- `CWIPC_API_VERSION` incremented if there are any API changes (additions only).
+- `CWIPC_API_VERSION_OLD` incremented if there are API changes that are not backward compatible.
+	- Both these need to be changed in `api.h` and `cwipc/util.py`.
+- `CHANGELOG.md` updated.
+- Version numbers in `cwipc_*/python/setup.py` updated.
+
+After making all these changes push to gitlab. Ensure the CI/CD build passes.
+
+After that tag all submodules and the main module with *v_X_._Y_._Z_\_stable*.
+
+Push the tag to gitlab, this will build the release.
+
+After the release is built copy the relevant new section of `CHANGELOG.md` to the release notes.
