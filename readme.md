@@ -78,7 +78,7 @@ Packages required:
 - _python 3_. Python 3.9 is preferred (3.7 or later may work). 
 	- On Windows you should install _"For All Users"_ and install into a writeable directory (such as `C:\Python37`). 
 	- Some needed packages such as _Open3D_ can be slow to follow Python releases, if you experience problems try installing a previous Python release. 
-	- On the Mac it is easy to install multiple Python versions with `brew`. Put the
+	- On the Mac it is easy to install multiple Python versions with `brew`. Put the relevant `/usr/local/opt/python@3.9/bin` first in your `$PATH` and things should build fine.
 - PCL <https://pointclouds.org>. 1.12 is preferred, but 1.9 or later may work. For Linux apt the package is called `libpcl-dev`. For MacOS brew you need to  `brew install pcl glfw3`. On Windows you need to ensure the DLL directories for PCL subpackages _OpenNI_ and _VTK_ are also on your `PATH`.
 - _jpeg-turbo_ <https://libjpeg-turbo.org/>. On Mac you must force-link it if it conflicts with the normal `jpeg` brew package.
 - _Intel Realsense SDK 2.0_ <https://github.com/IntelRealSense/librealsense>. 2.41 is known to work. 2.50 currently has issues on MacOS.
