@@ -75,10 +75,50 @@ On Windows you have to install each package individually according to the instru
 Packages required:
 
 - _cmake_. 
-- _python 3_. Python 3.8 is preferred on Linux and MacOS, on Windows 3.7 may be better. On Windows you should install _"For All Users"_ and install into a writeable directory (such as `C:\Python37`).
-- PCL 1.11 <https://pointclouds.org>. For Linux apt the package is called `libpcl-dev`. For MacOS brew you need to  `brew install pcl glfw3`. On Windows you need to ensure the DLL directories for PCL subpackages _OpenNI_ and _VTK_ are also on your `PATH`.
+- _python 3_. Python 3.9 is preferred (3.7 or later may work). 
+	- On Windows you should install _"For All Users"_ and install into a writeable directory (such as `C:\Python37`). 
+	- Some needed packages such as _Open3D_ can be slow to follow Python releases, if you experience problems try installing a previous Python release. 
+	- On the Mac it is easy to install multiple Python versions with `brew`. Put the relevant `/usr/local/opt/python@3.9/bin` first in your `$PATH` and things should build fine.
+- PCL <https://pointclouds.org>. 1.12 is preferred, but 1.9 or later may work. For Linux apt the package is called `libpcl-dev`. For MacOS brew you need to  `brew install pcl glfw3`. On Windows you need to ensure the DLL directories for PCL subpackages _OpenNI_ and _VTK_ are also on your `PATH`.
 - _jpeg-turbo_ <https://libjpeg-turbo.org/>. On Mac you must force-link it if it conflicts with the normal `jpeg` brew package.
-- _Intel Realsense SDK 2.0_ <https://github.com/IntelRealSense/librealsense>. 2.41 is known to work.
-- _Azure Kinect SDK_ <https://github.com/microsoft/Azure-Kinect-Sensor-SDK>. 1.4.1 is known to work.
-- _Azure Kinect Body Tracking SDK_. To be provided.
+- _Intel Realsense SDK 2.0_ <https://github.com/IntelRealSense/librealsense>. 2.41 is known to work. 2.50 currently has issues on MacOS.
+- _Azure Kinect SDK_ <https://github.com/microsoft/Azure-Kinect-Sensor-SDK>. 1.4.1 is known to work. Not available on Mac
+- _Azure Kinect Body Tracking SDK_. 1.0.1 and 1.1.0 should work. Not available on Mac.
 
+## Debugging
+
+A note here on how to debug the cwipc code, because it needs to go somewhere. When debugging it is easiest to build the whole package not with the command line tools but with Visual Studio (Windows) or Xcode (Mac). To debug with XCode create a toplevel folder `build-xcode` and in that folder run
+
+```
+cmake .. -G Xcode
+open cwipc.xcodeproj
+```
+
+Some issues can then be debugged with the C or C++ command line utilities (by putting breakpoints at the right location and running them with the correct command line arguments).
+
+Some issues are easier to debug with the Python scripts. There are some hooks in place to help with this:
+
+- all Python scripts accept a `--pausefordebug` command line option. This will pause the script at begin of run (and end of run), waiting for you to press `Y`. While the script is paused you can obtain the process ID and attach the XCode or Visual Studio debugger to the process.
+- all Python scripts accept a `--debuglibrary NAME=PATH` argument, for example `--debuglibrary cwipc_util=/tmp/libcwipc_util.dylib` to load the given cwipc library from the given path. This allows you to load the library that you have just built in Xcode or Visual Studio so you can set breakpoints in the library code.
+
+Additionally, you can send SIGQUIT to all the Python scripts to cause them to dump the Python stacktraces of all threads.
+
+## Creating a release
+
+These instructions are primarily for our own benefit. Lest we forget.
+
+When creating a new release, ensure the following have been done
+
+- `CWIPC_API_VERSION` incremented if there are any API changes (additions only).
+- `CWIPC_API_VERSION_OLD` incremented if there are API changes that are not backward compatible.
+	- Both these need to be changed in `api.h` and `cwipc/util.py`.
+- `CHANGELOG.md` updated.
+- Version numbers in `cwipc_*/python/setup.py` updated.
+
+After making all these changes push to gitlab. Ensure the CI/CD build passes.
+
+After that tag all submodules and the main module with *v_X_._Y_._Z_\_stable*.
+
+Push the tag to gitlab, this will build the release.
+
+After the release is built copy the relevant new section of `CHANGELOG.md` to the release notes.
