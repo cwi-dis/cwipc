@@ -21,7 +21,7 @@ build_linux:
     - apt-get install -y libpcl-dev
     - apt-get install -y python3-pip
     - apt-get install -y python3-venv
-    - apt-get install libopencv-dev # python3-opencv not needed
+    - apt-get install -y libopencv-dev # python3-opencv not needed
   script:
     - mkdir -p installed/lib
     - export LD_LIBRARY_PATH="`pwd`/installed/lib:$LD_LIBRARY_PATH"
