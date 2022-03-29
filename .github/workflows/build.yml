@@ -1,0 +1,73 @@
+name: CMake Build Matrix
+
+on: [push]
+
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            name: "Windows Latest MSVC", 
+            os: windows-latest,
+#            build_type: "Release", cc: "cl", cxx: "cl",
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+            artifact: "cwipc_util_win1064.zip",
+          }
+        - {
+            name: "Ubuntu Latest GCC", 
+            os: ubuntu-latest,
+#            build_type: "Release", cc: "gcc", cxx: "g++",
+            artifact: "cwipc_util_ubuntu1804.tgz",
+          }
+        - {
+            name: "macOS Latest Clang",
+            os: macos-latest,
+#            build_type: "Release", cc: "clang", cxx: "clang++",
+            artifact: "cwipc_util_osx1015",
+          }
+    steps:
+    - name: Install pcl (Linux)
+      if: matrix.config.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libpcl-dev
+
+    - name: Install pcl (OSX)
+      if: matrix.config.os == 'macos-latest'
+      run: brew install pcl
+
+    - name: Install pcl (Windows)
+      if: matrix.config.os == 'windows-latest'
+      run: |
+        choco install boost-msvc-14.2
+        choco install libpcl
+      
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: See what is there
+      shell: bash
+      run: |
+        pwd
+        ls -l
+
+    - name: Build & Test
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
+        build-dir: ${{ github.workspace }}/build
+#          # will set the CC & CXX for cmake
+#          cc: gcc
+#          cxx: g++
+#          build-type: Release
+#          # Extra options pass to cmake while configuring project
+#          configure-options: -DCMAKE_C_FLAGS=-w32 -DPNG_INCLUDE=OFF
+        run-test: true
+#          ctest-options: -R mytest
+      # install the build using cmake --install
+        install-build: true
+#          # run build using '-j [parallel]' to use multiple threads to build
+#          parallel: 14
