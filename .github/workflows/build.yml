@@ -87,7 +87,8 @@ jobs:
       shell: bash
       run: |
         pwd
-        ls -l
+        ls -la
+        ls -la cwipc_kinect/tests/fixtures/input/recording/
 
     - name: Build & Test
       uses: ashutoshvarma/action-cmake-build@master
