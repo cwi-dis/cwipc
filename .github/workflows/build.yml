@@ -32,6 +32,11 @@ jobs:
          
     steps:
     
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        submodules: 'true'
+
     - name: Pre-install dependencies (ubuntu-2004)
       if: matrix.config.os == 'ubuntu-latest'
       run: |
@@ -75,14 +80,9 @@ jobs:
     - name: Install vcpkg packages (Windows)
       if: matrix.config.os == 'windows-latest'
       run: |
-        vcpkg install pcl
+        ./vcpkg/vcpkg install pcl:x64-windows
       
               
-    - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        submodules: 'true'
-
     - name: See what is there
       shell: bash
       run: |
@@ -105,3 +105,8 @@ jobs:
         install-build: true
 #          # run build using '-j [parallel]' to use multiple threads to build
 #          parallel: 14
+
+    - name: CTest output in case of failure
+      if: ${{ failure() }}
+      run: cat build/Testing/Temporary/LastTest.log
+      
