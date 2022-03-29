@@ -35,7 +35,8 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       with:
-        submodules: 'true'
+        submodules: 'recursive'
+        lfs: 'true'
 
     - name: Pre-install dependencies (ubuntu-2004)
       if: matrix.config.os == 'ubuntu-latest'
