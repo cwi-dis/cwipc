@@ -18,3 +18,6 @@
 	url = ../cwipc_kinect
 	branch = .
 	update = merge
+[submodule "vcpkg"]
+	path = vcpkg
+	url = https://github.com/microsoft/vcpkg
