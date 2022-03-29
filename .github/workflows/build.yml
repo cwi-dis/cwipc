@@ -49,6 +49,8 @@ jobs:
       
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        submodules: 'true'
 
     - name: See what is there
       shell: bash
