@@ -39,7 +39,7 @@ fi
 
 mkdir -p build
 cd build
-cmake .. -G "Visual Studio 16 2019" -DCMAKE_INSTALL_PREFIX="$instdir" -DJPEG_Turbo_ROOT="C:/libjpeg-turbo64"
+cmake .. -G "Visual Studio 16 2019" -DCMAKE_INSTALL_PREFIX="$instdir" -DJPEG_Turbo_ROOT="C:/libjpeg-turbo64" -DOpenCV_DIR="C:/OpenCV-4.5.5/build"
 cmake --build . --config $config
 if [ "$notest" != "notest" ]; then
 	cmake --build . --config $config --target RUN_TESTS
