@@ -105,10 +105,18 @@ jobs:
 #          ctest-options: -R mytest
       # install the build using cmake --install
         install-build: true
+        install-options: --prefix installed
 #          # run build using '-j [parallel]' to use multiple threads to build
 #          parallel: 14
 
     - name: CTest output in case of failure
       if: ${{ failure() }}
       run: cat build/Testing/Temporary/LastTest.log
+      
+    - name: See what remains
+      shell: bash
+      run: |
+        ls -la
+        ls -la build
+        ls -la installed
       
