@@ -15,19 +15,19 @@ jobs:
             os: windows-latest,
 #            build_type: "Release", cc: "cl", cxx: "cl",
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-            artifact: "cwipc_util_win1064.zip",
+            artifact: "cwipc_win1064_.zip",
           }
         - {
             name: "Ubuntu Latest GCC", 
             os: ubuntu-latest,
 #            build_type: "Release", cc: "gcc", cxx: "g++",
-            artifact: "cwipc_util_ubuntu1804.tgz",
+            artifact: "cwipc_ubuntu2004_.tgz",
           }
         - {
             name: "macOS Latest Clang",
             os: macos-latest,
 #            build_type: "Release", cc: "clang", cxx: "clang++",
-            artifact: "cwipc_util_osx1015",
+            artifact: "cwipc_osx1015_",
           }
     steps:
     - name: Install pcl (Linux)
@@ -38,7 +38,8 @@ jobs:
 
     - name: Install pcl (OSX)
       if: matrix.config.os == 'macos-latest'
-      run: brew install pcl
+      run: |
+        brew install pcl
 
     - name: Install pcl (Windows)
       if: matrix.config.os == 'windows-latest'
