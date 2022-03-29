@@ -24,7 +24,7 @@ jobs:
             artifact: "cwipc_ubuntu2004_.tgz",
           }
          - {
-#            name: "macOS Latest Clang",
+           name: "macOS Latest Clang",
            os: macos-latest,
 #            build_type: "Release", cc: "clang", cxx: "clang++",
            artifact: "cwipc_osx1015_",
@@ -39,12 +39,12 @@ jobs:
         sudo add-apt-repository -y "deb https://librealsense.intel.com/Debian/apt-repo focal main" -u
         sudo apt-get -y update
       
-    - name: Install dependencies
+    - name: Install apt/brew/choco dependencies
       uses: lyricwulf/abc@v1
       with:
         linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1
         macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
-        windows: libpcl python3 glfw3 libjpeg-turbo realsense-sdk2 
+        windows: python3 glfw3 libjpeg-turbo realsense-sdk2 
      
     - name: Install K4A (ubuntu-2004)
       if: matrix.config.os == 'ubuntu-latest'
@@ -67,6 +67,16 @@ jobs:
       run: |
         brew unlink jpeg
         brew link --force jpeg-turbo
+    
+    - name: Install vcpkg (Windows)
+      if: matrix.config.os == 'windows-latest'
+      uses: lukka/run-vcpkg@v10
+      
+    - name: Install vcpkg packages (Windows)
+      if: matrix.config.os == 'windows-latest'
+      run: |
+        vcpkg install pcl
+      
               
     - name: Checkout code
       uses: actions/checkout@v2
