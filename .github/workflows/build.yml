@@ -93,11 +93,16 @@ jobs:
         pwd
         ls -la
         
+    - name: Create vcpkg tar (Windows)
+      shell: bash
+      run: |
+        tar cf vcpkg.tar vcpkg
+        
     - name: Upload vcpkg (Windows)
       uses: actions/upload-artifact@v3
       with:
         name: windows-vcpkg-dir
-        path: vcpkg/
+        path: vcpkg.tar
 
 #    - name: Build & Test
 #      uses: ashutoshvarma/action-cmake-build@master
