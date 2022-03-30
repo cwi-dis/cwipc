@@ -92,6 +92,12 @@ jobs:
       run: |
         pwd
         ls -la
+        
+    - name: Upload vcpkg (Windows)
+      uses: actions/upload-artifact@v3
+      with:
+        name: windows-vcpkg-dir
+        path: vcpkg/
 
 #    - name: Build & Test
 #      uses: ashutoshvarma/action-cmake-build@master
