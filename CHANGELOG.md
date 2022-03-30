@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - (kinect) cameraconfig is now independent of whether we use map\_color\_to\_depth or not
-- (kinect) opencv is now used for erosion of the depth map, much faster.
+- (kinect) implemented function generate_point_cloud_v2 which uses a lookup table to compute the pointcloud.
+- (kinect) opencv is now used for filtering the depth map: Thresholds + erosion. much faster.
 
 ### Removed
 
