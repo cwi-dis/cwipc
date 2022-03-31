@@ -80,11 +80,13 @@ jobs:
         brew unlink jpeg
         brew link --force jpeg-turbo
     
-    - name: Install vcpkg packages (Windows)
+    - name: Install PCL (Windows)
       if: matrix.config.os == 'windows-latest'
-      uses: lukka/run-vcpkg@v10
-      with:
-        vcpkgJsonGlob: 'vcpkg.json'
+      run: |
+        mkdir -p tmp
+        curl https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.12.1/PCL-1.12.1-AllInOne-msvc2019-win64.exe >tmp/install-pcl.exe
+        ./tmp/install-pcl.exe /S
+        ls -l "/c/Program Files"
       
               
     - name: See what is there
@@ -93,17 +95,6 @@ jobs:
         pwd
         ls -la
         
-    - name: Create vcpkg tar (Windows)
-      shell: bash
-      run: |
-        du -a vcpkg > vcpkg.du
-        
-    - name: Upload vcpkg (Windows)
-      uses: actions/upload-artifact@v3
-      with:
-        name: windows-vcpkg-du
-        path: vcpkg.du
-
 #    - name: Build & Test
 #      uses: ashutoshvarma/action-cmake-build@master
 #      with:
