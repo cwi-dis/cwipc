@@ -96,7 +96,7 @@ jobs:
     - name: Create vcpkg tar (Windows)
       shell: bash
       run: |
-        du -a vcpkg > pcpkg.du
+        du -a vcpkg > vcpkg.du
         
     - name: Upload vcpkg (Windows)
       uses: actions/upload-artifact@v3
