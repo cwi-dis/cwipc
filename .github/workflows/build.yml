@@ -84,9 +84,10 @@ jobs:
       if: matrix.config.os == 'windows-latest'
       run: |
         mkdir -p tmp
+        mkdir -p ../ProgramFiles
         curl -sSL https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.12.1/PCL-1.12.1-AllInOne-msvc2019-win64.exe -o tmp/install-pcl.exe
-        ./tmp/install-pcl.exe /S
-        ls -l "/c/Program Files"
+        ./tmp/install-pcl.exe /S=D:\a\cwipc\ProgramFiles\PCL-1.12.1
+        ls -l ..
       
               
     - name: See what is there
