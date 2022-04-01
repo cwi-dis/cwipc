@@ -56,7 +56,7 @@ jobs:
       with:
         linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1
         macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
-        windows: python3 glfw3 libjpeg-turbo realsense-sdk2
+        windows: glfw3 libjpeg-turbo realsense-sdk2
      
     - name: Install K4A (ubuntu-2004)
       if: matrix.config.os == 'ubuntu-latest'
@@ -88,13 +88,14 @@ jobs:
         mkdir -p tmp
         mkdir -p ../ProgramFiles
         curl -sSL https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.12.1/PCL-1.12.1-AllInOne-msvc2019-win64.exe -o tmp/install-pcl.exe
-        ./tmp/install-pcl.exe /S=D:\a\cwipc\ProgramFiles\PCL-1.12.1
+        ./tmp/install-pcl.exe /S /D=D:\a\cwipc\ProgramFiles\PCL-1.12.1
         echo "D:/a/cwipc/ProgramFiles/rabarber" >> $GITHUB_PATH
               
     - name: See what is there
       shell: bash
       run: |
         pwd
+        echo $PATH
         ls -la
         ls -la ..
         ls -R ../ProgramFiles
