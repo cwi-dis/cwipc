@@ -7,19 +7,19 @@ jobs:
         runs-on: windows-latest
         steps:
         - name: Checkout code
-            uses: actions/checkout@v2
-            with:
+          uses: actions/checkout@v2
+          with:
                 submodules: 'recursive'
                 lfs: 'true'
         - name: Install apt/brew/choco dependencies
-            uses: lyricwulf/abc@v1
-            with:
+          uses: lyricwulf/abc@v1
+          with:
                 linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1
                 macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
                 windows: glfw3 libjpeg-turbo realsense-sdk2
         - name: Install PCL (Windows)
-            shell: pwsh
-            run: |
+          shell: pwsh
+          run: |
                 $env:Path
                 $thirdpartydir="$((Get-Item .).FullName)\3rdparty"
                 mkdir $thirdpartydir
@@ -30,68 +30,68 @@ jobs:
                 Add-Content $env:GITHUB_PATH "$thirdpartydir/PCL-1.12.1/bin"
                 Add-Content $env:GITHUB_ENV "PCL_DIR=$thirdpartydir/PCL-1.12.1"
         - name: Build & Test
-            uses: ashutoshvarma/action-cmake-build@master
-            with:
+          uses: ashutoshvarma/action-cmake-build@master
+          with:
                 build-dir: ${{ github.workspace }}/build
                 configure-options: -DJPEG_Turbo_ROOT="C:/libjpeg-turbo64" -DPCL_ROOT="$PCL_DIR"
                 run-test: true
                 install-build: true
                 install-options: --prefix installed
         - name: CTest output in case of failure
-            if: ${{ failure() }}
-            run: cat build/Testing/Temporary/LastTest.log
+          if: ${{ failure() }}
+          run: cat build/Testing/Temporary/LastTest.log
                 
     build-macos:
         runs-on: macos-latest
         steps:
         - name: Checkout code
-            uses: actions/checkout@v2
-            with:
+          uses: actions/checkout@v2
+          with:
                 submodules: 'recursive'
                 lfs: 'true'
         - name: Install apt/brew/choco dependencies
-            uses: lyricwulf/abc@v1
-            with:
+          uses: lyricwulf/abc@v1
+          with:
                 linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1
                 macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
                 windows: glfw3 libjpeg-turbo realsense-sdk2
         - name: Install dependencies fixup (MacOS)
-            run: |
+          run: |
                 brew unlink jpeg
                 brew link --force jpeg-turbo
         - name: Build & Test
-            uses: ashutoshvarma/action-cmake-build@master
-            with:
+          uses: ashutoshvarma/action-cmake-build@master
+          with:
                 build-dir: ${{ github.workspace }}/build
                 configure-options:
                 run-test: true
                 install-build: true
                 install-options: --prefix installed
         - name: CTest output in case of failure
-            if: ${{ failure() }}
-            run: cat build/Testing/Temporary/LastTest.log
+          if: ${{ failure() }}
+          run: cat build/Testing/Temporary/LastTest.log
                 
     build-linux:
         runs-on: ubuntu-latest
         steps:
         - name: Checkout code
-            uses: actions/checkout@v2
-            with:
+          uses: actions/checkout@v2
+          with:
                 submodules: 'recursive'
                 lfs: 'true'
         - name: Pre-install dependencies
-            run: |
+          run: |
                 sudo apt-key adv --keyserver keys.gnupg.net --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE || sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE
                 sudo add-apt-repository -y "deb https://librealsense.intel.com/Debian/apt-repo focal main" -u
                 sudo apt-get -y update
         - name: Install apt/brew/choco dependencies
-            uses: lyricwulf/abc@v1
-            with:
+          uses: lyricwulf/abc@v1
+          with:
                 linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1
                 macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
                 windows: glfw3 libjpeg-turbo realsense-sdk2
         - name: Install K4A
-            run: |
+          run: |
                 curl -sSL https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/libk/libk4a1.3/libk4a1.3_1.3.0_amd64.deb > /tmp/libk4a1.3_1.3.0_amd64.deb
                 curl -sSL https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/libk/libk4a1.3-dev/libk4a1.3-dev_1.3.0_amd64.deb > /tmp/libk4a1.3-dev_1.3.0_amd64.deb
                 curl -sSL https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/libk/libk4abt1.0/libk4abt1.0_1.0.0_amd64.deb > /tmp/libk4abt1.0_1.0.0_amd64.deb
@@ -105,16 +105,16 @@ jobs:
                 sudo dpkg -i /tmp/libk4abt1.0-dev_1.0.0_amd64.deb
                 sudo dpkg -i /tmp/k4a-tools_1.3.0_amd64.deb      
         - name: Build & Test
-            uses: ashutoshvarma/action-cmake-build@master
-            with:
+          uses: ashutoshvarma/action-cmake-build@master
+          with:
                 build-dir: ${{ github.workspace }}/build
                 configure-options:
                 run-test: true
                 install-build: true
                 install-options: --prefix installed
         - name: CTest output in case of failure
-            if: ${{ failure() }}
-            run: cat build/Testing/Temporary/LastTest.log
+          if: ${{ failure() }}
+          run: cat build/Testing/Temporary/LastTest.log
                
 #  build:
 #    name: ${{ matrix.config.name }}
