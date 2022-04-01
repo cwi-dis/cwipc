@@ -103,9 +103,9 @@ jobs:
         ls -lR 3rdparty
         ls -l /c
         
-   - name: Build & Test
-     uses: ashutoshvarma/action-cmake-build@master
-     with:
+    - name: Build & Test
+      uses: ashutoshvarma/action-cmake-build@master
+      with:
        build-dir: ${{ github.workspace }}/build
 #          # will set the CC & CXX for cmake
 #          cc: gcc
@@ -121,10 +121,11 @@ jobs:
 #          # run build using '-j [parallel]' to use multiple threads to build
 #          parallel: 14
 
-   - name: CTest output in case of failure
-     if: ${{ failure() }}
-     run: cat build/Testing/Temporary/LastTest.log
+    - name: CTest output in case of failure
+      if: ${{ failure() }}
+      run: cat build/Testing/Temporary/LastTest.log
       
+    
     - name: See what remains
       shell: bash
       run: |
