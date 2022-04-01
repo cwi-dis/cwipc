@@ -92,6 +92,7 @@ jobs:
         cd $thirdpartydir
         Expand-Archive -Path PCL-1.12.1-win10-x64-AllInOne.zip -DestinationPath PCL-1.12.1
         Add-Content $env:GITHUB_PATH "$thirdpartydir/PCL-1.12.1/bin"
+        Add-Content $env:GITHUB_ENV "PCL_DIR=$thirdpartydir/PCL-1.12.1"
               
     - name: See what is there
       shell: bash
@@ -112,7 +113,7 @@ jobs:
 #          cxx: g++
 #          build-type: Release
 #          # Extra options pass to cmake while configuring project
-       configure-options: -DJPEG_Turbo_ROOT="C:/libjpeg-turbo64" -D
+       configure-options: -DJPEG_Turbo_ROOT="C:/libjpeg-turbo64" -DPCL_ROOT="$PCL_DIR"
        run-test: true
 #          ctest-options: -R mytest
      # install the build using cmake --install
