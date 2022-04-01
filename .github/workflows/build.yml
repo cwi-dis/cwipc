@@ -82,14 +82,16 @@ jobs:
     
     - name: Install PCL (Windows)
       if: matrix.config.os == 'windows-latest'
-      shell: bash
+      shell: pwsh
       run: |
-        echo $PATH
-        mkdir -p tmp
-        mkdir -p ../ProgramFiles
-        curl -sSL https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.12.1/PCL-1.12.1-AllInOne-msvc2019-win64.exe -o tmp/install-pcl.exe
-        ./tmp/install-pcl.exe /S /D=D:\a\cwipc\ProgramFiles\PCL-1.12.1
-        echo "D:/a/cwipc/ProgramFiles/rabarber" >> $GITHUB_PATH
+        $env:Path
+        $pcldir="$((Get-Item .).FullName)\pcl"
+        $pclinstdir=""$pcldir\pcl"
+        mkdir $pcldir
+        $pclinstdir
+        (New-Object System.Net.WebClient).DownloadFile("https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.12.1/PCL-1.12.1-AllInOne-msvc2019-win64.exe","$pcldir\pcl-installer.exe");
+        $pcldir\pcl-installer.exe /S /D=$pclinstdir
+        echo "$pclinstdir" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
               
     - name: See what is there
       shell: bash
