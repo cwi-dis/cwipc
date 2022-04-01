@@ -101,7 +101,7 @@ jobs:
         echo $PATH
         ls -la
         ls -la ..
-        ls -R ../ProgramFiles
+        ls -lR pcl
         
 #    - name: Build & Test
 #      uses: ashutoshvarma/action-cmake-build@master
