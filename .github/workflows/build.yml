@@ -86,7 +86,7 @@ jobs:
       run: |
         $env:Path
         $pcldir="$((Get-Item .).FullName)\pcl"
-        $pclinstdir=""$pcldir\pcl"
+        $pclinstdir="$pcldir\pcl"
         mkdir $pcldir
         $pclinstdir
         (New-Object System.Net.WebClient).DownloadFile("https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.12.1/PCL-1.12.1-AllInOne-msvc2019-win64.exe","$pcldir\pcl-installer.exe");
