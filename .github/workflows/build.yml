@@ -3,134 +3,149 @@ name: CMake Build Matrix
 on: [push]
 
 jobs:
-  build:
-    name: ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-         - {
-           name: "Windows Latest MSVC", 
-           os: windows-latest,
-           arch: x64,
-           triplet: x64-windows,
-#            build_type: "Release", cc: "cl", cxx: "cl",
-           environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
-           artifact: "cwipc_win1064_.zip",
-         }
+    build-windows:
+        runs-on: windows-latest
+        steps:
+        - name: Checkout code
+            uses: actions/checkout@v2
+            with:
+                submodules: 'recursive'
+                lfs: 'true'
+        - name: Install apt/brew/choco dependencies
+            uses: lyricwulf/abc@v1
+            with:
+                linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1
+                macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
+                windows: glfw3 libjpeg-turbo realsense-sdk2
+        - name: Install PCL (Windows)
+            shell: pwsh
+            run: |
+                $env:Path
+                $thirdpartydir="$((Get-Item .).FullName)\3rdparty"
+                mkdir $thirdpartydir
+                $thirdpartydir
+                (New-Object System.Net.WebClient).DownloadFile("https://github.com/cwi-dis/cwipc_test/releases/download/pcl-1-12-1-win/PCL-1.12.1-win10-x64-AllInOne.zip","$thirdpartydir/PCL-1.12.1-win10-x64-AllInOne.zip");
+                cd $thirdpartydir
+                Expand-Archive -Path PCL-1.12.1-win10-x64-AllInOne.zip -DestinationPath PCL-1.12.1
+                Add-Content $env:GITHUB_PATH "$thirdpartydir/PCL-1.12.1/bin"
+                Add-Content $env:GITHUB_ENV "PCL_DIR=$thirdpartydir/PCL-1.12.1"
+        - name: Build & Test
+            uses: ashutoshvarma/action-cmake-build@master
+            with:
+                build-dir: ${{ github.workspace }}/build
+                configure-options: -DJPEG_Turbo_ROOT="C:/libjpeg-turbo64" -DPCL_ROOT="$PCL_DIR"
+                run-test: true
+                install-build: true
+                install-options: --prefix installed
+        - name: CTest output in case of failure
+            if: ${{ failure() }}
+            run: cat build/Testing/Temporary/LastTest.log
+                
+    build-macos:
+        runs-on: macos-latest
+        steps:
+        - name: Checkout code
+            uses: actions/checkout@v2
+            with:
+                submodules: 'recursive'
+                lfs: 'true'
+        - name: Install apt/brew/choco dependencies
+            uses: lyricwulf/abc@v1
+            with:
+                linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1
+                macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
+                windows: glfw3 libjpeg-turbo realsense-sdk2
+        - name: Install dependencies fixup (MacOS)
+            run: |
+                brew unlink jpeg
+                brew link --force jpeg-turbo
+        - name: Build & Test
+            uses: ashutoshvarma/action-cmake-build@master
+            with:
+                build-dir: ${{ github.workspace }}/build
+                configure-options:
+                run-test: true
+                install-build: true
+                install-options: --prefix installed
+        - name: CTest output in case of failure
+            if: ${{ failure() }}
+            run: cat build/Testing/Temporary/LastTest.log
+                
+    build-linux:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout code
+            uses: actions/checkout@v2
+            with:
+                submodules: 'recursive'
+                lfs: 'true'
+        - name: Pre-install dependencies
+            run: |
+                sudo apt-key adv --keyserver keys.gnupg.net --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE || sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE
+                sudo add-apt-repository -y "deb https://librealsense.intel.com/Debian/apt-repo focal main" -u
+                sudo apt-get -y update
+        - name: Install apt/brew/choco dependencies
+            uses: lyricwulf/abc@v1
+            with:
+                linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1
+                macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
+                windows: glfw3 libjpeg-turbo realsense-sdk2
+        - name: Install K4A
+            run: |
+                curl -sSL https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/libk/libk4a1.3/libk4a1.3_1.3.0_amd64.deb > /tmp/libk4a1.3_1.3.0_amd64.deb
+                curl -sSL https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/libk/libk4a1.3-dev/libk4a1.3-dev_1.3.0_amd64.deb > /tmp/libk4a1.3-dev_1.3.0_amd64.deb
+                curl -sSL https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/libk/libk4abt1.0/libk4abt1.0_1.0.0_amd64.deb > /tmp/libk4abt1.0_1.0.0_amd64.deb
+                curl -sSL https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/libk/libk4abt1.0-dev/libk4abt1.0-dev_1.0.0_amd64.deb > /tmp/libk4abt1.0-dev_1.0.0_amd64.deb
+                curl -sSL https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/k/k4a-tools/k4a-tools_1.3.0_amd64.deb > /tmp/k4a-tools_1.3.0_amd64.deb
+                echo 'libk4a1.3 libk4a1.3/accepted-eula-hash string 0f5d5c5de396e4fee4c0753a21fee0c1ed726cf0316204edda484f08cb266d76' | sudo debconf-set-selections
+                echo 'libk4abt1.0	libk4abt1.0/accepted-eula-hash	string	03a13b63730639eeb6626d24fd45cf25131ee8e8e0df3f1b63f552269b176e38' | sudo debconf-set-selections
+                sudo dpkg -i /tmp/libk4a1.3_1.3.0_amd64.deb
+                sudo dpkg -i /tmp/libk4a1.3-dev_1.3.0_amd64.deb
+                sudo dpkg -i /tmp/libk4abt1.0_1.0.0_amd64.deb
+                sudo dpkg -i /tmp/libk4abt1.0-dev_1.0.0_amd64.deb
+                sudo dpkg -i /tmp/k4a-tools_1.3.0_amd64.deb      
+        - name: Build & Test
+            uses: ashutoshvarma/action-cmake-build@master
+            with:
+                build-dir: ${{ github.workspace }}/build
+                configure-options:
+                run-test: true
+                install-build: true
+                install-options: --prefix installed
+        - name: CTest output in case of failure
+            if: ${{ failure() }}
+            run: cat build/Testing/Temporary/LastTest.log
+               
+#  build:
+#    name: ${{ matrix.config.name }}
+#    runs-on: ${{ matrix.config.os }}
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        config:
 #         - {
-#            name: "Ubuntu Latest GCC", 
-#            os: ubuntu-latest,
-#            arch: x64,
-#            triplet: x64-linux,
-##            build_type: "Release", cc: "gcc", cxx: "g++",
-#            artifact: "cwipc_ubuntu2004_.tgz",
-#          }
-#         - {
-#           name: "macOS Latest Clang",
-#           os: macos-latest,
+#           name: "Windows Latest MSVC", 
+#           os: windows-latest,
 #           arch: x64,
-#           triplet: x64-osx,
-##            build_type: "Release", cc: "clang", cxx: "clang++",
-#           artifact: "cwipc_osx1015_",
+#           triplet: x64-windows,
+##            build_type: "Release", cc: "cl", cxx: "cl",
+#           environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat",
+#           artifact: "cwipc_win1064_.zip",
 #         }
-         
-    steps:
-    
-    - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        submodules: 'recursive'
-        lfs: 'true'
+##         - {
+##            name: "Ubuntu Latest GCC", 
+##            os: ubuntu-latest,
+##            arch: x64,
+##            triplet: x64-linux,
+###            build_type: "Release", cc: "gcc", cxx: "g++",
+##            artifact: "cwipc_ubuntu2004_.tgz",
+##          }
+##         - {
+##           name: "macOS Latest Clang",
+##           os: macos-latest,
+##           arch: x64,
+##           triplet: x64-osx,
+###            build_type: "Release", cc: "clang", cxx: "clang++",
+##           artifact: "cwipc_osx1015_",
+##         }
 
-    - name: Pre-install dependencies (ubuntu-2004)
-      if: matrix.config.os == 'ubuntu-latest'
-      run: |
-        sudo apt-key adv --keyserver keys.gnupg.net --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE || sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE
-        sudo add-apt-repository -y "deb https://librealsense.intel.com/Debian/apt-repo focal main" -u
-        sudo apt-get -y update
-      
-    - name: Install apt/brew/choco dependencies
-      uses: lyricwulf/abc@v1
-      with:
-        linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1
-        macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
-        windows: glfw3 libjpeg-turbo realsense-sdk2
-     
-    - name: Install K4A (ubuntu-2004)
-      if: matrix.config.os == 'ubuntu-latest'
-      run: |
-        curl -sSL https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/libk/libk4a1.3/libk4a1.3_1.3.0_amd64.deb > /tmp/libk4a1.3_1.3.0_amd64.deb
-        curl -sSL https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/libk/libk4a1.3-dev/libk4a1.3-dev_1.3.0_amd64.deb > /tmp/libk4a1.3-dev_1.3.0_amd64.deb
-        curl -sSL https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/libk/libk4abt1.0/libk4abt1.0_1.0.0_amd64.deb > /tmp/libk4abt1.0_1.0.0_amd64.deb
-        curl -sSL https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/libk/libk4abt1.0-dev/libk4abt1.0-dev_1.0.0_amd64.deb > /tmp/libk4abt1.0-dev_1.0.0_amd64.deb
-        curl -sSL https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/k/k4a-tools/k4a-tools_1.3.0_amd64.deb > /tmp/k4a-tools_1.3.0_amd64.deb
-        echo 'libk4a1.3 libk4a1.3/accepted-eula-hash string 0f5d5c5de396e4fee4c0753a21fee0c1ed726cf0316204edda484f08cb266d76' | sudo debconf-set-selections
-        echo 'libk4abt1.0	libk4abt1.0/accepted-eula-hash	string	03a13b63730639eeb6626d24fd45cf25131ee8e8e0df3f1b63f552269b176e38' | sudo debconf-set-selections
-        sudo dpkg -i /tmp/libk4a1.3_1.3.0_amd64.deb
-        sudo dpkg -i /tmp/libk4a1.3-dev_1.3.0_amd64.deb
-        sudo dpkg -i /tmp/libk4abt1.0_1.0.0_amd64.deb
-        sudo dpkg -i /tmp/libk4abt1.0-dev_1.0.0_amd64.deb
-        sudo dpkg -i /tmp/k4a-tools_1.3.0_amd64.deb      
-         
-    - name: Install dependencies fixup (MacOS)
-      if: matrix.config.os == 'macos-latest'
-      run: |
-        brew unlink jpeg
-        brew link --force jpeg-turbo
-    
-    - name: Install PCL (Windows)
-      if: matrix.config.os == 'windows-latest'
-      shell: pwsh
-      run: |
-        $env:Path
-        $thirdpartydir="$((Get-Item .).FullName)\3rdparty"
-        mkdir $thirdpartydir
-        $thirdpartydir
-        (New-Object System.Net.WebClient).DownloadFile("https://github.com/cwi-dis/cwipc_test/releases/download/pcl-1-12-1-win/PCL-1.12.1-win10-x64-AllInOne.zip","$thirdpartydir/PCL-1.12.1-win10-x64-AllInOne.zip");
-        cd $thirdpartydir
-        Expand-Archive -Path PCL-1.12.1-win10-x64-AllInOne.zip -DestinationPath PCL-1.12.1
-        Add-Content $env:GITHUB_PATH "$thirdpartydir/PCL-1.12.1/bin"
-        Add-Content $env:GITHUB_ENV "PCL_DIR=$thirdpartydir/PCL-1.12.1"
-              
-    - name: See what is there
-      shell: bash
-      run: |
-        pwd
-        echo $PATH
-        ls -la
-        ls -la ..
-        ls -lR 3rdparty
-        ls -l /c
-        
-    - name: Build & Test
-      uses: ashutoshvarma/action-cmake-build@master
-      with:
-       build-dir: ${{ github.workspace }}/build
-#          # will set the CC & CXX for cmake
-#          cc: gcc
-#          cxx: g++
-#          build-type: Release
-#          # Extra options pass to cmake while configuring project
-       configure-options: -DJPEG_Turbo_ROOT="C:/libjpeg-turbo64" -DPCL_ROOT="$PCL_DIR"
-       run-test: true
-#          ctest-options: -R mytest
-     # install the build using cmake --install
-       install-build: true
-       install-options: --prefix installed
-#          # run build using '-j [parallel]' to use multiple threads to build
-#          parallel: 14
-
-    - name: CTest output in case of failure
-      if: ${{ failure() }}
-      run: cat build/Testing/Temporary/LastTest.log
-      
-    
-    - name: See what remains
-      shell: bash
-      run: |
-        ls -la
-        ls -la build
-        ls -la installed
-      
