@@ -90,7 +90,8 @@ jobs:
         mkdir $pcldir
         $pclinstdir
         (New-Object System.Net.WebClient).DownloadFile("https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.12.1/PCL-1.12.1-AllInOne-msvc2019-win64.exe","$pcldir\pcl-installer.exe");
-        $pcldir\pcl-installer.exe /S /D=$pclinstdir
+        cd $pcldir
+        .\pcl-installer.exe /S /D=$pclinstdir
         Add-Content $env:GITHUB_PATH "$pclinstdir"
               
     - name: See what is there
