@@ -82,12 +82,12 @@ jobs:
     
     - name: Install PCL (Windows)
       if: matrix.config.os == 'windows-latest'
+      shell: bash
       run: |
         mkdir -p tmp
         mkdir -p ../ProgramFiles
         curl -sSL https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.12.1/PCL-1.12.1-AllInOne-msvc2019-win64.exe -o tmp/install-pcl.exe
         ./tmp/install-pcl.exe /S=D:\a\cwipc\ProgramFiles\PCL-1.12.1
-        ls -l ..
       
               
     - name: See what is there
@@ -95,6 +95,8 @@ jobs:
       run: |
         pwd
         ls -la
+        ls -la ..
+        ls -la ../ProgramFiles
         
 #    - name: Build & Test
 #      uses: ashutoshvarma/action-cmake-build@master
@@ -122,6 +124,6 @@ jobs:
       shell: bash
       run: |
         ls -la
-        ls -la build
+#        ls -la build
         ls -la installed
       
