@@ -30,6 +30,7 @@ jobs:
                 Add-Content $env:GITHUB_PATH "$thirdpartydir/PCL-1.12.1/bin"
                 Add-Content $env:GITHUB_ENV "PCL_DIR=$thirdpartydir/PCL-1.12.1"
         - name: Check jpeg turbo
+          shell: bash
           run: |
                 ls -l /c/
                 ls -lR /c/libjpeg-turbo64
