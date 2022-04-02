@@ -17,7 +17,7 @@ jobs:
                 linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1
                 macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
                 windows: glfw3 libjpeg-turbo realsense-sdk2
-        - name: Install PCL (Windows)
+        - name: Install PCL and post-install PATH (Windows)
           shell: pwsh
           run: |
                 $env:Path
@@ -30,12 +30,7 @@ jobs:
                 Add-Content $env:GITHUB_PATH "$thirdpartydir/PCL-1.12.1/bin"
                 Add-Content $env:GITHUB_PATH "C:/libjpeg-turbo64/bin"
                 Add-Content $env:GITHUB_ENV "PCL_DIR=$thirdpartydir/PCL-1.12.1"
-        - name: Check jpeg turbo
-          shell: bash
-          run: |
-                ls -l /c/
-                ls -l /c/Program*
-                ls -lR /c/libjpeg-turbo64
+                python -m ensurepip
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           with:
@@ -76,7 +71,9 @@ jobs:
                 install-options: --prefix installed
         - name: CTest output in case of failure
           if: ${{ failure() }}
-          run: cat build/Testing/Temporary/LastTest.log
+          run: |
+                cat build/cwipc_util/python/cmake_install.cmake
+                cat build/Testing/Temporary/LastTest.log
                 
     build-linux:
         runs-on: ubuntu-latest
