@@ -73,7 +73,7 @@ jobs:
           if: ${{ failure() }}
           run: |
                 cat build/cwipc_util/python/cmake_install.cmake
-                cat build/Testing/Temporary/LastTest.log
+                ls -lR build
                 
     build-linux:
         runs-on: ubuntu-latest
