@@ -39,9 +39,20 @@ jobs:
                 run-test: true
                 install-build: true
                 install-options: --prefix installed
-        - name: CTest output in case of failure
+        - name: upload CTest output in case of failure
           if: ${{ failure() }}
-          run: cat build/Testing/Temporary/LastTest.log
+          uses: actions/upload-artifact@v3
+          with:
+                name: windows-ctest-output
+                path: build/Testing/Temporary/LastTest.log
+        - name: Capture build folder as artifact
+          shell: bash
+          run: tar cfz build.tgz build
+        - name: Upload build folder
+          uses: actions/upload-artifact@v3
+          with:
+                name: windows-build-folder
+                path: build.tgz
                 
     build-macos:
         runs-on: macos-latest
@@ -69,11 +80,12 @@ jobs:
                 run-test: true
                 install-build: true
                 install-options: --prefix installed
-        - name: CTest output in case of failure
+        - name: upload CTest output in case of failure
           if: ${{ failure() }}
-          run: |
-                cat build/cwipc_util/python/cmake_install.cmake
-                ls -lR build
+          uses: actions/upload-artifact@v3
+          with:
+                name: macos-ctest-output
+                path: build/Testing/Temporary/LastTest.log
                 
     build-linux:
         runs-on: ubuntu-latest
@@ -116,9 +128,12 @@ jobs:
                 run-test: true
                 install-build: true
                 install-options: --prefix installed
-        - name: CTest output in case of failure
+        - name: upload CTest output in case of failure
           if: ${{ failure() }}
-          run: cat build/Testing/Temporary/LastTest.log
+          uses: actions/upload-artifact@v3
+          with:
+                name: linux-ctest-output
+                path: build/Testing/Temporary/LastTest.log
                
 #  build:
 #    name: ${{ matrix.config.name }}
