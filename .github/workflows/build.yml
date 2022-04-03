@@ -43,6 +43,11 @@ jobs:
                 Expand-Archive -Path PCL-1.12.1-win10-x64-AllInOne.zip -DestinationPath PCL-1.12.1
                 Add-Content $env:GITHUB_PATH "$thirdpartydir/PCL-1.12.1/bin"
                 Add-Content $env:GITHUB_ENV "PCL_DIR=$thirdpartydir/PCL-1.12.1"
+        - name: Check installs
+          shell: bash
+          run: |
+                ls -l "/c/Program Files"
+                ls -l "/c/Program Files (x86)"
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           with:
