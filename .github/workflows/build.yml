@@ -14,9 +14,9 @@ jobs:
         - name: Install apt/brew/choco dependencies
           uses: lyricwulf/abc@v1
           with:
-                linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1
+                linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1 libopencv-dev python-opencv
                 macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
-                windows: glfw3 libjpeg-turbo realsense-sdk2
+                windows: glfw3 libjpeg-turbo realsense-sdk2 opencv
         - name: Choco post-install PATH and such (Windows)
           shell: pwsh
           run: |
