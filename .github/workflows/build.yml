@@ -92,9 +92,9 @@ jobs:
         - name: Install apt/brew/choco dependencies
           uses: lyricwulf/abc@v1
           with:
-                linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1
+                linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1 libopencv-dev python-opencv
                 macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
-                windows: glfw3 libjpeg-turbo realsense-sdk2
+                windows: glfw3 libjpeg-turbo realsense-sdk2 opencv
         - name: Install dependencies fixup (MacOS)
           run: |
                 brew unlink jpeg
@@ -148,9 +148,9 @@ jobs:
         - name: Install apt/brew/choco dependencies
           uses: lyricwulf/abc@v1
           with:
-                linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1
+                linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1 libopencv-dev python-opencv
                 macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
-                windows: glfw3 libjpeg-turbo realsense-sdk2
+                windows: glfw3 libjpeg-turbo realsense-sdk2 opencv
         - name: Install K4A
           run: |
                 curl -sSL https://packages.microsoft.com/ubuntu/18.04/prod/pool/main/libk/libk4a1.3/libk4a1.3_1.3.0_amd64.deb > /tmp/libk4a1.3_1.3.0_amd64.deb
