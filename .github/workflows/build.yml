@@ -46,13 +46,23 @@ jobs:
                 name: windows-ctest-output
                 path: build/Testing/Temporary/LastTest.log
         - name: Capture build folder as artifact
+          if: ${{ failure() }}
           shell: bash
           run: tar cfz build.tgz build
         - name: Upload build folder
+          if: ${{ failure() }}
           uses: actions/upload-artifact@v3
           with:
                 name: windows-build-folder
                 path: build.tgz
+        - name: Capture installed folder as artifact
+          shell: bash
+          run: tar -c -f cwipc_win1064_.tgz -z -C installed .
+        - name: Upload installed folder
+          uses: actions/upload-artifact@v3
+          with:
+                name: cwipc_win1064_
+                path: cwipc_win1064_.tgz
                 
     build-macos:
         runs-on: macos-latest
@@ -86,6 +96,24 @@ jobs:
           with:
                 name: macos-ctest-output
                 path: build/Testing/Temporary/LastTest.log
+        - name: Capture build folder as artifact
+          if: ${{ failure() }}
+          shell: bash
+          run: tar cfz build.tgz build
+        - name: Upload build folder
+          if: ${{ failure() }}
+          uses: actions/upload-artifact@v3
+          with:
+                name: macos-build-folder
+                path: build.tgz
+        - name: Capture installed folder as artifact
+          shell: bash
+          run: tar -c -f cwipc_osx1014_.tgz -z -C installed .
+        - name: Upload installed folder
+          uses: actions/upload-artifact@v3
+          with:
+                name: cwipc_osx1014
+                path: cwipc_osx1014_.tgz
                 
     build-linux:
         runs-on: ubuntu-latest
@@ -134,6 +162,24 @@ jobs:
           with:
                 name: linux-ctest-output
                 path: build/Testing/Temporary/LastTest.log
+        - name: Capture build folder as artifact
+          if: ${{ failure() }}
+          shell: bash
+          run: tar cfz build.tgz build
+        - name: Upload build folder
+          if: ${{ failure() }}
+          uses: actions/upload-artifact@v3
+          with:
+                name: linux-build-folder
+                path: build.tgz
+        - name: Capture installed folder as artifact
+          shell: bash
+          run: tar -c -f cwipc_ubuntu2004_.tgz -z -C installed .
+        - name: Upload installed folder
+          uses: actions/upload-artifact@v3
+          with:
+                name: cwipc_ubuntu2004_
+                path: cwipc_ubuntu2004_.tgz
                
 #  build:
 #    name: ${{ matrix.config.name }}
