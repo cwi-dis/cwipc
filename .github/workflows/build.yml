@@ -28,17 +28,16 @@ jobs:
           shell: pwsh
           run: |
                 $thirdpartydir="$((Get-Item 3rdparty).FullName)"
-                (New-Object System.Net.WebClient).DownloadFile("https://download.microsoft.com/download/3/d/6/3d6d9e99-a251-4cf3-8c6a-8e108e960b4b/Azure%20Kinect%20SDK%201.4.1.exe","$thirdpartydir/kinect_sdk_141.exe");
-                (New-Object System.Net.WebClient).DownloadFile("https://download.microsoft.com/download/9/d/b/9dbe0fbe-c9c3-4228-a64c-1e0a08736ec1/Azure%20Kinect%20Body%20Tracking%20SDK%201.1.1.msi","$thirdpartydir/kinect_bt_sdk_111.msi");
+                (New-Object System.Net.WebClient).DownloadFile("https://github.com/cwi-dis/cwipc_test/releases/download/kinect_sdk_141/kinect_sdk_141.zip","$thirdpartydir/kinect_sdk_141.zip");
+                (New-Object System.Net.WebClient).DownloadFile("https://github.com/cwi-dis/cwipc_test/releases/download/kinect_bt_sdk_111/kinect_bt_sdk_111.zip","$thirdpartydir/kinect_bt_sdk_111.zip");
                 cd $thirdpartydir
+                Expand-Archive -Path kinect_sdk_141.zip -DestinationPath kinect_sdk_141
+                Expand-Archive -Path kinect_bt_sdk_111.zip -DestinationPath kinect_bt_sdk_111
                 dir
-                Start-Process "msiexec" -ArgumentList "kinect_bt_sdk_111.msi /a /passive /quiet /qn /norestart /log kinect_bt_sdk_install.txt" -Wait -NoNewWindow
-                dir
-                Start-Process ".\kinect_sdk_141.exe" -ArgumentList "/a /quiet /passive /qn /norestart /log kinect_sdk_install.txt" -Wait -NoNewWindow
-                dir
-                cat kinect_*.txt
-                Add-Content $env:GITHUB_PATH "C:/Program Files/Azure Kinect SDK v1.4.1/sdk/windows-desktop/bin"
-                Add-Content $env:GITHUB_PATH "C:/Program Files/Azure Kinect Body Tracking SDK/tools"
+                Add-Content $env:GITHUB_PATH "$thirdpartydir/kinect_sdk_141/sdk/windows-desktop/bin"
+                Add-Content $env:GITHUB_PATH "$thirdpartydir/kinect_bt_sdk_111/tools"
+                Add-Content $env:GITHUB_ENV "K4A_DIR=$thirdpartydir/kinect_sdk_141"
+                Add-Content $env:GITHUB_ENV "K4ABT_DIR=$thirdpartydir/kinect_bt_sdk_111"
         - name: Install PCL (Windows)
           shell: pwsh
           run: |
@@ -57,7 +56,7 @@ jobs:
           uses: ashutoshvarma/action-cmake-build@master
           with:
                 build-dir: ${{ github.workspace }}/build
-                configure-options: -DJPEG_Turbo_ROOT="$JPEG_TURBO_DIR" -DPCL_ROOT="$PCL_DIR"
+                configure-options: -DJPEG_Turbo_ROOT="$JPEG_TURBO_DIR" -DPCL_ROOT="$PCL_DIR" -DK4A_ROOT="$K4A_DIR" -DK4ABT_ROOT="$K4ABT_DIR"
                 run-test: true
                 install-build: true
                 install-options: --prefix installed
