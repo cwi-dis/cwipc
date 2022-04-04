@@ -33,7 +33,7 @@ jobs:
                 cd $thirdpartydir
                 dir
                 icacls "C:\Windows\Temp" /q /c /t /grant Users:F /T
-                Start-Process "kinect_sdk_141.exe" -ArgumentList "/install /quiet /norestart /log kinect_sdk_install.txt" -Wait -NoNewWindow
+                Start-Process ".\kinect_sdk_141.exe" -ArgumentList "/install /quiet /norestart /log kinect_sdk_install.txt" -Wait -NoNewWindow
                 Start-Process "msiexec" -ArgumentList "kinect_bt_sdk_111.msi /install /quiet /norestart /log kinect_bt_sdk_install.txt" -Wait -NoNewWindow
                 dir
                 cat kinect_*.txt
