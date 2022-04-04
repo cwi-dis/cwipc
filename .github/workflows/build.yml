@@ -24,6 +24,7 @@ jobs:
                 Add-Content $env:GITHUB_PATH "C:/libjpeg-turbo64/bin"
                 $thirdpartydir="$((Get-Item .).FullName)\3rdparty"
                 mkdir $thirdpartydir
+                Get-CimInstance -ClassName Win32_LogicalDisk
         - name: Install K4A (Windows)
           shell: pwsh
           run: |
