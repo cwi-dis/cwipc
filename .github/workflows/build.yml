@@ -31,10 +31,10 @@ jobs:
                 (New-Object System.Net.WebClient).DownloadFile("https://download.microsoft.com/download/3/d/6/3d6d9e99-a251-4cf3-8c6a-8e108e960b4b/Azure%20Kinect%20SDK%201.4.1.exe","$thirdpartydir/kinect_sdk_141.exe");
                 (New-Object System.Net.WebClient).DownloadFile("https://download.microsoft.com/download/9/d/b/9dbe0fbe-c9c3-4228-a64c-1e0a08736ec1/Azure%20Kinect%20Body%20Tracking%20SDK%201.1.1.msi","$thirdpartydir/kinect_bt_sdk_111.msi");
                 cd $thirdpartydir
+                dir
                 .\kinect_sdk_141.exe /install /quiet /norestart /log kinect_sdk_install.txt
-                cat kinect_sdk_install.txt
                 msiexec kinect_bt_sdk_111.msi /install /quiet /norestart /log kinect_bt_sdk_install.txt
-                cat kinect_bt_sdk_install.txt
+                cat kinect_*.txt
                 Add-Content $env:GITHUB_PATH "C:/Program Files/Azure Kinect SDK v1.4.1/sdk/windows-desktop/bin"
                 Add-Content $env:GITHUB_PATH "C:/Program Files/Azure Kinect Body Tracking SDK/tools"
         - name: Install PCL (Windows)
