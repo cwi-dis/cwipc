@@ -15,14 +15,6 @@ set(CMAKE_MODULE_PATH
 	${CMAKE_CURRENT_LIST_DIR}/cwipc_kinect/CMakeFiles
 	${CMAKE_MODULE_PATH}
 	)
-# Workaround for older cmake versions on Windows? Need to investigate. xxxjack.
-# set(OLD_WINDOWS_CMAKE_WORKAROUND TRUE)
-if(OLD_WINDOWS_CMAKE_WORKAROUND)
-	# Ensure all executable, dll/so and link-library outputs end up in the same directories
-	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
-	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
-	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
-endif()
 
 #
 # Packages required by all submodules
