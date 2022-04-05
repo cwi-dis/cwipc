@@ -6,6 +6,11 @@ project(cwipc)
 include(CTest)
 include(GNUInstallDirs)
 
+# Ensure all executable, dll/so and link-library outputs end up in the same directories
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
 # Add extension directories (for things like Find<package>)
 set(CMAKE_MODULE_PATH
 	${CMAKE_CURRENT_LIST_DIR}/CMakeFiles
