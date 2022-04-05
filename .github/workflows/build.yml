@@ -79,12 +79,12 @@ jobs:
                 path: build.tgz
         - name: Capture installed folder as artifact
           shell: bash
-          run: tar -c -f cwipc_win1064_.tgz -z -C installed .
+          run: tar -c -f cwipc_win1064_$GITHUB_REF_NAME.tgz -z -C installed .
         - name: Upload installed folder
           uses: actions/upload-artifact@v3
           with:
-                name: cwipc_win1064_
-                path: cwipc_win1064_.tgz
+                name: cwipc_win1064_$GITHUB_REF_NAME
+                path: cwipc_win1064_$GITHUB_REF_NAME.tgz
                 
     build-macos:
         runs-on: macos-latest
@@ -131,12 +131,12 @@ jobs:
                 path: build.tgz
         - name: Capture installed folder as artifact
           shell: bash
-          run: tar -c -f cwipc_osx1014_.tgz -z -C installed .
+          run: tar -c -f cwipc_osx1014_$GITHUB_REF_NAME.tgz -z -C installed .
         - name: Upload installed folder
           uses: actions/upload-artifact@v3
           with:
-                name: cwipc_osx1014
-                path: cwipc_osx1014_.tgz
+                name: cwipc_osx1014_$GITHUB_REF_NAME
+                path: cwipc_osx1014_$GITHUB_REF_NAME.tgz
                 
     build-linux:
         runs-on: ubuntu-latest
@@ -198,12 +198,12 @@ jobs:
                 path: build.tgz
         - name: Capture installed folder as artifact
           shell: bash
-          run: tar -c -f cwipc_ubuntu2004_.tgz -z -C installed .
+          run: tar -c -f cwipc_ubuntu2004_$GITHUB_REF_NAME.tgz -z -C installed .
         - name: Upload installed folder
           uses: actions/upload-artifact@v3
           with:
-                name: cwipc_ubuntu2004_
-                path: cwipc_ubuntu2004_.tgz
+                name: cwipc_ubuntu2004_$GITHUB_REF_NAME
+                path: cwipc_ubuntu2004_$GITHUB_REF_NAME.tgz
                
 #  build:
 #    name: ${{ matrix.config.name }}
