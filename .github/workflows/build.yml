@@ -56,10 +56,10 @@ jobs:
           uses: ashutoshvarma/action-cmake-build@master
           with:
                 build-dir: ${{ github.workspace }}/build
-                configure-options: -DJPEG_Turbo_ROOT="$JPEG_TURBO_DIR" -DPCL_ROOT="$PCL_DIR" -DK4A_ROOT="$K4A_DIR" -DK4ABT_ROOT="$K4ABT_DIR"
+                configure-options: -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/installed" -DJPEG_Turbo_ROOT="$JPEG_TURBO_DIR" -DPCL_ROOT="$PCL_DIR" -DK4A_ROOT="$K4A_DIR" -DK4ABT_ROOT="$K4ABT_DIR"
+                build-type: RelWithDebInfo
                 run-test: true
                 install-build: true
-                install-options: --prefix installed
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
           uses: actions/upload-artifact@v3
