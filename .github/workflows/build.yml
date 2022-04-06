@@ -16,14 +16,22 @@ jobs:
           with:
                 linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1 libopencv-dev
                 macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
-                windows: glfw3 libjpeg-turbo realsense-sdk2 opencv
+                windows: glfw3 realsense-sdk2 opencv
         - name: Choco post-install PATH and such (Windows)
           shell: pwsh
           run: |
-                Add-Content $env:GITHUB_ENV "JPEG_TURBO_DIR=C:/libjpeg-turbo64"
-                Add-Content $env:GITHUB_PATH "C:/libjpeg-turbo64/bin"
                 $thirdpartydir="$((Get-Item .).FullName)\3rdparty"
                 mkdir $thirdpartydir
+        - name: Install libturbojpeg (Windows)
+          shell: pwsh
+          run: |
+                $thirdpartydir="$((Get-Item 3rdparty).FullName)"
+                (New-Object System.Net.WebClient).DownloadFile("https://sourceforge.net/projects/libjpeg-turbo/files/2.1.3/libjpeg-turbo-2.1.3-vc64.exe","$thirdpartydir/libjpeg-turbo-2.1.3-vc64.exe");
+                cd $thirdpartydir
+                dir
+                .\libjpeg-turbo-2.1.3-vc64.exe /S
+                Add-Content $env:GITHUB_ENV "JPEG_TURBO_DIR=C:/libjpeg-turbo64"
+                Add-Content $env:GITHUB_PATH "C:/libjpeg-turbo64/bin"
         - name: Install K4A (Windows)
           shell: pwsh
           run: |
@@ -50,6 +58,7 @@ jobs:
         - name: Check installs
           shell: bash
           run: |
+                ls -l /c
                 ls -l "/c/Program Files"
                 ls -l "/c/Program Files (x86)"
                 printenv
