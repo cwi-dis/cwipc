@@ -1,15 +1,10 @@
 cmake_minimum_required(VERSION 3.16.0)
 cmake_policy(SET CMP0074 NEW)
-
+cmake_policy(SET CMP0072 NEW)
 project(cwipc)
 
 include(CTest)
 include(GNUInstallDirs)
-
-# Ensure all executable, dll/so and link-library outputs end up in the same directories
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # Add extension directories (for things like Find<package>)
 set(CMAKE_MODULE_PATH
@@ -21,6 +16,15 @@ set(CMAKE_MODULE_PATH
 	${CMAKE_MODULE_PATH}
 	)
 
+# Ensure all executable, dll/so and link-library outputs end up in the same directories
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE})
+set(CMAKE_PYWHEELS_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/share/cwipc/python)
+set(CMAKE_PYWHEELS_INSTALL_DIRECTORY ${CMAKE_INSTALL_DATADIR}/cwipc/python)
+set(CMAKE_TESTDATA_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/share/cwipc/tests)
+set(CMAKE_TESTDATA_INSTALL_DIRECTORY ${CMAKE_INSTALL_DATADIR}/cwipc/tests)
+
 #
 # Packages required by all submodules
 #
@@ -31,19 +35,14 @@ set(CMAKE_MODULE_PATH
 #     set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
 #endif()
 
+find_package(libjpeg-turbo REQUIRED)
 find_package(PCL 1.10 REQUIRED COMPONENTS common io octree filters features)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
-#
-# Packages required by submodules cwipc_util and cwipc_codec (which are non-optional
-#
-# Disabled for now (will be found by submodules) find_package(JPEG_Turbo REQUIRED)
-#find_package(Boost 1.47.0 ${QUIET_FLAG} REQUIRED COMPONENTS system filesystem thread date_time iostreams chrono program_options)
-#find_package(Eigen 4.3 ${QUIET_FLAG} REQUIRED)
 
 #
 # Optional packages, required by some submodules
 #
-find_package(KINECT)
+find_package(k4a)
 find_package(REALSENSE2)
 
 add_subdirectory("cwipc_util")
@@ -51,6 +50,6 @@ add_subdirectory("cwipc_codec")
 if(REALSENSE2_FOUND)
 	add_subdirectory("cwipc_realsense2")
 endif()
-if(KINECT_FOUND)
+if(k4a_FOUND)
 	add_subdirectory("cwipc_kinect")
 endif()
