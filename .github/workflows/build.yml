@@ -62,6 +62,9 @@ jobs:
                 ls -l "/c/Program Files"
                 ls -l "/c/Program Files (x86)"
                 printenv
+        - name: Install dependencies
+          shell: bash
+          run: ./scripts/install-3rdparty-win1064.sh
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           with:
