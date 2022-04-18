@@ -15,13 +15,7 @@ build_linux:
   - ubuntu2004
   - vrtogether
   before_script:
-    - apt-get update
-    - apt-get install -y tzdata
-    - apt-get install -y cmake
-    - apt-get install -y libpcl-dev
-    - apt-get install -y python3-pip
-    - apt-get install -y python3-venv
-    - apt-get install -y libopencv-dev # python3-opencv not needed
+    - ./scripts/install-3rdparty-ubuntu2004.sh
   script:
     - mkdir -p installed/lib
     - export LD_LIBRARY_PATH="`pwd`/installed/lib:$LD_LIBRARY_PATH"
@@ -37,10 +31,12 @@ build_linux:
     - tar --directory installed -cvaf cwipc_ubuntu2004_$CI_COMMIT_TAG.tgz .
     - touch successful.tmp
   after_script:
-    - if [ ! -e successful.tmp ]; then cat build/Testing/Temporary/LastTest.log; fi
+    - if [ ! -e successful.tmp ]; then cp build/Testing/Temporary/LastTest.log ctest_log_ubuntu2004.log; fi
   artifacts:
+    when: always
     paths:
       - cwipc_ubuntu2004_$CI_COMMIT_TAG.tgz
+      - ctest_log_ubuntu2004.log
       
 build_osx:
   stage: build
@@ -49,6 +45,8 @@ build_osx:
   tags:
   - osx1015
   - vrtogether
+  before_script:
+    - ./scripts/install-3rdparty-osx1015.sh
   script:
     - mkdir -p installed/lib
     - instdir=`cd installed ; pwd`
@@ -64,10 +62,12 @@ build_osx:
     - tar --directory installed -z -cvf cwipc_osx1015_$CI_COMMIT_TAG.tgz .
     - touch successful.tmp
   after_script:
-    - if [ ! -e successful.tmp ]; then cat build/Testing/Temporary/LastTest.log; fi
+    - if [ ! -e successful.tmp ]; then cp build/Testing/Temporary/LastTest.log ctest_log_osx1015.log; fi
   artifacts:
+    when: always
     paths:
       - cwipc_osx1015_$CI_COMMIT_TAG.tgz
+      - ctest_log_osx1015.log
       
 build_win:
   stage: build
@@ -76,6 +76,10 @@ build_win:
   tags:
   - win10
   - vrtogether
+  variables:
+    OPENGL_IS_BROKEN: "true" # See issue #19
+  before_script:
+    - ./scripts/install-3rdparty-win1064.sh
   script:
     - mkdir -p installed/bin
     - export PATH="`pwd`/installed/bin:$PATH"
@@ -92,10 +96,12 @@ build_win:
     - zip -r cwipc_win1064_${CI_COMMIT_TAG}.zip installed
     - touch successful.tmp
   after_script:
-    - if [ ! -e successful.tmp ]; then cat build/Testing/Temporary/LastTest.log; fi
+    - if [ ! -e successful.tmp ]; then cp build/Testing/Temporary/LastTest.log ctest_log_win1064.log; fi
   artifacts:
+    when: always
     paths:
       - cwipc_win1064_$CI_COMMIT_TAG.zip
+      - ctest_log_win1064.log
       
 deploy_all:
   stage: deploy
