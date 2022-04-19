@@ -55,25 +55,21 @@ jobs:
                 Expand-Archive -Path PCL-1.12.1-win10-x64-AllInOne.zip -DestinationPath PCL-1.12.1
                 Add-Content $env:GITHUB_PATH "$thirdpartydir/PCL-1.12.1/bin"
                 Add-Content $env:GITHUB_ENV "PCL_DIR=$thirdpartydir/PCL-1.12.1"
-        - name: Check installs
-          shell: bash
-          run: |
-                ls -l /c
-                ls -l "/c/Program Files"
-                ls -l "/c/Program Files (x86)"
-                printenv
         - name: Install dependencies
           shell: bash
           run: |
                 ./scripts/install-3rdparty-win1064.sh
+                pythonExecutable=`which python`
                 pythonRoot=`python -c "import sys ; print(sys.prefix)"`
                 echo "Python_ROOT_DIR=\"$pythonRoot\"" >> $GITHUB_ENV
+                echo "Python3_EXECUTABLE=\"$pythonExecutable\"" >> $GITHUB_ENV
+                ls -lR $pythonRoot/..
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           with:
                 build-dir: ${{ github.workspace }}/build
-                configure-options: --trace-expand --trace-source=FindPython -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython_ROOT_DIR=${{ env.Python_ROOT_DIR}} -DPython_FIND_STRATEGY=LOCATION -DPython_FIND_REGISTRY=NEVER -DJPEG_Turbo_ROOT=${{ env.JPEG_TURBO_DIR }} -DPCL_ROOT=${{ env.PCL_DIR }} -DK4A_ROOT=${{ env.K4A_DIR }} -DK4ABT_ROOT=${{ env.K4ABT_DIR }}
-                build-type: RelWithDebInfo
+                configure-options: -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -DJPEG_Turbo_ROOT=${{ env.JPEG_TURBO_DIR }} -DPCL_ROOT=${{ env.PCL_DIR }} -DK4A_ROOT=${{ env.K4A_DIR }} -DK4ABT_ROOT=${{ env.K4ABT_DIR }}
+                build-type: Release
                 run-test: true
                 install-build: true
         - name: upload CTest output in case of failure
