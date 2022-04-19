@@ -72,7 +72,7 @@ jobs:
           uses: ashutoshvarma/action-cmake-build@master
           with:
                 build-dir: ${{ github.workspace }}/build
-                configure-options: -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython_ROOT_DIR=${{ env.Python_ROOT_DIR}} -DPython_FIND_STRATEGY=LOCATION -DJPEG_Turbo_ROOT=${{ env.JPEG_TURBO_DIR }} -DPCL_ROOT=${{ env.PCL_DIR }} -DK4A_ROOT=${{ env.K4A_DIR }} -DK4ABT_ROOT=${{ env.K4ABT_DIR }}
+                configure-options: --trace -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython_ROOT_DIR=${{ env.Python_ROOT_DIR}} -DPython_FIND_STRATEGY=LOCATION -DPython_FIND_REGISTRY=NEVER -DJPEG_Turbo_ROOT=${{ env.JPEG_TURBO_DIR }} -DPCL_ROOT=${{ env.PCL_DIR }} -DK4A_ROOT=${{ env.K4A_DIR }} -DK4ABT_ROOT=${{ env.K4ABT_DIR }}
                 build-type: RelWithDebInfo
                 run-test: true
                 install-build: true
