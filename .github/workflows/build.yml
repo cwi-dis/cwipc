@@ -64,12 +64,15 @@ jobs:
                 printenv
         - name: Install dependencies
           shell: bash
-          run: ./scripts/install-3rdparty-win1064.sh
+          run: |
+                ./scripts/install-3rdparty-win1064.sh
+                pythonRoot=`python -c "import sys ; print(sys.prefix)"`
+                echo "Python_ROOT_DIR=\"$pythonRoot\"" >> $GITHUB_ENV
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           with:
                 build-dir: ${{ github.workspace }}/build
-                configure-options: -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DJPEG_Turbo_ROOT=${{ env.JPEG_TURBO_DIR }} -DPCL_ROOT=${{ env.PCL_DIR }} -DK4A_ROOT=${{ env.K4A_DIR }} -DK4ABT_ROOT=${{ env.K4ABT_DIR }}
+                configure-options: -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython_ROOT_DIR=${{ env.Python_ROOT_DIR}} -DJPEG_Turbo_ROOT=${{ env.JPEG_TURBO_DIR }} -DPCL_ROOT=${{ env.PCL_DIR }} -DK4A_ROOT=${{ env.K4A_DIR }} -DK4ABT_ROOT=${{ env.K4ABT_DIR }}
                 build-type: RelWithDebInfo
                 run-test: true
                 install-build: true
