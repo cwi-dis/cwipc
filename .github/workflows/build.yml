@@ -20,7 +20,7 @@ jobs:
         - name: Choco post-install PATH and such (Windows)
           shell: pwsh
           run: |
-                $thirdpartydir="$((Get-Item .).FullName)\3rdparty"
+                $thirdpartydir="$((Get-Item ..).FullName)\3rdparty"
                 mkdir $thirdpartydir
         - name: Install libturbojpeg (Windows)
           shell: pwsh
@@ -35,7 +35,7 @@ jobs:
         - name: Install K4A (Windows)
           shell: pwsh
           run: |
-                $thirdpartydir="$((Get-Item 3rdparty).FullName)"
+                $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
                 (New-Object System.Net.WebClient).DownloadFile("https://github.com/cwi-dis/cwipc_test/releases/download/kinect_sdk_141/kinect_sdk_141.zip","$thirdpartydir/kinect_sdk_141.zip");
                 (New-Object System.Net.WebClient).DownloadFile("https://github.com/cwi-dis/cwipc_test/releases/download/kinect_bt_sdk_111/kinect_bt_sdk_111.zip","$thirdpartydir/kinect_bt_sdk_111.zip");
                 cd $thirdpartydir
@@ -49,7 +49,7 @@ jobs:
         - name: Install PCL (Windows)
           shell: pwsh
           run: |
-                $thirdpartydir="$((Get-Item 3rdparty).FullName)"
+                $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
                 (New-Object System.Net.WebClient).DownloadFile("https://github.com/cwi-dis/cwipc_test/releases/download/pcl-1-12-1-win/PCL-1.12.1-win10-x64-AllInOne.zip","$thirdpartydir/PCL-1.12.1-win10-x64-AllInOne.zip");
                 cd $thirdpartydir
                 Expand-Archive -Path PCL-1.12.1-win10-x64-AllInOne.zip -DestinationPath PCL-1.12.1
