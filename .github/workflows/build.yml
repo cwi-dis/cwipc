@@ -17,7 +17,7 @@ jobs:
                 linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1 libopencv-dev
                 macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
                 windows: glfw3 realsense-sdk2 opencv
-        - name: Choco post-install PATH and such (Windows)
+        - name: Pre-install (Windows)
           shell: pwsh
           run: |
                 $thirdpartydir="$((Get-Item ..).FullName)\3rdparty"
@@ -64,6 +64,10 @@ jobs:
                 pythonExecutable=`cygpath --windows "$pythonExecutable"`
                 echo "Python_ROOT_DIR=$pythonRoot" >> $GITHUB_ENV
                 echo "Python3_EXECUTABLE=$pythonExecutable" >> $GITHUB_ENV
+        - name: Check what is installed
+          shell: bash
+          run: |
+                du ..
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           with:
