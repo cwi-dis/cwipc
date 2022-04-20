@@ -40,7 +40,7 @@ jobs:
                 (New-Object System.Net.WebClient).DownloadFile("https://github.com/cwi-dis/cwipc_test/releases/download/kinect_bt_sdk_111/kinect_bt_sdk_111.zip","$thirdpartydir/kinect_bt_sdk_111.zip");
                 cd $thirdpartydir
                 Expand-Archive -Path kinect_sdk_141.zip -DestinationPath $thirdpartydir\kinect_sdk_141
-                Expand-Archive -Path kinect_bt_sdk_111.zip -DestinationPath $thirdpartydir\3rdkinect_bt_sdk_111
+                Expand-Archive -Path kinect_bt_sdk_111.zip -DestinationPath $thirdpartydir\kinect_bt_sdk_111
                 dir
                 Add-Content $env:GITHUB_PATH "$thirdpartydir/kinect_sdk_141/sdk/windows-desktop/bin"
                 Add-Content $env:GITHUB_PATH "$thirdpartydir/kinect_bt_sdk_111/tools"
