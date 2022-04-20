@@ -62,8 +62,8 @@ jobs:
                 pythonExecutable=`which python`
                 pythonRoot=`python -c "import sys ; print(sys.prefix)"`
                 pythonExecutable=`cygpath --windows "$pythonExecutable"`
-                echo "Python_ROOT_DIR=\"$pythonRoot\"" >> $GITHUB_ENV
-                echo "Python3_EXECUTABLE=\"$pythonExecutable\"" >> $GITHUB_ENV
+                echo "Python_ROOT_DIR=$pythonRoot" >> $GITHUB_ENV
+                echo "Python3_EXECUTABLE=$pythonExecutable" >> $GITHUB_ENV
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           with:
