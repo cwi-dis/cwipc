@@ -28,7 +28,6 @@ jobs:
                 $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
                 (New-Object System.Net.WebClient).DownloadFile("https://sourceforge.net/projects/libjpeg-turbo/files/2.1.3/libjpeg-turbo-2.1.3-vc64.exe","$thirdpartydir/libjpeg-turbo-2.1.3-vc64.exe");
                 cd $thirdpartydir
-                dir
                 .\libjpeg-turbo-2.1.3-vc64.exe /S
                 Add-Content $env:GITHUB_ENV "JPEG_TURBO_DIR=C:/libjpeg-turbo64"
                 Add-Content $env:GITHUB_PATH "C:/libjpeg-turbo64/bin"
@@ -41,7 +40,6 @@ jobs:
                 cd $thirdpartydir
                 Expand-Archive -Path kinect_sdk_141.zip -DestinationPath $thirdpartydir
                 Expand-Archive -Path kinect_bt_sdk_111.zip -DestinationPath $thirdpartydir
-                dir
                 Add-Content $env:GITHUB_PATH "$thirdpartydir/kinect_sdk_141/sdk/windows-desktop/bin"
                 Add-Content $env:GITHUB_PATH "$thirdpartydir/kinect_bt_sdk_111/tools"
                 Add-Content $env:GITHUB_ENV "K4A_DIR=$thirdpartydir/kinect_sdk_141"
@@ -55,6 +53,16 @@ jobs:
                 Expand-Archive -Path PCL-1.12.1-win10-x64-AllInOne.zip -DestinationPath $thirdpartydir
                 Add-Content $env:GITHUB_PATH "$thirdpartydir/PCL 1.12.1/bin"
                 Add-Content $env:GITHUB_ENV "PCL_DIR=$thirdpartydir"
+        - name: Install OpenCV (Windows)
+          shell: pwsh
+          run: |
+                $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
+                (New-Object System.Net.WebClient).DownloadFile("https://sourceforge.net/projects/opencvlibrary/files/4.5.5/opencv-4.5.5-vc14_vc15.exe","$thirdpartydir/opencv-4.5.5-vc14_vc15.exe");
+                cd $thirdpartydir
+                .\opencv-4.5.5-vc14_vc15.exe -o. -y
+                Add-Content $env:GITHUB_ENV "OPENCV_DIR=$thirdpartydir/opencv/build"
+                Add-Content $env:GITHUB_PATH "$thirdpartydir/opencv/build/bin"
+                
         - name: Install dependencies
           shell: bash
           run: |
@@ -72,7 +80,7 @@ jobs:
           uses: ashutoshvarma/action-cmake-build@master
           with:
                 build-dir: ${{ github.workspace }}/build
-                configure-options: -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -Dlibjpeg_turbo_ROOT=${{ env.JPEG_TURBO_DIR }} -DPCL_ROOT=${{ env.PCL_DIR }} -Dk4a_ROOT=${{ env.K4A_DIR }} -Dk4abt_ROOT=${{ env.K4ABT_DIR }}
+                configure-options: -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -Dlibjpeg_turbo_ROOT=${{ env.JPEG_TURBO_DIR }} -DPCL_ROOT=${{ env.PCL_DIR }} -Dk4a_ROOT=${{ env.K4A_DIR }} -Dk4abt_ROOT=${{ env.K4ABT_DIR }} -DOpenCV_ROOT=${{ env.OPENCV_DIR }}
                 build-type: Release
                 run-test: true
                 install-build: true
