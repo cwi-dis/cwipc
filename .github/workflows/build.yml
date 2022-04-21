@@ -72,7 +72,7 @@ jobs:
           uses: ashutoshvarma/action-cmake-build@master
           with:
                 build-dir: ${{ github.workspace }}/build
-                configure-options: -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -Dlibjpeg_turbo_ROOT=${{ env.JPEG_TURBO_DIR }} -DPCL_ROOT=${{ env.PCL_DIR }} -Dk4a_ROOT=${{ env.K4A_DIR }} -Dk4abt_ROOT=${{ env.K4ABT_DIR }}
+                configure-options: -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/installed" -DPython3_EXECUTABLE="${{ env.Python3_EXECUTABLE }}" -Dlibjpeg_turbo_ROOT="${{ env.JPEG_TURBO_DIR }}" -DPCL_ROOT="${{ env.PCL_DIR }}" -Dk4a_ROOT="${{ env.K4A_DIR }}" -Dk4abt_ROOT="${{ env.K4ABT_DIR }}"
                 build-type: Release
                 run-test: true
                 install-build: true
