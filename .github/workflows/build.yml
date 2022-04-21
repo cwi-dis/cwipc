@@ -60,8 +60,8 @@ jobs:
                 (New-Object System.Net.WebClient).DownloadFile("https://sourceforge.net/projects/opencvlibrary/files/4.5.5/opencv-4.5.5-vc14_vc15.exe","$thirdpartydir/opencv-4.5.5-vc14_vc15.exe");
                 cd $thirdpartydir
                 .\opencv-4.5.5-vc14_vc15.exe -o. -y
-                Add-Content $env:GITHUB_ENV "OPENCV_DIR=$thirdpartydir/opencv/build"
-                Add-Content $env:GITHUB_PATH "$thirdpartydir/opencv/build/bin"
+                Add-Content $env:GITHUB_ENV "OPENCV_DIR=$thirdpartydir/opencv/build/x64/vc15"
+                Add-Content $env:GITHUB_PATH "$thirdpartydir/opencv/build/x64/vc15/bin"
                 
         - name: Install dependencies
           shell: bash
