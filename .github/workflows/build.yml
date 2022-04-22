@@ -100,7 +100,9 @@ jobs:
                 path: build.tgz
         - name: Capture installed folder as artifact
           shell: bash
-          run: tar -c -f cwipc_win1064_$GITHUB_REF_NAME.tgz -z -C installed .
+          run: |
+                tar -c -v -f cwipc_win1064_$GITHUB_REF_NAME.tgz -z -C installed .
+                ls -l
         - name: Upload installed folder
           uses: actions/upload-artifact@v3
           with:
@@ -144,7 +146,9 @@ jobs:
                 path: build.tgz
         - name: Capture installed folder as artifact
           shell: bash
-          run: tar -c -f cwipc_osx1014_$GITHUB_REF_NAME.tgz -z -C installed .
+          run: |
+                tar -c -v -f cwipc_osx1014_$GITHUB_REF_NAME.tgz -z -C installed .
+                ls -l
         - name: Upload installed folder
           uses: actions/upload-artifact@v3
           with:
@@ -188,7 +192,9 @@ jobs:
                 path: build.tgz
         - name: Capture installed folder as artifact
           shell: bash
-          run: tar -c -f cwipc_ubuntu2004_$GITHUB_REF_NAME.tgz -z -C installed .
+          run: |
+                tar -c -v -f cwipc_ubuntu2004_$GITHUB_REF_NAME.tgz -z -C installed .
+                ls -l
         - name: Upload installed folder
           uses: actions/upload-artifact@v3
           with:
