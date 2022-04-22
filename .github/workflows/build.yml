@@ -79,6 +79,8 @@ jobs:
                 ls -l "/c/Program Files"
                 ls -l /c/tools
                 ls -l /c/opencv
+                du /c/opencv
+                ls -lR /c/opencv/build/x64
                 
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
