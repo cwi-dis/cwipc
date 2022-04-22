@@ -16,7 +16,7 @@ jobs:
           with:
                 linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1 libopencv-dev
                 macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
-                windows: glfw3 realsense-sdk2
+                windows: glfw3 realsense-sdk2 opencv
         - name: Pre-install (Windows)
           shell: pwsh
           run: |
@@ -56,12 +56,9 @@ jobs:
         - name: Install OpenCV (Windows)
           shell: pwsh
           run: |
-                $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
-                (New-Object System.Net.WebClient).DownloadFile("https://sourceforge.net/projects/opencvlibrary/files/4.5.5/opencv-4.5.5-vc14_vc15.exe","$thirdpartydir/opencv-4.5.5-vc14_vc15.exe");
-                cd $thirdpartydir
-                .\opencv-4.5.5-vc14_vc15.exe -o"C:/" -y
-                Add-Content $env:GITHUB_PATH "C:/opencv/build/x64/vc15/bin"
-                
+                choco install opencv
+                Add-Content $env:GITHUB_PATH "C:/tools/opencv/build/x64/vc15/bin"
+                Add-Content $env:GITHUB_ENV "OPENCV_DIR=C:/tools/opencv/build"
         - name: Install Python packages (Windows)
           shell: bash
           run: |
@@ -74,19 +71,12 @@ jobs:
         - name: Check what is installed
           shell: bash
           run: |
-                ls -l ../3rdparty
-                ls -l /c
-                ls -l "/c/Program Files"
-                ls -l /c/tools
-                ls -l /c/opencv
-                du /c/opencv
-                ls -lR /c/opencv/build/x64
-                
+                du /c/tools
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           with:
                 build-dir: ${{ github.workspace }}/build
-                configure-options: --trace-expand -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -Dlibjpeg_turbo_ROOT=${{ env.JPEG_TURBO_DIR }} -DPCL_ROOT=${{ env.PCL_DIR }} -Dk4a_ROOT=${{ env.K4A_DIR }} -Dk4abt_ROOT=${{ env.K4ABT_DIR }}
+                configure-options: --trace-expand -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -Dlibjpeg_turbo_ROOT=${{ env.JPEG_TURBO_DIR }} -DPCL_ROOT=${{ env.PCL_DIR }} -Dk4a_ROOT=${{ env.K4A_DIR }} -Dk4abt_ROOT=${{ env.K4ABT_DIR }} -DOpenCV_ROOT=${{ env.OPENCV_DIR }}
                 build-type: Release
                 run-test: true
                 install-build: true
