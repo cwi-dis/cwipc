@@ -16,7 +16,7 @@ jobs:
           with:
                 linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1 libopencv-dev
                 macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
-                windows: glfw3 realsense-sdk2 opencv
+                windows: glfw3 realsense-sdk2
         - name: Pre-install (Windows)
           shell: pwsh
           run: |
@@ -59,8 +59,8 @@ jobs:
                 $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
                 (New-Object System.Net.WebClient).DownloadFile("https://sourceforge.net/projects/opencvlibrary/files/4.5.5/opencv-4.5.5-vc14_vc15.exe","$thirdpartydir/opencv-4.5.5-vc14_vc15.exe");
                 cd $thirdpartydir
-                .\opencv-4.5.5-vc14_vc15.exe -o"C:/opencv" -y
-                Add-Content $env:GITHUB_PATH "$thirdpartydir/opencv/build/x64/vc15/bin"
+                .\opencv-4.5.5-vc14_vc15.exe -o"C:/" -y
+                Add-Content $env:GITHUB_PATH "C:/opencv/build/x64/vc15/bin"
                 
         - name: Install Python packages (Windows)
           shell: bash
@@ -71,12 +71,14 @@ jobs:
                 pythonExecutable=`cygpath --windows "$pythonExecutable"`
                 echo "Python_ROOT_DIR=$pythonRoot" >> $GITHUB_ENV
                 echo "Python3_EXECUTABLE=$pythonExecutable" >> $GITHUB_ENV
-#         - name: Check what is installed
-#           shell: bash
-#           run: |
-#                 du ..
-#                 ls -l /c
-#                 ls -l "/c/Program Files"
+        - name: Check what is installed
+          shell: bash
+          run: |
+                ls -l ../3rdparty
+                ls -l /c
+                ls -l "/c/Program Files"
+                ls -l /c/tools
+                ls -l /c/opencv
                 
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
