@@ -40,7 +40,7 @@ jobs:
                 cd $thirdpartydir
                 Expand-Archive -Path kinect_sdk_141.zip -DestinationPath $thirdpartydir
                 Expand-Archive -Path kinect_bt_sdk_111.zip -DestinationPath $thirdpartydir
-                Add-Content $env:GITHUB_PATH "$thirdpartydir/kinect_sdk_141/sdk/windows-desktop/bin"
+                Add-Content $env:GITHUB_PATH "$thirdpartydir/kinect_sdk_141/sdk/windows-desktop/amd64/bin"
                 Add-Content $env:GITHUB_PATH "$thirdpartydir/kinect_bt_sdk_111/tools"
                 Add-Content $env:GITHUB_ENV "K4A_DIR=$thirdpartydir/kinect_sdk_141"
                 Add-Content $env:GITHUB_ENV "K4ABT_DIR=$thirdpartydir/kinect_bt_sdk_111"
@@ -52,6 +52,8 @@ jobs:
                 cd $thirdpartydir
                 Expand-Archive -Path PCL-1.12.1-win10-x64-AllInOne.zip -DestinationPath $thirdpartydir
                 Add-Content $env:GITHUB_PATH "$thirdpartydir/PCL 1.12.1/bin"
+                Add-Content $env:GITHUB_PATH "$thirdpartydir/PCL 1.12.1/3rdparty/VTK/bin"
+                Add-Content $env:GITHUB_PATH "C:/Program Files/OpenNI2/redist"
                 Add-Content $env:GITHUB_ENV "PCL_DIR=$thirdpartydir"
         - name: Install OpenCV (Windows)
           shell: pwsh
@@ -76,7 +78,7 @@ jobs:
           uses: ashutoshvarma/action-cmake-build@master
           with:
                 build-dir: ${{ github.workspace }}/build
-                configure-options: --trace-expand -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -Dlibjpeg_turbo_ROOT=${{ env.JPEG_TURBO_DIR }} -DPCL_ROOT=${{ env.PCL_DIR }} -Dk4a_ROOT=${{ env.K4A_DIR }} -Dk4abt_ROOT=${{ env.K4ABT_DIR }} -DOpenCV_ROOT=${{ env.OPENCV_DIR }}
+                configure-options: -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -Dlibjpeg_turbo_ROOT=${{ env.JPEG_TURBO_DIR }} -DPCL_ROOT=${{ env.PCL_DIR }} -Dk4a_ROOT=${{ env.K4A_DIR }} -Dk4abt_ROOT=${{ env.K4ABT_DIR }} -DOpenCV_ROOT=${{ env.OPENCV_DIR }}
                 build-type: Release
                 run-test: true
                 install-build: true
