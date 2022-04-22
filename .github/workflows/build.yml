@@ -62,7 +62,7 @@ jobs:
                 .\opencv-4.5.5-vc14_vc15.exe -o"C:/opencv" -y
                 Add-Content $env:GITHUB_PATH "$thirdpartydir/opencv/build/x64/vc15/bin"
                 
-        - name: Install dependencies
+        - name: Install Python packages (Windows)
           shell: bash
           run: |
                 ./scripts/install-3rdparty-win1064.sh
@@ -71,18 +71,18 @@ jobs:
                 pythonExecutable=`cygpath --windows "$pythonExecutable"`
                 echo "Python_ROOT_DIR=$pythonRoot" >> $GITHUB_ENV
                 echo "Python3_EXECUTABLE=$pythonExecutable" >> $GITHUB_ENV
-        - name: Check what is installed
-          shell: bash
-          run: |
-                du ..
-                ls -l /c
-                ls -l "/c/Program Files"
+#         - name: Check what is installed
+#           shell: bash
+#           run: |
+#                 du ..
+#                 ls -l /c
+#                 ls -l "/c/Program Files"
                 
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           with:
                 build-dir: ${{ github.workspace }}/build
-                configure-options: -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -Dlibjpeg_turbo_ROOT=${{ env.JPEG_TURBO_DIR }} -DPCL_ROOT=${{ env.PCL_DIR }} -Dk4a_ROOT=${{ env.K4A_DIR }} -Dk4abt_ROOT=${{ env.K4ABT_DIR }}
+                configure-options: --trace-expand -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -Dlibjpeg_turbo_ROOT=${{ env.JPEG_TURBO_DIR }} -DPCL_ROOT=${{ env.PCL_DIR }} -Dk4a_ROOT=${{ env.K4A_DIR }} -Dk4abt_ROOT=${{ env.K4ABT_DIR }}
                 build-type: Release
                 run-test: true
                 install-build: true
