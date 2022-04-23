@@ -102,7 +102,7 @@ jobs:
           shell: bash
           run: |
                 cd build/bin/Release
-                ../../venv/python ../../../cwipc_ytil/python/cwipc_find_dll_problems.py
+                ../../venv/Scripts/python ../../../cwipc_util/python/cwipc_find_dll_problems.py
         - name: Capture installed folder as artifact
           shell: bash
           run: |
