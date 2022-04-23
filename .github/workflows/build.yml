@@ -106,13 +106,13 @@ jobs:
         - name: Capture installed folder as artifact
           shell: bash
           run: |
-                tar -c -v -f cwipc_win1064_$GITHUB_REF_NAME.tgz -z -C installed .
+                tar -c -v -f cwipc_win1064_${{ github.ref_name }}.tgz -z -C installed .
                 ls -l
         - name: Upload installed folder
           uses: actions/upload-artifact@v3
           with:
-                name: cwipc_win1064_${{ env.GITHUB_REF_NAME }}
-                path: cwipc_win1064_${{ env.GITHUB_REF_NAME }}.tgz
+                name: cwipc_win1064_${{ github.ref_name }}
+                path: cwipc_win1064_${{ github.ref_name }}.tgz
                 
     build-macos:
         runs-on: macos-latest
@@ -152,13 +152,13 @@ jobs:
         - name: Capture installed folder as artifact
           shell: bash
           run: |
-                tar -c -v -f cwipc_osx1014_$GITHUB_REF_NAME.tgz -z -C installed .
+                tar -c -v -f cwipc_osx1014_${{ github.ref_name }}.tgz -z -C installed .
                 ls -l
         - name: Upload installed folder
           uses: actions/upload-artifact@v3
           with:
-                name: cwipc_osx1014_${{ env.GITHUB_REF_NAME }}
-                path: cwipc_osx1014_${{ env.GITHUB_REF_NAME }}.tgz
+                name: cwipc_osx1014_${{ github.ref_name }}
+                path: cwipc_osx1014_${{ github.ref_name }}.tgz
                 
     build-linux:
         runs-on: ubuntu-latest
@@ -198,13 +198,13 @@ jobs:
         - name: Capture installed folder as artifact
           shell: bash
           run: |
-                tar -c -v -f cwipc_ubuntu2004_$GITHUB_REF_NAME.tgz -z -C installed .
+                tar -c -v -f cwipc_ubuntu2004_${{ github.ref_name }}.tgz -z -C installed .
                 ls -l
         - name: Upload installed folder
           uses: actions/upload-artifact@v3
           with:
-                name: cwipc_ubuntu2004_${{ env.GITHUB_REF_NAME }}
-                path: cwipc_ubuntu2004_${{ env.GITHUB_REF_NAME }}.tgz
+                name: cwipc_ubuntu2004_${{ github.ref_name }}
+                path: cwipc_ubuntu2004_${{ github.ref_name }}.tgz
                
 #  build:
 #    name: ${{ matrix.config.name }}
