@@ -102,6 +102,7 @@ jobs:
           shell: bash
           run: |
                 cd build/bin/Release
+                ../../venv/Scripts/python -m pip install dlltracer
                 ../../venv/Scripts/python ../../../cwipc_util/python/cwipc_find_dll_problems.py
         - name: Capture installed folder as artifact
           shell: bash
