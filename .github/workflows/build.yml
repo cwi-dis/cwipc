@@ -129,6 +129,7 @@ jobs:
                 ls -l ..
                 
     build-macos:
+        if: ${{ false }}
         runs-on: macos-latest
         steps:
         - name: Checkout code
@@ -175,6 +176,7 @@ jobs:
                 path: cwipc_osx1014_${{ github.ref_name }}.tgz
                 
     build-linux:
+        if: ${{ false }}
         runs-on: ubuntu-latest
         steps:
         - name: Checkout code
