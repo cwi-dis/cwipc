@@ -110,13 +110,12 @@ jobs:
         - name: Capture installed folder as artifact
           shell: bash
           run: |
-                tar -c -v -f cwipc_win1064_${{ github.ref_name }}.tgz -z -C installed .
-                ls -l
+                7z a cwipc_win1064_${{ github.ref_name }}.zip installed/
         - name: Upload installed folder
           uses: actions/upload-artifact@v3
           with:
-                name: cwipc_win1064_${{ github.ref_name }}
-                path: cwipc_win1064_${{ github.ref_name }}.tgz
+                name: cwipc_win1064_${{ github.ref_name }}.zip
+                path: cwipc_win1064_${{ github.ref_name }}.zip
         - name: Check what was created and installed
           if: always()
           shell: bash
@@ -171,7 +170,7 @@ jobs:
         - name: Upload installed folder
           uses: actions/upload-artifact@v3
           with:
-                name: cwipc_osx1014_${{ github.ref_name }}
+                name: cwipc_osx1014_${{ github.ref_name }}.tgz
                 path: cwipc_osx1014_${{ github.ref_name }}.tgz
                 
     build-linux:
@@ -217,7 +216,7 @@ jobs:
         - name: Upload installed folder
           uses: actions/upload-artifact@v3
           with:
-                name: cwipc_ubuntu2004_${{ github.ref_name }}
+                name: cwipc_ubuntu2004_${{ github.ref_name }}.tgz
                 path: cwipc_ubuntu2004_${{ github.ref_name }}.tgz
                
 #  build:
