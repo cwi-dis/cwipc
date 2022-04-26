@@ -48,13 +48,13 @@ jobs:
           shell: pwsh
           run: |
                 $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
-                (New-Object System.Net.WebClient).DownloadFile("https://github.com/cwi-dis/cwipc_test/releases/download/pcl-1-12-1-win/PCL-1.11.1-win10-x64-AllInOne.zip","$thirdpartydir/PCL-1.11.1-win10-x64-AllInOne.zip");
+                (New-Object System.Net.WebClient).DownloadFile("https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.11.1/PCL-1.11.1-AllInOne-msvc2019-win64.exe","$thirdpartydir/PCL-1.11.1-AllInOne-msvc2019-win64.exe");
                 cd $thirdpartydir
-                Expand-Archive -Path PCL-1.11.1-win10-x64-AllInOne.zip -DestinationPath $thirdpartydir
-                Add-Content $env:GITHUB_PATH "$thirdpartydir/PCL 1.11.1/bin"
-                Add-Content $env:GITHUB_PATH "$thirdpartydir/PCL 1.11.1/3rdparty/VTK/bin"
+                .\PCL-1.11.1-AllInOne-msvc2019-win64.exe /S
+                Start-Sleep -s 120
+                Add-Content $env:GITHUB_PATH "C:/Program Files/PCL 1.11.1/bin"
+                Add-Content $env:GITHUB_PATH "C:/Program Files/PCL 1.11.1/3rdparty/VTK/bin"
                 Add-Content $env:GITHUB_PATH "C:/Program Files/OpenNI2/redist"
-                Add-Content $env:GITHUB_ENV "PCL_DIR=$thirdpartydir"
         - name: Install OpenCV (Windows)
           shell: pwsh
           run: |
@@ -73,12 +73,13 @@ jobs:
         - name: Check what is installed
           shell: bash
           run: |
-                du /c/tools
+                ls -l /c/tools
+                ls -l "/c/Program Files"
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           with:
                 build-dir: ${{ github.workspace }}/build
-                configure-options: -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -Dlibjpeg_turbo_ROOT=${{ env.JPEG_TURBO_DIR }} -DPCL_ROOT=${{ env.PCL_DIR }} -Dk4a_ROOT=${{ env.K4A_DIR }} -Dk4abt_ROOT=${{ env.K4ABT_DIR }} -DOpenCV_ROOT=${{ env.OPENCV_DIR }}
+                configure-options: -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -Dk4a_ROOT=${{ env.K4A_DIR }} -Dk4abt_ROOT=${{ env.K4ABT_DIR }} -DOpenCV_ROOT=${{ env.OPENCV_DIR }}
                 build-type: Release
                 run-test: true
                 install-build: true
