@@ -16,7 +16,7 @@ jobs:
           with:
                 linux: curl libpcl-dev python3-pip python3-venv libturbojpeg0-dev libusb-dev libglfw3-dev librealsense2-dkms librealsense2-utils librealsense2-dev libsoundio1 libopencv-dev
                 macos: pcl python3 homebrew/core/glfw3 jpeg-turbo librealsense
-                windows: glfw3 realsense-sdk2
+                windows: glfw3
         - name: Pre-install (Windows)
           shell: pwsh
           run: |
@@ -32,18 +32,17 @@ jobs:
           shell: pwsh
           run: |
                 $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
-                (New-Object System.Net.WebClient).DownloadFile("https://sourceforge.net/projects/libjpeg-turbo/files/2.1.3/libjpeg-turbo-2.1.3-vc64.exe","$thirdpartydir/libjpeg-turbo-2.1.3-vc64.exe");
-                cd $thirdpartydir
-                (New-Object System.Net.WebClient).DownloadFile("https://github.com/opencv/opencv/releases/download/4.5.5/opencv-4.5.5-vc14_vc15.exe","opencv-4.5.5-vc14_vc15.exe");
-                Start-Process '.\opencv-4.5.5-vc14_vc15.exe' -ArgumentList '-o"C:\" -y' -Wait
+                $installer="$thirdpartydir\opencv-installer.exe"
+                (New-Object System.Net.WebClient).DownloadFile("https://github.com/opencv/opencv/releases/download/4.5.5/opencv-4.5.5-vc14_vc15.exe","$installer");
+                Start-Process "$installer" -ArgumentList '-o"C:\" -y' -Wait
                 Add-Content $env:GITHUB_PATH "C:/opencv/build/bin"
         - name: Install libturbojpeg (Windows)
           shell: pwsh
           run: |
                 $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
-                (New-Object System.Net.WebClient).DownloadFile("https://sourceforge.net/projects/libjpeg-turbo/files/2.1.3/libjpeg-turbo-2.1.3-vc64.exe","$thirdpartydir/libjpeg-turbo-2.1.3-vc64.exe");
-                cd $thirdpartydir
-                .\libjpeg-turbo-2.1.3-vc64.exe /S
+                $installer="$thirdpartydir\jpegturbo-installer.exe"
+                (New-Object System.Net.WebClient).DownloadFile("https://sourceforge.net/projects/libjpeg-turbo/files/2.1.3/libjpeg-turbo-2.1.3-vc64.exe","$installer");
+                Start-Process "$installer" -ArgumentList "/S" -Wait
                 Add-Content $env:GITHUB_ENV "JPEG_TURBO_DIR=C:/libjpeg-turbo64"
                 Add-Content $env:GITHUB_PATH "C:/libjpeg-turbo64/bin"
         - name: Install K4A (Windows)
