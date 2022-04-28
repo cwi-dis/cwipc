@@ -1,6 +1,6 @@
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-  GIT_STRATEGY: clone   # Only enable this line to fix problems with multiple branches in submodules
+  GIT_STRATEGY: clone
   
 stages:
   - build
@@ -15,6 +15,7 @@ build_linux:
   - ubuntu2004
   - vrtogether
   before_script:
+    - git fetch --tags
     - ./scripts/install-3rdparty-ubuntu2004.sh
   script:
     - mkdir -p installed/lib
@@ -46,6 +47,7 @@ build_osx:
   - osx1015
   - vrtogether
   before_script:
+    - git fetch --tags
     - ./scripts/install-3rdparty-osx1015.sh
   script:
     - mkdir -p installed/lib
@@ -79,6 +81,7 @@ build_win:
   variables:
     OPENGL_IS_BROKEN: "true" # See issue #19
   before_script:
+    - git fetch --tags
     - ./scripts/install-3rdparty-win1064.sh
   script:
     - mkdir -p installed/bin

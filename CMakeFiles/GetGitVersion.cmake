@@ -7,7 +7,7 @@ macro(get_git_version)
 	# cwipc-specific: our release tags start with v
 	execute_process(COMMAND "git" "describe" "--match" "v*" RESULT_VARIABLE status OUTPUT_VARIABLE describe_output OUTPUT_STRIP_TRAILING_WHITESPACE)
 	if(status AND NOT status EQUAL 0)
-		message(STATUS "GetGitVersion: git describe failed: ${status}")
+		message(WARNING "GetGitVersion: git describe failed: ${status}")
 		set(${MYARGS_VERSION_VAR} "unknown")
 		return()
 	endif()
