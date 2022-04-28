@@ -16,6 +16,7 @@ build_linux:
   - vrtogether
   before_script:
     - git fetch --tags
+    - git describe --match 'v*'
     - ./scripts/install-3rdparty-ubuntu2004.sh
   script:
     - mkdir -p installed/lib
@@ -48,6 +49,7 @@ build_osx:
   - vrtogether
   before_script:
     - git fetch --tags
+    - git describe --match 'v*'
     - ./scripts/install-3rdparty-osx1015.sh
   script:
     - mkdir -p installed/lib
@@ -82,6 +84,7 @@ build_win:
     OPENGL_IS_BROKEN: "true" # See issue #19
   before_script:
     - git fetch --tags
+    - git describe --match 'v*'
     - ./scripts/install-3rdparty-win1064.sh
   script:
     - mkdir -p installed/bin
