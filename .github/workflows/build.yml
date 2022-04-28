@@ -12,6 +12,7 @@ jobs:
           with:
                 submodules: 'recursive'
                 lfs: 'true'
+                fetch-depth: 0
         - name: Pre-install (Windows)
           shell: pwsh
           run: |
@@ -137,6 +138,7 @@ jobs:
           with:
                 submodules: 'recursive'
                 lfs: 'true'
+                fetch-depth: 0
         - name: Install dependencies
           shell: bash
           run: ./scripts/install-3rdparty-osx1015.sh
@@ -184,6 +186,7 @@ jobs:
           with:
                 submodules: 'recursive'
                 lfs: 'true'
+                fetch-depth: 0
         - name: Install dependencies
           shell: bash
           run: ./scripts/install-3rdparty-ubuntu2004.sh  
