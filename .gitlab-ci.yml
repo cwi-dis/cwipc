@@ -34,6 +34,7 @@ build_linux:
     - touch successful.tmp
   after_script:
     - if [ ! -e successful.tmp ]; then cp build/Testing/Temporary/LastTest.log ctest_log_ubuntu2004.log; fi
+    - ./build/venv/bin/pip list
   artifacts:
     when: always
     paths:
@@ -67,6 +68,7 @@ build_osx:
     - touch successful.tmp
   after_script:
     - if [ ! -e successful.tmp ]; then cp build/Testing/Temporary/LastTest.log ctest_log_osx1015.log; fi
+    - ./build/venv/bin/pip list
   artifacts:
     when: always
     paths:
