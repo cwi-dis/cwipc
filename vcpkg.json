@@ -1,7 +1,0 @@
-{
-  "name": "cwipc",
-  "version-string": "latest",
-  "dependencies": [
-    "pcl"
-  ]
-}
