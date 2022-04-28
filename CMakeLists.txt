@@ -25,15 +25,17 @@ set(CMAKE_PYWHEELS_INSTALL_DIRECTORY ${CMAKE_INSTALL_DATADIR}/cwipc/python)
 set(CMAKE_TESTDATA_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/share/cwipc/tests)
 set(CMAKE_TESTDATA_INSTALL_DIRECTORY ${CMAKE_INSTALL_DATADIR}/cwipc/tests)
 
+# Get version from git
+include(GetGitVersion)
+get_git_version(VERSION_VAR CWIPC_VERSION)
+if(CWIPC_VERSION)
+	message(STATUS "CWIPC_VERSION=${CWIPC_VERSION}")
+	add_compile_definitions(CWIPC_VERSION=${CWIPC_VERSION})
+	set(ENV{CWIPC_VERSION} ${CWIPC_VERSION})
+endif()
 #
 # Packages required by all submodules
 #
-
-# see here: https://github.com/PointCloudLibrary/pcl/issues/3680
-# when this is fixed, we can remove the following 3 lines.
-#if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
-#     set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
-#endif()
 
 find_package(libjpeg-turbo REQUIRED)
 find_package(PCL 1.10 REQUIRED COMPONENTS common io octree filters features)
