@@ -28,7 +28,6 @@ sudo apt-get install -y libsoundio1
 sudo pip install --upgrade pip
 sudo pip install --upgrade setuptools
 sudo pip install --upgrade build
-sudo pip install --upgrade pillow
 #
 # Install k4a SDK from their repository.
 # Bit of a hack, see https://github.com/microsoft/Azure-Kinect-Sensor-SDK/issues/1263
