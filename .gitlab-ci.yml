@@ -1,7 +1,7 @@
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
   GIT_STRATEGY: clone
-  
+  GIT_DEPTH: 999
 stages:
   - build
   - test
