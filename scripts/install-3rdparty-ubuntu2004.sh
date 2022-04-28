@@ -25,9 +25,7 @@ sudo apt-get install -y libsoundio1
 #
 # Upgrade essential Python packages that are too old on Ubuntu 20.04
 #
-sudo pip install --upgrade pip
-sudo pip install --upgrade setuptools
-sudo pip install --upgrade build
+sudo pip install --upgrade pip setuptools build wheel
 #
 # Install k4a SDK from their repository.
 # Bit of a hack, see https://github.com/microsoft/Azure-Kinect-Sensor-SDK/issues/1263

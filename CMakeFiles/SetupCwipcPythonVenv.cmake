@@ -20,7 +20,7 @@ if(NOT VENV_DIR)
         set(Python3_BINDIR "${VENV_DIR}/bin")
         set(Python3_EXECUTABLE "${Python3_BINDIR}/python")
     endif()
-    execute_process(COMMAND ${Python3_EXECUTABLE} -m pip --quiet install --upgrade pip setuptools build)
+    execute_process(COMMAND ${Python3_EXECUTABLE} -m pip --quiet install --upgrade pip setuptools build wheel)
     message(STATUS "Created Python venv in ${VENV_DIR}")
 endif()
 

@@ -1,3 +1,1 @@
-pip install --upgrade pip
-pip install --upgrade setuptools
-pip install --upgrade build
+pip install --upgrade pip setuptools build wheel
