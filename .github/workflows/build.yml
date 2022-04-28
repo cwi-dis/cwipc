@@ -223,7 +223,7 @@ jobs:
                 path: cwipc_ubuntu2004_${{ github.ref_name }}.tgz
     
     create-release:
-#        if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
+        if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
         name: create-release
         runs-on: ubuntu-latest
         needs:
@@ -249,9 +249,9 @@ jobs:
         - name: Check what is there
           shell: bash
           run: ls -l
-#        - name: Create Release
-#          uses: softprops/action-gh-release@v1
-#          id: create_release
-#          with:
-#                draft: false
-#                prerelease: false
+        - name: Create Release
+          uses: softprops/action-gh-release@v1
+          id: create_release
+          with:
+                draft: false
+                prerelease: false
