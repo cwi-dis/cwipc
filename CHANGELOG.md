@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (kinect) implemented function generate_point_cloud_v2 which uses a lookup table to compute the pointcloud.
 - (kinect) opencv is now used for filtering the depth map: Thresholds + erosion. much faster.
 - (macos) MacOS 10.15 is now the target platform: 10.14 is no longer easily supported in brew.
+- Build process, CMakefiles and versioning have been streamlined.
+- Github is now the primary hosting platform and Gitlab is considered a mirror.
 
 ### Removed
 
