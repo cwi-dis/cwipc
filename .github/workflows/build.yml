@@ -258,3 +258,7 @@ jobs:
           with:
                 draft: false
                 prerelease: false
+                files: |
+                    cwipc_win1064_${{ github.ref_name }}.zip
+                    cwipc_osx1014_${{ github.ref_name }}.tgz
+                    cwipc_ubuntu2004_${{ github.ref_name }}.tgz
