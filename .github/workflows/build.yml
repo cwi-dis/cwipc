@@ -253,9 +253,11 @@ jobs:
           shell: bash
           run: ls -l
         - name: Create Release
-          uses: softprops/action-gh-release@v1
+          uses: marvinpinto/action-automatic-releases@latest
           id: create_release
           with:
+                repo_token: "${{ secrets.GITHUB_TOKEN }}"
+                automatic_release_tag: latest
                 draft: false
                 prerelease: false
                 files: |
