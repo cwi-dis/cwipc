@@ -27,9 +27,10 @@ build_linux:
     - mkdir build
     - cd build
     - cmake .. -DCMAKE_INSTALL_PREFIX=$instdir
-    - make
-    - make install
-    - make test
+    - cmake --build .
+# There is a problem with Python open3d on the flauwte CI/CD runner.
+    - ctest -E '(cwipc_tilecolor)|(cwipc_calibrate)'
+    - cmake --install .
     - cd ..
     - tar --directory installed -cvaf cwipc_ubuntu2004_$CI_COMMIT_TAG.tgz .
     - touch successful.tmp
