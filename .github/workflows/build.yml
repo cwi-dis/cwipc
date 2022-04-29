@@ -1,4 +1,4 @@
-name: CMake Build Matrix
+name: Build, test and optionally deploy
 
 on: [push]
 
@@ -234,6 +234,11 @@ jobs:
             - build-macos
             - build-linux
         steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+          with:
+                submodules: 'recursive'
+                lfs: 'true'
         - name: Download Windows installed folder
           uses: actions/download-artifact@v3
           with:
@@ -253,14 +258,38 @@ jobs:
           shell: bash
           run: ls -l
         - name: Create Release
-          uses: marvinpinto/action-automatic-releases@latest
+          uses: actions/create-release@v1
           id: create_release
           with:
-                repo_token: "${{ secrets.GITHUB_TOKEN }}"
-                automatic_release_tag: latest
                 draft: false
                 prerelease: false
-                files: |
-                    cwipc_win1064_${{ github.ref_name }}.zip
-                    cwipc_osx1014_${{ github.ref_name }}.tgz
-                    cwipc_ubuntu2004_${{ github.ref_name }}.tgz
+                release_name: ${{ github.ref }}
+                tag_name: ${{ github.ref }}
+                body_path: CHANGELOG.md
+        - name: Upload Windows installed folder
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: cwipc_win1064_${{ github.ref_name }}.zip
+            asset_name: cwipc_win1064_${{ github.ref_name }}.zip
+            asset_content_type: application/zip
+        - name: Upload MacOS installed folder
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: cwipc_osx1014_${{ github.ref_name }}.tgz
+            asset_name: cwipc_osx1014_${{ github.ref_name }}.tgz
+            asset_content_type: application/gzip
+        - name: Upload Linux installed folder
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: cwipc_ubuntu2004_${{ github.ref_name }}.tgz
+            asset_name: cwipc_ubuntu2004_${{ github.ref_name }}.tgz
+            asset_content_type: application/gzip
