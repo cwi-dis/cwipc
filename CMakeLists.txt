@@ -24,6 +24,7 @@ set(CMAKE_PYWHEELS_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/share/cwipc/python)
 set(CMAKE_PYWHEELS_INSTALL_DIRECTORY ${CMAKE_INSTALL_DATADIR}/cwipc/python)
 set(CMAKE_TESTDATA_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/share/cwipc/tests)
 set(CMAKE_TESTDATA_INSTALL_DIRECTORY ${CMAKE_INSTALL_DATADIR}/cwipc/tests)
+set(CMAKE_SCRIPTS_INSTALL_DIRECTORY ${CMAKE_INSTALL_DATADIR}/cwipc)
 
 # Get version from git
 include(GetGitVersion)
@@ -55,3 +56,6 @@ endif()
 if(k4a_FOUND)
 	add_subdirectory("cwipc_kinect")
 endif()
+
+# Install scripts to help installing prerequisites
+install(DIRECTORY scripts DESTINATION ${CMAKE_SCRIPTS_INSTALL_DIRECTORY})
