@@ -34,7 +34,7 @@ build_linux:
     - tar --directory installed -cvaf cwipc_ubuntu2004_$CI_COMMIT_TAG.tgz .
     - touch successful.tmp
   after_script:
-    - if [ ! -e successful.tmp ]; then tar cfz build_folder_ubuntu2004.tgz; fi
+    - if [ ! -e successful.tmp ]; then tar cfz build_folder_ubuntu2004.tgz build; fi
     - ./build/venv/bin/pip list
   artifacts:
     when: always
