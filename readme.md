@@ -13,6 +13,72 @@ The suite also contains modules `cwipc_kinect` and `cwipc_realsense2` that which
 
 For now, refer to <https://www.dis.cwi.nl/cwipc-sxr-dataset/>.
 
+Documentation on the API can be created using _Doxygen_ in `cwipc_util/doc`, and will be made available here at some point in the future.
+
+## Installing third party requirements
+
+Building requires `cmake`, `python3`, `libpcl`, `glfw3`, `jpeg-turbo` and optionally (for Intel Realsense support) `librealsense` and/or (for Azure Kinect support)  `Azure Kinect SDK`, `Azure Kinect Body Tracking SDK` and `OpenCV`.
+
+Running prebuilt binaries needs most of those requirements are well.
+
+### Linux
+
+There is a script `scripts/install-thirdparty-ubuntu2004.sh` that installs all requirements on Ubuntu 20.04. For other Linux variants please inspect this script and ensure the correct packages are installed.
+
+### MacOS
+
+There is a script `scripts/install-thirdparty-osx1015.sh` that installs all requirements on MacOS 10.15 or later. This script requires [HomeBrew](https://brew.sh) and the XCode Command Line Tools. Installing HomeBrew will help you install the command line tools.
+
+Building and installing natively on Apple Silicon (M1 machines) might work and might not work. A workaround is to install HomeBrew for Intel (which can be installed alongside HomeBrew for M1, because they use different locations) and ensure that `/usr/local/bin` is in your `$PATH` before `/opt/homebrew/bin`. Then everything is built for Intel and Rosetta.
+
+### Windows
+
+There are two things you always need to install (independent of whether you want to use a binary installer or build from source):
+
+- `git` and `bash`, from <https://git-scm.com/downloads>.
+- Python, from <https://www.python.org/downloads>. 3.9 is preferred, as of this writing (April 2022) python 3.10 does not work because some required packages are not available for 3.10 yet.
+	- Note: you should install Python *"For All Users"*. 
+	- Note: You should install into a writeable directory, such as `C:/Python39` otherwise you will have to use _Run as Administrator_ for various build steps.
+
+If you want to build from source you first need to install some developer resources:
+
+- Visual Studio. Community Edition 2019 is known to work.
+- CMake, from <https://cmake.org/install/>.
+
+Next, you need to install the third-party libraries and tools mentioned above.
+
+- Run the script `scripts/install-3rdparty-full-win1064.ps1` in a PowerShell **with Administrator rights**. Note the bold font.
+
+Finally, you need to ensure that all DLLs from the packages installed above or on the environment `%PATH%` variable:
+
+- Open the `install-3rdparty-full-win1064.ps1` script in a text editor, and inspect the comments that state what should be added to path.
+- Open `Control Panel` -> `System Properties` -> `Environment Variables` -> `System Variables` -> `Path`.
+- Check that each of the folders mentioned in the script exist (otherwise something went wrong during the installation step).
+- Add each folder to the `Path`.
+- Press `OK` to close the dialogs.
+- Close all command prompt windows, bash windows and powershell windows and re-open them.
+
+If you don't follow these steps you will later get obscure errors. Windows will tell you that (for example) `"The cwipc_realsense2 DLL could not be found"`, and you see it right in front of you. The _actual_ problem is going to be with one of the dependency DLLs (but it would be far to helpful if Windows told you this:-), and the problem invariably is that something has not been added to `Path`.
+
+For the rest of the build instructions it is probably best to use `bash`, not `CMD` or powershell.
+
+## Installing a binary distribution
+
+Prebuilt binary releases are available at <https://github.com/cwi-dis/cwipc/releases> as zip or gzipped tar files. Download the correct one for you platform. On MacOS and Linux you can extract straight into `/usr/local` or any other location of your liking. On Windows you create an empty folder such as `C:/cwipc` and extract there.
+
+On Windows, add `c:/cwipc/bin` to your `%PATH%` environment variable (and restart your command prompt).
+
+Run `cwipc_pymodules_install.sh` to install the Python components. (On windows you can use this script when you are using bash, or you can run `cwipc_pymodules_install.bat` if you are using CMD).
+
+Check that everything is installed correctly by running
+
+```
+cwipc_view --synthetic
+```
+
+This should bring up a viewer window with a synthetic point cloud. Use left-mouse-drag, right-mouse-drag and scroll wheel to change your view position.
+
+
 ## Build instructions
 
 Check out the source repository from <https://github.com/cwi-dis/cwipc.git> and ensure you also check out the submodules and the git-lfs files. Use either
@@ -29,9 +95,7 @@ or
 git clone --recurse-submodules https://github.com/cwi-dis/cwipc.git
 ```
 
-Now you need to ensure that you have the required third party software installed (and, for Windows, that you have installed it in the expected location), see below.
-
-Finally you build by using one of the build scripts:
+Now you build by using one of the build scripts:
 
 - Linux:
 
@@ -58,32 +122,8 @@ Finally you build by using one of the build scripts:
   ```
   This will build everything, do a limited self-test and install into `./installed`.
   
-Both these scripts configures, builds, tests and installs each of the submodules individually (in `build` directories under the submodule directory). If you need to tweak the build procedure, for example by adding `cmake` flags, you can use `rm -rf cwipc_*/build` to do a complete clean build.
+Both these scripts configures, builds, tests and installs each of the submodules individually (in `build` directories under the submodule directory). If you need to tweak the build procedure, for example by adding `cmake` flags, you can use `rm -rf build` to do a complete clean build.
 
-The build scripts build the submodules in the correct order (`cwipc_util` first) and stop on error.
-
-## Required third party software
-
-On all platforms we require the standard development tools for the platform (XCode and the xcode command line tools on MacOS, Visual Studio 2019 on Windows, standard gcc tools on Linux).
-
-On Linux the preferred way to install the third party software is through _apt_ or whatever package manager your platform supports. Our build process should then automatically pick everything up.
-
-On MacOS the preferred way to install the third party software is through _Homebrew_ <https://brew.sh>. Our build process should then automatically pick everything up. The Python dependency deserves special note on MacOS, due to the many variants of Python available. If you ensure the `python3` command refers to the brew-installed Python 3.8 everything should go well. When building on an M1 Mac you should use the (Rosetta-based) Intel version of _Homebrew_, the one that installs into `/usr/local`, not into `/opt/homebrew`. Both versions can co-exist, ensure you have the Intel one in your path first when you build.
-
-On Windows you have to install each package individually according to the instructions coming with the package. You need to ensure any "developer" option is installed. You also need to ensure that the folders with the DLLs and utilties for each package are on the `PATH` environment variable. For some packages you must install them in a specific place, or using specific settings.
-
-Packages required:
-
-- _cmake_. 
-- _python 3_. Python 3.9 is preferred (3.7 or later may work). 
-	- On Windows you should install _"For All Users"_ and install into a writeable directory (such as `C:\Python37`). 
-	- Some needed packages such as _Open3D_ can be slow to follow Python releases, if you experience problems try installing a previous Python release. 
-	- On the Mac it is easy to install multiple Python versions with `brew`. Put the relevant `/usr/local/opt/python@3.9/bin` first in your `$PATH` and things should build fine.
-- PCL <https://pointclouds.org>. 1.12 is preferred, but 1.9 or later may work. For Linux apt the package is called `libpcl-dev`. For MacOS brew you need to  `brew install pcl glfw3`. On Windows you need to ensure the DLL directories for PCL subpackages _OpenNI_ and _VTK_ are also on your `PATH`.
-- _jpeg-turbo_ <https://libjpeg-turbo.org/>. On Mac you must force-link it if it conflicts with the normal `jpeg` brew package.
-- _Intel Realsense SDK 2.0_ <https://github.com/IntelRealSense/librealsense>. 2.41 is known to work. 2.50 currently has issues on MacOS.
-- _Azure Kinect SDK_ <https://github.com/microsoft/Azure-Kinect-Sensor-SDK>. 1.4.1 is known to work. Not available on Mac
-- _Azure Kinect Body Tracking SDK_. 1.0.1 and 1.1.0 should work. Not available on Mac.
 
 ## Debugging
 
@@ -113,12 +153,13 @@ When creating a new release, ensure the following have been done
 - `CWIPC_API_VERSION_OLD` incremented if there are API changes that are not backward compatible.
 	- Both these need to be changed in `api.h` and `cwipc/util.py`.
 - `CHANGELOG.md` updated.
-- Version numbers in `cwipc_*/python/setup.py` updated.
 
-After making all these changes push to gitlab. Ensure the CI/CD build passes.
+Version numbers for the release no longer need to be updated manually, they are generated from the git tag name.
 
-After that tag all submodules and the main module with *v_X_._Y_._Z_\_stable*.
+After making all these changes push to github. Ensure the CI/CD build passes.
 
-Push the tag to gitlab, this will build the release.
+After that tag all submodules and the main module with *v_X_._Y_._Z_*.
+
+Push the tag to github, this will build the release.
 
 After the release is built copy the relevant new section of `CHANGELOG.md` to the release notes.
