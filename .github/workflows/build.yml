@@ -243,17 +243,17 @@ jobs:
           uses: actions/download-artifact@v3
           with:
                 name: cwipc_win1064_${{ github.ref_name }}.zip
-                path: cwipc_win1064_${{ github.ref_name }}.zip
+                path: ./
         - name: Download MacOS installed folder
           uses: actions/download-artifact@v3
           with:
                 name: cwipc_osx1014_${{ github.ref_name }}.tgz
-                path: cwipc_osx1014_${{ github.ref_name }}.tgz
+                path: ./
         - name: Download Linux installed folder
           uses: actions/download-artifact@v3
           with:
                 name: cwipc_ubuntu2004_${{ github.ref_name }}.tgz
-                path: cwipc_ubuntu2004_${{ github.ref_name }}.tgz
+                path: ./
         - name: Check what is there
           shell: bash
           run: ls -l
