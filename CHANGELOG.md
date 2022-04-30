@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- cwipc_get_version() added to API, CWIPC_API_VERSION updated.
+
 ### Changed
 
 - (kinect) cameraconfig is now independent of whether we use map\_color\_to\_depth or not
