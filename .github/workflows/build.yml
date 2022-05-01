@@ -241,7 +241,7 @@ jobs:
                 lfs: 'true'
         - name: Create Assets and full sourcecode assets
           shell: bash
-          run |
+          run: |
                 mkdir Assets
                 tar -c -f Assets/${{ github.ref_name }}-complete.tar.gz --exclude=Assets --exclude=.git .
                 zip -x .git -x Assets -r Assets/${{ github.ref_name }}-complete.zip .
