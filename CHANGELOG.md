@@ -8,12 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- cwipc_get_version() added to API, CWIPC_API_VERSION updated.
+
 ### Changed
 
 - (kinect) cameraconfig is now independent of whether we use map\_color\_to\_depth or not
 - (kinect) implemented function generate_point_cloud_v2 which uses a lookup table to compute the pointcloud.
 - (kinect) opencv is now used for filtering the depth map: Thresholds + erosion. much faster.
 - (macos) MacOS 10.15 is now the target platform: 10.14 is no longer easily supported in brew.
+- Build process, CMakefiles and versioning have been streamlined.
+- Github is now the primary hosting platform and Gitlab is considered a mirror.
 
 ### Removed
 

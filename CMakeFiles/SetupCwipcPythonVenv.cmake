@@ -6,10 +6,10 @@ find_package(Python3 REQUIRED COMPONENTS Interpreter)
 if(NOT VENV_DIR)
 	#
 	# Create venv for testing, and re-set Python3_EXECUTABLE to that Python.
-	# But: enable use of system-installed packages, because otherwise CI/CD will take forever.
+	# We disable use of system-installed packages, because otherwise the testing of the scripts will fail.
 	#
     get_filename_component(VENV_DIR "${CMAKE_BINARY_DIR}/venv" ABSOLUTE)
-    execute_process(COMMAND ${Python3_EXECUTABLE} -m venv --system-site-packages "${VENV_DIR}")
+    execute_process(COMMAND ${Python3_EXECUTABLE} -m venv "${VENV_DIR}")
     set(ENV{VIRTUAL_ENV} "${VENV_DIR}")
     if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     	set(Python3_SYSTEM_EXECUTABLE ${Python3_EXECUTABLE})
@@ -20,7 +20,7 @@ if(NOT VENV_DIR)
         set(Python3_BINDIR "${VENV_DIR}/bin")
         set(Python3_EXECUTABLE "${Python3_BINDIR}/python")
     endif()
-    execute_process(COMMAND ${Python3_EXECUTABLE} -m pip install build)
+    execute_process(COMMAND ${Python3_EXECUTABLE} -m pip --quiet install --upgrade pip setuptools build wheel)
     message(STATUS "Created Python venv in ${VENV_DIR}")
 endif()
 
@@ -84,6 +84,6 @@ macro(cwipc_install_wheel)
 	cmake_parse_arguments(MYARGS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 	# The /.. in the DESTINATION is a trick to forestall double /python/python
 	install(DIRECTORY ${MYARGS_WHEELDIR} DESTINATION ${CMAKE_PYWHEELS_INSTALL_DIRECTORY}/.. FILES_MATCHING PATTERN "${MYARGS_NAME}*.whl" )
-	install(CODE "execute_process(COMMAND \"${Python3_SYSTEM_EXECUTABLE}\" -m pip uninstall --yes ${MYARGS_NAME} WORKING_DIRECTORY \"${MYARGS_WHEELDIR}\" )")
-	install(CODE "execute_process(COMMAND \"${Python3_SYSTEM_EXECUTABLE}\" -m pip install --find-links=. ${MYARGS_NAME} WORKING_DIRECTORY \"${MYARGS_WHEELDIR}\" )")
+	install(CODE "execute_process(COMMAND \"${Python3_SYSTEM_EXECUTABLE}\" -m pip --quiet uninstall --yes ${MYARGS_NAME} WORKING_DIRECTORY \"${MYARGS_WHEELDIR}\" )")
+	install(CODE "execute_process(COMMAND \"${Python3_SYSTEM_EXECUTABLE}\" -m pip --quiet install --find-links=. ${MYARGS_NAME} WORKING_DIRECTORY \"${MYARGS_WHEELDIR}\" )")
 endmacro()

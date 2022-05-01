@@ -5,8 +5,9 @@ errorexit() {
 	echo '** Error: your buildall-win did not succeed. Check error log above.'
 	exit 1
 }
+# Alternative: config=RelWithDebInfo.
 # Alternative: config=Release. But having the .PDB files is good for debugging.
-config=RelWithDebInfo
+config=Release
 trap errorexit ERR
 dirname=`dirname $0`
 dirname=`cd $dirname/..; pwd`
@@ -38,11 +39,10 @@ if nproc 2>&1 >/dev/null; then
 fi
 
 mkdir -p build
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX="$instdir" -DJPEG_Turbo_ROOT="C:/libjpeg-turbo64" -DOpenCV_ROOT="C:/OpenCV-4.5.5/build"
-cmake --build . --config $config
+cmake -S . -B build -DCMAKE_INSTALL_PREFIX="$instdir"
+cmake --build build --config $config
 if [ "$notest" != "notest" ]; then
-	cmake --build . --config $config --target RUN_TESTS
+	ctest --test-dir build --build-config $config
 fi
-cmake --build . --config $config --target INSTALL
+cmake --install build --config $config
 

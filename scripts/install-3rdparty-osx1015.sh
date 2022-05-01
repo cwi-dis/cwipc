@@ -11,7 +11,7 @@ brew unlink jpeg
 brew link --force jpeg-turbo
 
 # Install Python delendencies
-python3 -m pip install --upgrade pip setuptools build
+python3 -m pip install --upgrade pip setuptools build wheel
 
 # Install Python dependencies for Depolyment scripts (unsure they are still needed)
 python3 -m pip install requests requests_toolbelt mechanize pillow numpy open3d
