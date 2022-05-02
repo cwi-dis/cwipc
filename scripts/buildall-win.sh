@@ -45,4 +45,3 @@ if [ "$notest" != "notest" ]; then
 	ctest --test-dir build --build-config $config
 fi
 cmake --install build --config $config
-
