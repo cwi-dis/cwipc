@@ -29,20 +29,6 @@ x--cicd)
 	;;
 esac
 
-# Workaround for brew-installed Qt5 not found by cmake:
-if [ -d /usr/local/opt/qt5/lib/cmake/Qt5 ]; then
-	cmakeargs="$cmakeargs -DQt5_DIR=/usr/local/opt/qt5/lib/cmake/Qt5"
-fi
-# Workaround for finding the wrong Python3 on M1 macs
-pydir=`python3 -c 'import sys ; print(sys.prefix)'`
-case x$pydir in
-x)
-	;;
-x*)
-	cmakeargs="$cmakeargs -DPython3_ROOT_DIR=$pydir"
-	;;
-esac
-
 # See if we can parallelize the build
 if sysctl -n hw.physicalcpu 2>&1 >/dev/null; then
 	ncpu=`sysctl -n hw.physicalcpu`
