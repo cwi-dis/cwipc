@@ -8,7 +8,7 @@ macro(get_git_version)
 	execute_process(COMMAND "git" "describe" "--match" "v*" RESULT_VARIABLE status OUTPUT_VARIABLE describe_output OUTPUT_STRIP_TRAILING_WHITESPACE)
 	if(status AND NOT status EQUAL 0)
 		message(WARNING "GetGitVersion: git describe failed: ${status}")
-		set(${MYARGS_VERSION_VAR} "unknown")
+		set(${MYARGS_VERSION_VAR} "0.0+unknown")
 	else()
 		# cwipc-specific: remove the "v" and any "_stable"
 		string(REPLACE "_stable" "" describe_output ${describe_output})
@@ -18,7 +18,7 @@ macro(get_git_version)
 		string(REGEX REPLACE ".*-g([a-fA-F0-9]+)" "\\1" describe_sha ${describe_output})
 		# Use unknown if no version tag found
 		if(NOT describe_version)
-			set(describe_version "unknown")
+			set(describe_version "0.0")
 		endif()
 		if(describe_sha)
 			# Append +sha to the version tag
