@@ -35,3 +35,4 @@ Start-Process '.\Azure Kinect Body Tracking SDK 1.1.1.msi' -ArgumentList '/quiet
 (New-Object System.Net.WebClient).DownloadFile("https://github.com/opencv/opencv/releases/download/4.5.5/opencv-4.5.5-vc14_vc15.exe","opencv-4.5.5-vc14_vc15.exe");
 Start-Process '.\opencv-4.5.5-vc14_vc15.exe' -ArgumentList '-o"C:\" -y' -Wait
 # xxxjack add to path: C:\opencv\build\bin
+# xxxjack add to path: C:\opencv\build\x64\vc15\bin
