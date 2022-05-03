@@ -242,25 +242,25 @@ jobs:
         - name: Create Assets and full sourcecode assets
           shell: bash
           run: |
-                mkdir Assets
-                tar -c -f Assets/${{ github.ref_name }}-complete.tar.gz --exclude=Assets --exclude=.git  .
-                zip -x .git -x Assets -r Assets/${{ github.ref_name }}-complete.zip .
-                awk '/^## /{if(flag){exit}; flag=1} flag' CHANGELOG.md > Assets/changes.md
+                mkdir ../Assets
+                tar -c -f ../Assets/${{ github.ref_name }}-complete.tar.gz --exclude-vcs .
+                zip -x '*.git*' -r ../Assets/${{ github.ref_name }}-complete.zip .
+                awk '/^## /{if(flag){exit}; flag=1} flag' CHANGELOG.md > ../Assets/changes.md
         - name: Download Windows installed folder
           uses: actions/download-artifact@v3
           with:
                 name: cwipc_win1064_${{ github.ref_name }}.zip
-                path: Assets/
+                path: ../Assets/
         - name: Download MacOS installed folder
           uses: actions/download-artifact@v3
           with:
                 name: cwipc_osx1014_${{ github.ref_name }}.tgz
-                path: Assets/
+                path: ../Assets/
         - name: Download Linux installed folder
           uses: actions/download-artifact@v3
           with:
                 name: cwipc_ubuntu2004_${{ github.ref_name }}.tgz
-                path: Assets/
+                path: ../Assets/
         - name: Check what is there
           shell: bash
           run: ls -l
@@ -274,14 +274,14 @@ jobs:
                 prerelease: false
                 release_name: ${{ github.ref }}
                 tag_name: ${{ github.ref }}
-                body-path: Assets/changes.md
+                body_path: ../Assets/changes.md
         - name: Upload complete source (gzipped tar)
           uses: actions/upload-release-asset@v1
           env:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: Assets/${{ github.ref_name }}-complete.tar.gz
+            asset_path: ../Assets/${{ github.ref_name }}-complete.tar.gz
             asset_name: cwipc-${{ github.ref_name }}-source-including-submodules.tar.gz
             asset_content_type: application/zip
         - name: Upload complete source (zip)
@@ -290,7 +290,7 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: Assets/${{ github.ref_name }}-complete.zip
+            asset_path: ../Assets/${{ github.ref_name }}-complete.zip
             asset_name: cwipc-${{ github.ref_name }}-source-including-submodules.zip
             asset_content_type: application/zip
         - name: Upload Windows installed folder
@@ -299,7 +299,7 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: Assets/cwipc_win1064_${{ github.ref_name }}.zip
+            asset_path: ../Assets/cwipc_win1064_${{ github.ref_name }}.zip
             asset_name: cwipc-win10-${{ github.ref_name }}-built.zip
             asset_content_type: application/zip
         - name: Upload MacOS installed folder
@@ -308,7 +308,7 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: Assets/cwipc_osx1014_${{ github.ref_name }}.tgz
+            asset_path: ../Assets/cwipc_osx1014_${{ github.ref_name }}.tgz
             asset_name: cwipc-macos1014-intel-${{ github.ref_name }}-built.tgz
             asset_content_type: application/gzip
         - name: Upload Linux installed folder
@@ -317,6 +317,6 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: Assets/cwipc_ubuntu2004_${{ github.ref_name }}.tgz
+            asset_path: ../Assets/cwipc_ubuntu2004_${{ github.ref_name }}.tgz
             asset_name: cwipc-ubuntu2004-${{ github.ref_name }}-built.tgz
             asset_content_type: application/gzip
