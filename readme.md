@@ -1,5 +1,5 @@
 # cwipc - CWI Point Clouds software suite
-
+![build](https://github.com/cwi-dis/cwipc/actions/workflows/build.yml/badge.svg)
 
 In order to facilitate working with point clouds as opaque objects - similar to how most software warks with images, or audio samples -  our group has developed an open source suite of libraries and tools that we call `cwipc` (abbreviation of CWI Point Clouds). The implementation builds on the PCL pointcloud library and various vendor-specific capturing libraries, but this is transparent to software using the `cwipc` suite (but it can access these representations if it needs to).
 
