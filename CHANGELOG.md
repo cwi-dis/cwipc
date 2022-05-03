@@ -4,22 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
+## [7.2] - 2022-05-03
 
 ### Added
 
-- cwipc_get_version() added to API, CWIPC_API_VERSION updated.
+- All tools accept a `--version` argument to only print the version. `cwipc_get_version()` added to API, `CWIPC_API_VERSION` updated. 
+- Github is now the primary hosting platform and Gitlab is considered a mirror. Binary and full-source releases are available on github via <https://github.com/cwi-dis/cwipc/releases>.
+- Instructions for installing from binary or source releases updated.
 
 ### Changed
 
 - (kinect) cameraconfig is now independent of whether we use map\_color\_to\_depth or not
-- (kinect) implemented function generate_point_cloud_v2 which uses a lookup table to compute the pointcloud.
+- (kinect) implemented function `generate_point_cloud_v2()` which uses a lookup table to compute the pointcloud.
 - (kinect) opencv is now used for filtering the depth map: Thresholds + erosion. much faster.
 - (macos) MacOS 10.15 is now the target platform: 10.14 is no longer easily supported in brew.
 - Build process, CMakefiles and versioning have been streamlined.
-- Github is now the primary hosting platform and Gitlab is considered a mirror.
-
-### Removed
 
 ## [7.1] - 2022-01-26
 
