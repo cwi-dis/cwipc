@@ -26,6 +26,20 @@ set(CMAKE_TESTDATA_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/share/cwipc/tests)
 set(CMAKE_TESTDATA_INSTALL_DIRECTORY ${CMAKE_INSTALL_DATADIR}/cwipc/tests)
 set(CMAKE_SCRIPTS_INSTALL_DIRECTORY ${CMAKE_INSTALL_DATADIR}/cwipc)
 
+# Ensure we use the correct RPATH in installed binaries.
+# This also works in the build tree, because we use the staging area to
+# build all executables and dynamic libraries and it has the
+# same layout as the installed tree
+if(APPLE)
+	set(CMAKE_INSTALL_RPATH "@loader_path/../lib")
+	set(CMAKE_SKIP_BUILD_RPATH FALSE)
+	set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+elseif(UNIX)
+	set(CMAKE_INSTALL_RPATH "$$ORIGIN/../lib")
+	set(CMAKE_SKIP_BUILD_RPATH FALSE)
+	set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+endif()
+
 # Get version from git
 include(GetGitVersion)
 get_git_version(VERSION_VAR CWIPC_VERSION)
