@@ -66,20 +66,46 @@ For the rest of the build instructions it is probably best to use `bash`, not `C
 
 Prebuilt binary releases are available at <https://github.com/cwi-dis/cwipc/releases> as zip or gzipped tar files. Download the correct one for you platform. On MacOS and Linux you can extract straight into `/usr/local` or any other location of your liking. On Windows you create an empty folder such as `C:/cwipc` and extract there.
 
-On Windows, add `c:/cwipc/bin` to your `%PATH%` environment variable (and restart your command prompt).
+- On Windows, add `c:/cwipc/bin` to your `%PATH%` environment variable (and restart your command prompt).
 
-Run `cwipc_pymodules_install.sh` to install the Python components. (On windows you can use this script when you are using bash, or you can run `cwipc_pymodules_install.bat` if you are using CMD).
+- On MacOS you need to clear the quarantine bits (which are Apple's way to ensure you cannot accidentally run malware downloaded from the internet):
 
-Check that everything is installed correctly by running
+  ```
+  cd /usr/local # or wherever you extracted to
+  xattr -d com.apple.quarantine bin/cwipc_*
+  xattr -d com.apple.quarantine lib/libcwipc_*
 
-```
-cwipc_view --synthetic
-```
+  ```
 
-This should bring up a viewer window with a synthetic point cloud. Use left-mouse-drag, right-mouse-drag and scroll wheel to change your view position.
+- On Linux and Mac, if you did not install to `/usr/local`, add the `bin` directory to your `PATH` environment variable.
+- Optionally, if you want to use a python virtual environment so the cwipc modules and dependencies are not installed into your normal Python environment, create a Python venv:
+
+  ```
+  python3 -m venv venv
+  . venv/bin/activate # Note the dot space. 
+  ```
+  
+- Run `cwipc_pymodules_install.sh` to install the Python components. (On windows you can use this script when you are using bash, or you can run `cwipc_pymodules_install.bat` if you are using CMD).
+
+- Check that everything is installed correctly by running
+
+  ```
+  cwipc_view --version
+  cwipc_view --synthetic
+  ```
+
+  This should bring up a viewer window with a synthetic point cloud. Use left-mouse-drag, right-mouse-drag and scroll wheel to change your view position.
 
 
-## Build instructions
+## Building from source
+
+You can either download a source archive (zip or gzipped tar) or clone the git repository.
+
+### Download source archive
+
+Full source releases (including submodules) are available at  <https://github.com/cwi-dis/cwipc/releases>, as assets with names like `cwipc-`_version_`-source-including-submodules`. Available as gzipped tar or zip, the contents are identical. Download and extract.
+
+### Clone git repository
 
 Check out the source repository from <https://github.com/cwi-dis/cwipc.git> and ensure you also check out the submodules and the git-lfs files. Use either
 
@@ -95,7 +121,9 @@ or
 git clone --recurse-submodules https://github.com/cwi-dis/cwipc.git
 ```
 
-Now you build by using one of the build scripts:
+### Build using build script
+
+You can run the usual `cmake`, `cmake --build`, `ctest`, `cmake --install` commands manually, or you can build by using one of the build scripts:
 
 - Linux:
 
@@ -113,7 +141,7 @@ Now you build by using one of the build scripts:
   
   This will build everything, do a limited self-test and install into `/usr/local`. Note that on the Mac _everything_ does not include the Kinect grabber: the Microsoft Kinect SDK is not yet available for MacOS.
   
-  As of this writing some of the dependencies are not available yet for the M1 chip, but building for Rosetta 2 works.
+  As of this writing some of the dependencies are not available yet for the M1 chip, but building for Rosetta 2 works. Please _do_ ensure that Python for the correct architecture has been selected.
 
 - Windows:
 
