@@ -44,7 +44,9 @@ Add-PathVariable("C:\Program Files\OpenNI2\Redist")
 #
 # Install Realsense SDK. Cannot get the installer to run unattended, so use chocolatey.
 #
-choco install -y realsense-sdk2
+$installer="$tmpinstalldir\Intel.RealSense.SDK-WIN10-2.50.0.3785.exe"
+(New-Object System.Net.WebClient).DownloadFile("https://github.com/IntelRealSense/librealsense/releases/download/v2.50.0/Intel.RealSense.SDK-WIN10-2.50.0.3785.exe",$installer);
+Start-Process -FilePath $installer -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOCANCEL /SP-' -Wait
 Add-PathVariable("C:\Program Files (x86)\Intel RealSense SDK 2.0\bin\x64")
 
 #
