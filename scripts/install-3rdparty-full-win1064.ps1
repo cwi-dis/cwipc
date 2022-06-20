@@ -21,8 +21,8 @@ Function Add-PathVariable {
 #
 # Create a temporary dirctory to download installers
 #
-mkdir tmpinstall
-$tmpinstalldir="$((Get-Item .\tmpinstall).FullName)"
+mkdir $env:TEMP\cwipc-3rdparty-downloads
+$tmpinstalldir="$((Get-Item $env:TEMP\cwipc-3rdparty-downloads).FullName)"
 #
 # Install libjpeg-turbo
 #
