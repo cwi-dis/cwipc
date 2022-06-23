@@ -168,8 +168,24 @@ Some issues are easier to debug with the Python scripts. There are some hooks in
 
 - all Python scripts accept a `--pausefordebug` command line option. This will pause the script at begin of run (and end of run), waiting for you to press `Y`. While the script is paused you can obtain the process ID and attach the XCode or Visual Studio debugger to the process.
 - all Python scripts accept a `--debuglibrary NAME=PATH` argument, for example `--debuglibrary cwipc_util=/tmp/libcwipc_util.dylib` to load the given cwipc library from the given path. This allows you to load the library that you have just built in Xcode or Visual Studio so you can set breakpoints in the library code.
+- The python modules and scripts can be run from the `build` folder, using the venv-python there. As follows:
 
-Additionally, you can send SIGQUIT to all the Python scripts to cause them to dump the Python stacktraces of all threads.
+  ```
+  cd build
+  . venv/bin/activate
+  python -m cwipc.scripts.cwipc_view --synthetic
+  ```
+  
+  Such a run will pick up the dynamic libraries from the build folder, but you can also specify the debug options outlined above.
+- The Python unittests can also be run individually from the build folder, for example with
+
+  ```
+  cd build
+  . venv/bin/activate
+  python ../cwipc_codec/python/test_cwipc_codec.py --verbose TestApi.test_cwipc_parallel_encoder
+  ```
+
+Additionally, you can send `SIGQUIT` to all the Python scripts (installed or when running from the build folder) to cause them to dump the Python stacktraces of all threads.
 
 ## Creating a release
 
