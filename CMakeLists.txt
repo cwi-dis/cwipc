@@ -47,6 +47,7 @@ if(CWIPC_VERSION)
 	message(STATUS "CWIPC_VERSION=${CWIPC_VERSION}")
 	add_compile_definitions(CWIPC_VERSION=${CWIPC_VERSION})
 	set(ENV{CWIPC_VERSION} ${CWIPC_VERSION})
+	set(PROJECT_VERSION ${CWIPC_VERSION})
 endif()
 #
 # Packages required by all submodules
