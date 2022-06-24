@@ -73,3 +73,6 @@ endif()
 
 # Install scripts to help installing prerequisites
 install(DIRECTORY scripts DESTINATION ${CMAKE_SCRIPTS_INSTALL_DIRECTORY})
+
+# Creating installers
+include(CwipcInstallers)

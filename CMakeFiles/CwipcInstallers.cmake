@@ -1,0 +1,3 @@
+
+# Creating installers
+include(CPack)
