@@ -93,6 +93,12 @@ jobs:
                 build-type: Release
                 run-test: true
                 install-build: true
+        - name: Create installer
+          shell: bash
+          run: |
+                cpack --config build/CPackSourceConfig.cmake
+                cpack --config build/CPackConfig.cmake
+                ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
           uses: actions/upload-artifact@v3
@@ -150,6 +156,12 @@ jobs:
                 run-test: true
                 install-build: true
                 install-options: --prefix ${{ github.workspace }}/installed
+        - name: Create installer
+          shell: bash
+          run: |
+                cpack --config build/CPackSourceConfig.cmake
+                cpack --config build/CPackConfig.cmake
+                ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
           uses: actions/upload-artifact@v3
@@ -198,6 +210,12 @@ jobs:
                 run-test: true
                 install-build: true
                 install-options: --prefix ${{ github.workspace }}/installed
+        - name: Create installer
+          shell: bash
+          run: |
+                cpack --config build/CPackSourceConfig.cmake
+                cpack --config build/CPackConfig.cmake
+                ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
           uses: actions/upload-artifact@v3
