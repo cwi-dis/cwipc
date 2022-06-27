@@ -128,7 +128,7 @@ jobs:
           uses: actions/upload-artifact@v3
           with:
                 name: nsis-installer
-                path: build/packages/*.exe
+                path: build/package/*.exe
         - name: Check what was created and installed
           if: always()
           shell: bash
@@ -251,7 +251,7 @@ jobs:
           uses: actions/upload-artifact@v3
           with:
                 name: debian-installer
-                path: build/packages/*.deb
+                path: build/package/*.deb
     
     create-release:
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
