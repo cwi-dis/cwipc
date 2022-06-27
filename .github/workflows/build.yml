@@ -124,6 +124,11 @@ jobs:
           with:
                 name: cwipc_win1064_${{ github.ref_name }}.zip
                 path: cwipc_win1064_${{ github.ref_name }}.zip
+        - name: Upload nsis installer
+          uses: actions/upload-artifact@v3
+          with:
+                name: nsis-installer
+                path: build/packages/*.exe
         - name: Check what was created and installed
           if: always()
           shell: bash
@@ -242,6 +247,11 @@ jobs:
           with:
                 name: cwipc_ubuntu2004_${{ github.ref_name }}.tgz
                 path: cwipc_ubuntu2004_${{ github.ref_name }}.tgz
+        - name: Upload debian package
+          uses: actions/upload-artifact@v3
+          with:
+                name: debian-installer
+                path: build/packages/*.deb
     
     create-release:
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
