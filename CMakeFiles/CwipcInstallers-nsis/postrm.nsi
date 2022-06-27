@@ -1,1 +1,0 @@
-ExecWait "python3 -m pip uninstall -y cwipc_util cwipc_codec cwipw_realsense2 cwipc_kinect"
