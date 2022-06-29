@@ -1,1 +1,4 @@
 cwipc_pymodules_install.sh
+echo NOTE: the realsense SDK and Kinect Azure SDK are not installed automatically,
+echo NOTE: because they come from private repositories.
+echo NOTE: Inspect script /usr/share/cwipc/scripts/install-3rdparty-ubuntu2004.sh to install them.
