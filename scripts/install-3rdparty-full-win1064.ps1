@@ -135,9 +135,11 @@ Write-Output "registry: update PATH environment variable"
 Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value $env:Path
 Write-Output "registry: done"
 #
-# Install Python. NOTE: must be done last, due to manipulating PATH.
+# Install Python. 
+# NOTE: must be done last, due to manipulating PATH.
+# NOTE: use pip, not python, because windows has an alias "python" that tells you how to install it.
 #
-if(Can-Execute-From-Path("python --version")) {
+if(Can-Execute-From-Path("pip --version")) {
 	Write-Output "python: already installed"
 } else {
 	Write-Output "python: installing..."
