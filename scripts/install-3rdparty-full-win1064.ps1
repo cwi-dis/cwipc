@@ -41,6 +41,7 @@ if (Test-Path $env:TEMP\cwipc-3rdparty-downloads) {
 	mkdir $env:TEMP\cwipc-3rdparty-downloads
 }
 $tmpinstalldir="$((Get-Item $env:TEMP\cwipc-3rdparty-downloads).FullName)"
+
 #
 # Install libjpeg-turbo
 #
@@ -133,3 +134,15 @@ if(Can-Execute-From-Path("opencv-version")) {
 Write-Output "registry: update PATH environment variable"
 Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value $env:Path
 Write-Output "registry: done"
+#
+# Install Python. NOTE: must be done last, due to manipulating PATH.
+#
+if(Can-Execute-From-Path("python --version")) {
+	Write-Output "python: already installed"
+} else {
+	Write-Output "python: installing..."
+	$installer="$tmpinstalldir\python-3.9.13-amd64.exe"
+	(New-Object System.Net.WebClient).DownloadFile("https://www.python.org/ftp/python/3.9.13/python-3.9.13-amd64.exe",$installer);
+	Start-Process -FilePath $installer -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait
+	Write-Output "python: installed"
+}
