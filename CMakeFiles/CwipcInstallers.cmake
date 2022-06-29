@@ -30,6 +30,11 @@ elseif(WIN32)
     string(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '$INSTDIR\\\\bin\\\\cwipc_pymodules_install.bat'")
     set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "")
     string(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "ExecWait 'python3 -m pip uninstall -y cwipc_util cwipc_codec cwipw_realsense2 cwipc_kinect'\\n")
+	set(CPACK_NSIS_MENU_LINKS
+		"share/docs/cwipc/readme.md" "Readme file"
+		"bin/cwipc_pymodules_install_win.bat "Install cwipc utilities (run as Admin)"
+		"share/cwipc/scripts/install-3rdparty-full-win64.ps1" "Install 3rdparty dependencies (run as Admin)"
+	)
 else()
     message(WARNING Cannot create packages for this system)
 endif()
