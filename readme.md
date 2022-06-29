@@ -19,6 +19,8 @@ Documentation on the API can be created using _Doxygen_ in `cwipc_util/doc`, and
 
 The simplest way to install cwipc is through a prebuilt installer. This will install everything in the standard location, and it allows running the command line tools as well as developing C, C++ or Python programs that use the cwipc library.
 
+After installation, run `cwipc_view --synthetic` from a shell (terminal window, command prompt). It should show you a window with a rotating synthetic point cloud if everything is installed correctly.
+
 See below if you want to install to a different location, or if you want to modify cwipc itself and build it from source.
 
 ### Windows
@@ -30,6 +32,8 @@ Run it, and it will install the cwipc command line tools and the C++ and Python 
 It will _also install all required third party packages_, unless a usable version is detected.
 
 Python requires a specific mention: if you have already installed a version of Python **and** that Python is on your **PATH** environment variable the cwipc Python interface modules will be installed into that Python installation.
+
+Sometimes you must manually re-run the _Install cwipc utilities_ from the Windows start menu after installing. We are unsure why...
 
 ## Linux
 
