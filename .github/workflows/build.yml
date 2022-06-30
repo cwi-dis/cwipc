@@ -93,6 +93,12 @@ jobs:
                 build-type: Release
                 run-test: true
                 install-build: true
+        - name: Create installer
+          shell: bash
+          run: |
+                cpack --config build/CPackSourceConfig.cmake
+                cpack --config build/CPackConfig.cmake
+                ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
           uses: actions/upload-artifact@v3
@@ -118,6 +124,11 @@ jobs:
           with:
                 name: cwipc_win1064_${{ github.ref_name }}.zip
                 path: cwipc_win1064_${{ github.ref_name }}.zip
+        - name: Upload nsis installer
+          uses: actions/upload-artifact@v3
+          with:
+                name: nsis-installer
+                path: build/package/*.exe
         - name: Check what was created and installed
           if: always()
           shell: bash
@@ -150,6 +161,12 @@ jobs:
                 run-test: true
                 install-build: true
                 install-options: --prefix ${{ github.workspace }}/installed
+        - name: Create installer
+          shell: bash
+          run: |
+                cpack --config build/CPackSourceConfig.cmake
+                cpack --config build/CPackConfig.cmake
+                ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
           uses: actions/upload-artifact@v3
@@ -198,6 +215,12 @@ jobs:
                 run-test: true
                 install-build: true
                 install-options: --prefix ${{ github.workspace }}/installed
+        - name: Create installer
+          shell: bash
+          run: |
+                cpack --config build/CPackSourceConfig.cmake
+                cpack --config build/CPackConfig.cmake
+                ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
           uses: actions/upload-artifact@v3
@@ -224,6 +247,11 @@ jobs:
           with:
                 name: cwipc_ubuntu2004_${{ github.ref_name }}.tgz
                 path: cwipc_ubuntu2004_${{ github.ref_name }}.tgz
+        - name: Upload debian package
+          uses: actions/upload-artifact@v3
+          with:
+                name: debian-installer
+                path: build/package/*.deb
     
     create-release:
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')

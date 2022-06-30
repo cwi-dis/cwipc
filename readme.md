@@ -1,7 +1,7 @@
 # cwipc - CWI Point Clouds software suite
 ![build](https://github.com/cwi-dis/cwipc/actions/workflows/build.yml/badge.svg)
 
-In order to facilitate working with point clouds as opaque objects - similar to how most software warks with images, or audio samples -  our group has developed an open source suite of libraries and tools that we call `cwipc` (abbreviation of CWI Point Clouds). The implementation builds on the PCL pointcloud library and various vendor-specific capturing libraries, but this is transparent to software using the `cwipc` suite (but it can access these representations if it needs to).
+In order to facilitate working with point clouds as opaque objects - similar to how most software works with images, or audio samples -  our group has developed an open source suite of libraries and tools that we call `cwipc` (abbreviation of CWI Point Clouds). The implementation builds on the PCL pointcloud library and various vendor-specific capturing libraries, but this is transparent to software using the `cwipc` suite (but it can access these representations if it needs to).
 
 The idea behind a `cwipc` object is that it represents a point cloud (a collection of points with x/y/z coordinates, r/g/b values and possibly information on which camera angle the point was captured from, plus additional global information such as timestamp captured and voxel size, and optionally original RGB and D images or skeleton data). A cwipc object can be passed around without knowing what is inside it, and this can be done across implementation language boundaries while minimizing unnecessary memory copies. The library makes it possible to create end-to-end pipelines in order to capture, send, receive, and render dynamic point clouds. It is suitable for real-time applications and because point clouds can become very large special care is given to memory management and minimizing the amount of copying needed.
 
@@ -15,11 +15,88 @@ For now, refer to <https://www.dis.cwi.nl/cwipc-sxr-dataset/>.
 
 Documentation on the API can be created using _Doxygen_ in `cwipc_util/doc`, and will be made available here at some point in the future.
 
+## Installation
+
+The simplest way to install cwipc is through a prebuilt installer. This will install everything in the standard location, and it allows running the command line tools as well as developing C, C++ or Python programs that use the cwipc library.
+
+After installation, run `cwipc_view --synthetic` from a shell (terminal window, command prompt). It should show you a window with a rotating synthetic point cloud if everything is installed correctly.
+
+See below if you want to install to a different location, or if you want to modify cwipc itself and build it from source.
+
+### Windows
+
+Download the windows installer `.exe` for the most recent cwipc release from <https://github.com/cwi-dis/cwipc/releases/latest>.
+
+Run it, and it will install the cwipc command line tools and the C++ and Python APIs.
+
+It will _also install all required third party packages_, unless a usable version is detected.
+
+Python requires a specific mention: if you have already installed a version of Python **and** that Python is on your **PATH** environment variable the cwipc Python interface modules will be installed into that Python installation.
+
+Sometimes you must manually re-run the _Install cwipc utilities_ from the Windows start menu after installing. We are unsure why...
+
+## Linux
+
+The installer is currently only available for Ubuntu 20.04.
+
+Download the debian package for the most recent cwipc release from <https://github.com/cwi-dis/cwipc/releases/latest>.
+
+Install from the command line with `sudo apt install ./yourpackagename.deb`.
+
+The Kinect and Realsense SDKs will not be automatically installed, because they come from different repositories and not from the standard Ubuntu/Debian repositories. 
+
+Inspect `/usr/share/cwipc/scripts/install-3rdparty-ubuntu2004.sh` to see how to install them.
+
+## Mac
+
+The installer will be available soon, via [Homebrew](https://brew.sh). Install with
+
+```
+brew install cwi-dis/cwipc
+```
+
+## Installing a binary zip/tar distribution
+
+If the installers do not fit your need you can install prebuilt binaries to a place of your liking.
+
+Prebuilt binary releases are available at <https://github.com/cwi-dis/cwipc/releases> as zip or gzipped tar files. Download the correct one for you platform. On MacOS and Linux you can extract straight into `/usr/local` or any other location of your liking. On Windows you create an empty folder such as `C:/cwipc` and extract there.
+
+- On Windows, add `c:/cwipc/bin` to your `%PATH%` environment variable (and restart your command prompt).
+
+- On MacOS you need to clear the quarantine bits (which are Apple's way to ensure you cannot accidentally run malware downloaded from the internet):
+
+  ```
+  cd /usr/local # or wherever you extracted to
+  xattr -d com.apple.quarantine bin/cwipc_*
+  xattr -d com.apple.quarantine lib/libcwipc_*
+
+  ```
+
+- On Linux and Mac, if you did not install to `/usr/local`, add the `bin` directory to your `PATH` environment variable.
+- Optionally, if you want to use a python virtual environment so the cwipc modules and dependencies are not installed into your normal Python environment, create a Python venv:
+
+  ```
+  python3 -m venv venv
+  . venv/bin/activate # Note the dot space. 
+  ```
+  
+- Run `cwipc_pymodules_install.sh` to install the Python components. (On windows you can use this script when you are using bash, or you can run `cwipc_pymodules_install.bat` if you are using CMD).
+
+- Check that everything is installed correctly by running
+
+  ```
+  cwipc_view --version
+  cwipc_view --synthetic
+  ```
+
+  This should bring up a viewer window with a synthetic point cloud. Use left-mouse-drag, right-mouse-drag and scroll wheel to change your view position.
+
+
 ## Installing third party requirements
 
-Building requires `cmake`, `python3`, `libpcl`, `glfw3`, `jpeg-turbo` and optionally (for Intel Realsense support) `librealsense` and/or (for Azure Kinect support)  `Azure Kinect SDK`, `Azure Kinect Body Tracking SDK` and `OpenCV`.
+Building from source requires `cmake`, `python3`, `libpcl`, `glfw3`, `jpeg-turbo` and optionally (for Intel Realsense support) `librealsense` and/or (for Azure Kinect support)  `Azure Kinect SDK`, `Azure Kinect Body Tracking SDK` and `OpenCV`.
 
-Running prebuilt binaries needs most of those requirements are well.
+Running binaries needs most of those requirements are well (but note that the installers should take care of all of these).
 
 ### Linux
 
@@ -61,40 +138,6 @@ Finally, you need to ensure that all DLLs from the packages installed above or o
 If you don't follow these steps you will later get obscure errors. Windows will tell you that (for example) `"The cwipc_realsense2 DLL could not be found"`, and you see it right in front of you. The _actual_ problem is going to be with one of the dependency DLLs (but it would be far to helpful if Windows told you this:-), and the problem invariably is that something has not been added to `Path`.
 
 For the rest of the build instructions it is probably best to use `bash`, not `CMD` or powershell.
-
-## Installing a binary distribution
-
-Prebuilt binary releases are available at <https://github.com/cwi-dis/cwipc/releases> as zip or gzipped tar files. Download the correct one for you platform. On MacOS and Linux you can extract straight into `/usr/local` or any other location of your liking. On Windows you create an empty folder such as `C:/cwipc` and extract there.
-
-- On Windows, add `c:/cwipc/bin` to your `%PATH%` environment variable (and restart your command prompt).
-
-- On MacOS you need to clear the quarantine bits (which are Apple's way to ensure you cannot accidentally run malware downloaded from the internet):
-
-  ```
-  cd /usr/local # or wherever you extracted to
-  xattr -d com.apple.quarantine bin/cwipc_*
-  xattr -d com.apple.quarantine lib/libcwipc_*
-
-  ```
-
-- On Linux and Mac, if you did not install to `/usr/local`, add the `bin` directory to your `PATH` environment variable.
-- Optionally, if you want to use a python virtual environment so the cwipc modules and dependencies are not installed into your normal Python environment, create a Python venv:
-
-  ```
-  python3 -m venv venv
-  . venv/bin/activate # Note the dot space. 
-  ```
-  
-- Run `cwipc_pymodules_install.sh` to install the Python components. (On windows you can use this script when you are using bash, or you can run `cwipc_pymodules_install.bat` if you are using CMD).
-
-- Check that everything is installed correctly by running
-
-  ```
-  cwipc_view --version
-  cwipc_view --synthetic
-  ```
-
-  This should bring up a viewer window with a synthetic point cloud. Use left-mouse-drag, right-mouse-drag and scroll wheel to change your view position.
 
 
 ## Building from source

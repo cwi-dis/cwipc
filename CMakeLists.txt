@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0)
 cmake_policy(SET CMP0074 NEW)
 cmake_policy(SET CMP0072 NEW)
-project(cwipc)
-
-include(CTest)
-include(GNUInstallDirs)
 
 # Add extension directories (for things like Find<package>)
 set(CMAKE_MODULE_PATH
@@ -15,6 +11,22 @@ set(CMAKE_MODULE_PATH
 	${CMAKE_CURRENT_LIST_DIR}/cwipc_kinect/CMakeFiles
 	${CMAKE_MODULE_PATH}
 	)
+
+# Get version from git
+include(GetGitVersion)
+get_git_version(VERSION_VAR CWIPC_VERSION)
+if(CWIPC_VERSION)
+	message(STATUS "CWIPC_VERSION=${CWIPC_VERSION}")
+	add_compile_definitions(CWIPC_VERSION=${CWIPC_VERSION})
+	set(ENV{CWIPC_VERSION} ${CWIPC_VERSION})
+	# Remove patch from version before we pass it to the project VERSION argument (it doesn't understand)
+	string(REGEX REPLACE "\\+.*" "" CWIPC_BASE_VERSION ${CWIPC_VERSION})
+endif()
+
+project(cwipc VERSION ${CWIPC_BASE_VERSION})
+
+include(CTest)
+include(GNUInstallDirs)
 
 # Ensure all executable, dll/so and link-library outputs end up in the same directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -40,14 +52,6 @@ elseif(UNIX)
 	set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 endif()
 
-# Get version from git
-include(GetGitVersion)
-get_git_version(VERSION_VAR CWIPC_VERSION)
-if(CWIPC_VERSION)
-	message(STATUS "CWIPC_VERSION=${CWIPC_VERSION}")
-	add_compile_definitions(CWIPC_VERSION=${CWIPC_VERSION})
-	set(ENV{CWIPC_VERSION} ${CWIPC_VERSION})
-endif()
 #
 # Packages required by all submodules
 #
@@ -73,3 +77,6 @@ endif()
 
 # Install scripts to help installing prerequisites
 install(DIRECTORY scripts DESTINATION ${CMAKE_SCRIPTS_INSTALL_DIRECTORY})
+
+# Creating installers
+include(CwipcInstallers)

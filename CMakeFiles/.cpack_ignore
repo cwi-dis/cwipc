@@ -1,0 +1,12 @@
+
+\\.git/
+\\.git*
+\\.vscode/
+\\.mypy_cache/
+\\.archive/
+\\.DS_Store
+build*/
+doc/
+
+.editorconfig
+.gdbinit
