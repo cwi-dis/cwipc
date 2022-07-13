@@ -276,7 +276,7 @@ jobs:
           uses: actions/download-artifact@v3
           with:
                 name: cached-git-version
-                path: .cachedgitversion.txt
+                path: .
         - name: Create Assets and full sourcecode assets
           shell: bash
           run: |
