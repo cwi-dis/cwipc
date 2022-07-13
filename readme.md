@@ -35,7 +35,7 @@ Python requires a specific mention: if you have already installed a version of P
 
 Sometimes you must manually re-run the _Install cwipc utilities_ from the Windows start menu after installing. We are unsure why...
 
-## Linux
+### Linux
 
 The installer is currently only available for Ubuntu 20.04.
 
@@ -47,15 +47,21 @@ The Kinect and Realsense SDKs will not be automatically installed, because they 
 
 Inspect `/usr/share/cwipc/scripts/install-3rdparty-ubuntu2004.sh` to see how to install them.
 
-## Mac
+### Mac
 
-The installer will be available soon, via [Homebrew](https://brew.sh). Install with
+The installer is available via [Homebrew](https://brew.sh). Install with
 
 ```
 brew install cwi-dis/cwipc
 ```
 
-## Installing a binary zip/tar distribution
+After that you should manually install the Python-based utility scripts with
+
+```
+cwipc_pymodules_install.sh
+```
+
+## Advanced usage: Installing a binary zip/tar distribution
 
 If the installers do not fit your need you can install prebuilt binaries to a place of your liking.
 
@@ -92,7 +98,7 @@ Prebuilt binary releases are available at <https://github.com/cwi-dis/cwipc/rele
   This should bring up a viewer window with a synthetic point cloud. Use left-mouse-drag, right-mouse-drag and scroll wheel to change your view position.
 
 
-## Installing third party requirements
+## Advanced usage: Installing third party requirements
 
 Building from source requires `cmake`, `python3`, `libpcl`, `glfw3`, `jpeg-turbo` and optionally (for Intel Realsense support) `librealsense` and/or (for Azure Kinect support)  `Azure Kinect SDK`, `Azure Kinect Body Tracking SDK` and `OpenCV`.
 
@@ -140,7 +146,7 @@ If you don't follow these steps you will later get obscure errors. Windows will 
 For the rest of the build instructions it is probably best to use `bash`, not `CMD` or powershell.
 
 
-## Building from source
+## Advanced usage: Building from source
 
 You can either download a source archive (zip or gzipped tar) or clone the git repository.
 
@@ -250,3 +256,5 @@ After that tag all submodules and the main module with *v_X_._Y_._Z_*.
 Push the tag to github, this will build the release.
 
 After the release is built copy the relevant new section of `CHANGELOG.md` to the release notes.
+
+After that, update the `brew` formula at <https://github.com/cwi-dis/homebrew-cwipc>. Use `brew edit`, `brew install`, then push the changes.
