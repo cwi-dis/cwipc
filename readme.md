@@ -52,7 +52,8 @@ Inspect `/usr/share/cwipc/scripts/install-3rdparty-ubuntu2004.sh` to see how to 
 The installer is available via [Homebrew](https://brew.sh). Install with
 
 ```
-brew install cwi-dis/cwipc
+brew tap cwi-dis/cwipc
+brew install cwipc
 ```
 
 After that you should manually install the Python-based utility scripts with
