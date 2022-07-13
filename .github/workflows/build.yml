@@ -252,6 +252,11 @@ jobs:
           with:
                 name: debian-installer
                 path: build/package/*.deb
+        - name: Upload cached git version
+          uses: actions/upload-artifact@v3
+          with:
+                name: cached-git-version
+                path: .cachedgitversion.txt
     
     create-release:
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
@@ -267,6 +272,11 @@ jobs:
           with:
                 submodules: 'recursive'
                 lfs: 'true'
+        - name: Download cached git version
+          uses: actions/download-artifact@v3
+          with:
+                name: cached-git-version
+                path: .cachedgitversion.txt
         - name: Create Assets and full sourcecode assets
           shell: bash
           run: |
