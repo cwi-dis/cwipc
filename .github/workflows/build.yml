@@ -351,6 +351,26 @@ jobs:
                 release_name: ${{ github.ref }}
                 tag_name: ${{ github.ref }}
                 body_path: ../Assets/changes.md
+
+        - name: Upload Windows installer
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: ${{ env.windows_exe_path }}
+            asset_name: cwipc-win1064-${{ github.ref_name }}.exe
+            asset_content_type: application/gzip
+        - name: Upload Debian package
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: ${{ env.linux_deb_path }}
+            asset_name: cwipc-ubuntu2004-${{ github.ref_name }}.deb
+            asset_content_type: application/gzip
+
         - name: Upload complete source (gzipped tar)
           uses: actions/upload-release-asset@v1
           env:
@@ -395,22 +415,4 @@ jobs:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
             asset_path: ../Assets/cwipc_ubuntu2004_${{ github.ref_name }}.tgz
             asset_name: cwipc-ubuntu2004-${{ github.ref_name }}-built.tgz
-            asset_content_type: application/gzip
-        - name: Upload Debian package
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ${{ env.linux_deb_path }}
-            asset_name: cwipc-ubuntu2004-${{ github.ref_name }}.deb
-            asset_content_type: application/gzip
-        - name: Upload Windows installer
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ${{ env.windows_exe_path }}
-            asset_name: cwipc-win1064-${{ github.ref_name }}.exe
             asset_content_type: application/gzip
