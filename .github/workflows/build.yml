@@ -309,9 +309,15 @@ jobs:
           with:
                 name: windows-installer.exe
                 path: ../Assets/
+        - name: Find Artefact names
+          run: |
+                EXE_PATH=$(ls ../Assets/*.exe | head -n 1)
+                DEB_PATH=$(ls ../Assets/*.deb | head -n 1)
+                echo EXE_PATH=$EXE_PATH >> $env:GITHUB_ENV
+                echo DEB_PATH=$DEB_PATH >> $env:GITHUB_ENV
         - name: Check what is there
           shell: bash
-          run: ls -l
+          run: ls -l . ../Assets
         - name: Create Release
           uses: actions/create-release@v1
           id: create_release
@@ -374,7 +380,7 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/*.deb
+            asset_path: ${{ env.DEB_PATH }}
             asset_name: cwipc-ubuntu2004-${{ github.ref_name }}.deb
             asset_content_type: application/gzip
         - name: Upload Windows installer
@@ -383,6 +389,6 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/*.exe
+            asset_path: ${{ env.EXE_PATH }}
             asset_name: cwipc-win1064-${{ github.ref_name }}.exe
             asset_content_type: application/gzip
