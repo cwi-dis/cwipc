@@ -217,8 +217,12 @@ jobs:
         - name: Get all tags
           run: |
                 git show-ref --tags
+                git log -4
+                git describe
                 git fetch --tags --force origin
                 git show-ref --tags
+                git log -4
+                git describe
         - name: Install dependencies
           shell: bash
           run: ./scripts/install-3rdparty-ubuntu2004.sh  
