@@ -218,7 +218,8 @@ jobs:
           run: |
                 git show-ref --tags
                 git log -40
-                git describe
+                git describe --debug
+                git describe --tags --debug
         - name: Install dependencies
           shell: bash
           run: ./scripts/install-3rdparty-ubuntu2004.sh  
@@ -287,6 +288,7 @@ jobs:
           with:
                 submodules: 'recursive'
                 lfs: 'true'
+                fetch-depth: 0
         - name: Get all tags
           run: |
                 git show-ref --tags
