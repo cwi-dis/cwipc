@@ -4,11 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [7.3] - 2022-07-13
+## [7.3.7] - 2022-07-14
 
 ### Added
 
-- Installers for Windows, Ubuntu and Mac (brew) are now available.
+- Installers for Windows (NSIS exe) and Ubuntu (debian package) are available in the release assets.
+- Installer for Mac is available through Homebrew, see the readme file.
 - The encoder can be run in parallel on mutliple threads, by setting `cwipc_encoder_params.n_parallel` to a value greater than `1`.
 
 ### Changed
