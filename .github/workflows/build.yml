@@ -16,8 +16,8 @@ jobs:
         - name: Get all tags
           run: |
                 git show-ref --tags
-                git fetch --tags --force origin
-                git show-ref --tags
+                git log -40
+                git describe
         - name: Pre-install (Windows)
           shell: pwsh
           run: |
@@ -158,8 +158,8 @@ jobs:
         - name: Get all tags
           run: |
                 git show-ref --tags
-                git fetch --tags --force origin
-                git show-ref --tags
+                git log -40
+                git describe
         - name: Install dependencies
           shell: bash
           run: ./scripts/install-3rdparty-osx1015.sh
@@ -217,11 +217,7 @@ jobs:
         - name: Get all tags
           run: |
                 git show-ref --tags
-                git log -4
-                git describe
-                git fetch --tags --force origin
-                git show-ref --tags
-                git log -4
+                git log -40
                 git describe
         - name: Install dependencies
           shell: bash
@@ -294,8 +290,8 @@ jobs:
         - name: Get all tags
           run: |
                 git show-ref --tags
-                git fetch --tags --force origin
-                git show-ref --tags
+                git log -40
+                git describe
         - name: Download cached git version
           uses: actions/download-artifact@v3
           with:
@@ -335,10 +331,10 @@ jobs:
                 path: ../Assets/
         - name: Find Artefact names
           run: |
-                EXE_PATH=$(ls ../Assets/*.exe | head -n 1)
-                DEB_PATH=$(ls ../Assets/*.deb | head -n 1)
-                echo EXE_PATH=$EXE_PATH >> $env:GITHUB_ENV
-                echo DEB_PATH=$DEB_PATH >> $env:GITHUB_ENV
+                windows_exe_path=$(ls ../Assets/*.exe | head -n 1)
+                linux_deb_path=$(ls ../Assets/*.deb | head -n 1)
+                echo "windows_exe_path=${windows_exe_path}" >> $GITHUB_ENV
+                echo "linux_deb_path=${linux_deb_path}" >> $GITHUB_ENV
         - name: Check what is there
           shell: bash
           run: ls -l . ../Assets
@@ -404,7 +400,7 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ${{ env.DEB_PATH }}
+            asset_path: ${{ env.linux_deb_path }}
             asset_name: cwipc-ubuntu2004-${{ github.ref_name }}.deb
             asset_content_type: application/gzip
         - name: Upload Windows installer
@@ -413,6 +409,6 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ${{ env.EXE_PATH }}
+            asset_path: ${{ env.windows_exe_path }}
             asset_name: cwipc-win1064-${{ github.ref_name }}.exe
             asset_content_type: application/gzip
