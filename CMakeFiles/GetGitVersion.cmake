@@ -5,7 +5,7 @@ macro(get_git_version)
 	cmake_parse_arguments(MYARGS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
 	# cwipc-specific: our release tags start with v
-	execute_process(COMMAND "git" "describe" "--match" "v*" RESULT_VARIABLE status OUTPUT_VARIABLE describe_output OUTPUT_STRIP_TRAILING_WHITESPACE)
+	execute_process(COMMAND "git" "describe" "--tags" "--match" "v*" RESULT_VARIABLE status OUTPUT_VARIABLE describe_output OUTPUT_STRIP_TRAILING_WHITESPACE)
 	if(status AND NOT status EQUAL 0)
 		message(WARNING "GetGitVersion: git describe failed: ${status}")
 		set(describe_version "0.0+unknown")
