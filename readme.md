@@ -259,3 +259,5 @@ Push the tag to github, this will build the release.
 After the release is built copy the relevant new section of `CHANGELOG.md` to the release notes.
 
 After that, update the `brew` formula at <https://github.com/cwi-dis/homebrew-cwipc>. Use `brew edit`, `brew install`, then push the changes.
+
+Finally, when you are happy that everything works, edit the release on the github web interface and clear the `prerelease` flag.
