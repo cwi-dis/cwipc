@@ -15,8 +15,9 @@ jobs:
                 fetch-depth: 0
         - name: Get all tags
           run: |
-                git fetch --tags origin
-                git tag -l
+                git show-ref --tags
+                git fetch --tags --force origin
+                git show-ref --tags
         - name: Pre-install (Windows)
           shell: pwsh
           run: |
@@ -156,8 +157,9 @@ jobs:
                 fetch-depth: 0
         - name: Get all tags
           run: |
-                git fetch --tags origin
-                git tag -l
+                git show-ref --tags
+                git fetch --tags --force origin
+                git show-ref --tags
         - name: Install dependencies
           shell: bash
           run: ./scripts/install-3rdparty-osx1015.sh
@@ -214,8 +216,9 @@ jobs:
                 fetch-depth: 0
         - name: Get all tags
           run: |
-                git fetch --tags origin
-                git tag -l
+                git show-ref --tags
+                git fetch --tags --force origin
+                git show-ref --tags
         - name: Install dependencies
           shell: bash
           run: ./scripts/install-3rdparty-ubuntu2004.sh  
@@ -286,8 +289,9 @@ jobs:
                 lfs: 'true'
         - name: Get all tags
           run: |
-                git fetch --tags origin
-                git tag -l
+                git show-ref --tags
+                git fetch --tags --force origin
+                git show-ref --tags
         - name: Download cached git version
           uses: actions/download-artifact@v3
           with:
