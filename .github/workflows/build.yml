@@ -13,6 +13,10 @@ jobs:
                 submodules: 'recursive'
                 lfs: 'true'
                 fetch-depth: 0
+        - name: Get all tags
+          run: |
+                git fetch --tags origin
+                git tag -l
         - name: Pre-install (Windows)
           shell: pwsh
           run: |
@@ -150,6 +154,10 @@ jobs:
                 submodules: 'recursive'
                 lfs: 'true'
                 fetch-depth: 0
+        - name: Get all tags
+          run: |
+                git fetch --tags origin
+                git tag -l
         - name: Install dependencies
           shell: bash
           run: ./scripts/install-3rdparty-osx1015.sh
@@ -204,6 +212,10 @@ jobs:
                 submodules: 'recursive'
                 lfs: 'true'
                 fetch-depth: 0
+        - name: Get all tags
+          run: |
+                git fetch --tags origin
+                git tag -l
         - name: Install dependencies
           shell: bash
           run: ./scripts/install-3rdparty-ubuntu2004.sh  
@@ -272,6 +284,10 @@ jobs:
           with:
                 submodules: 'recursive'
                 lfs: 'true'
+        - name: Get all tags
+          run: |
+                git fetch --tags origin
+                git tag -l
         - name: Download cached git version
           uses: actions/download-artifact@v3
           with:
