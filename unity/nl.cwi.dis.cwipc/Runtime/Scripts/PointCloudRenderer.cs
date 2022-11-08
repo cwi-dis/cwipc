@@ -96,7 +96,7 @@ namespace cwipc
                 if (now > lastDataReceived + (int)(timeoutBeforeGhosting*1000) && !dataIsMissing)
                 {
 #if CWIPC_WITH_LOGGING
-                    Debug.Log($"{Name()}: No data for {timeoutBeforeGhosting}, set pointsize=0.2");
+                    Debug.Log($"{Name()}: No pointcloud received for {timeoutBeforeGhosting} seconds, ghosting with pointsize=0.2");
 #endif
                     block.SetFloat("_PointSizeFactor", 0.2f);
                     dataIsMissing = true;

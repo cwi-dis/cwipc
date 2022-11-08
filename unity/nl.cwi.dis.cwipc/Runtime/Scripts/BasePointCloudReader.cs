@@ -44,7 +44,10 @@ namespace cwipc
             currentPointcloud = null;
             reader?.free();
             reader = null;
-            currentByteArray.Dispose();
+            if (currentByteArray.IsCreated)
+            {
+                currentByteArray.Dispose();
+            }
         }
 
         public void Start()
