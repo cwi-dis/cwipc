@@ -24,7 +24,7 @@ namespace cwipc
 #endif
                 }
                 else
-                    throw new System.Exception($"{Name()}: cwipc_synthetic could not be created"); // Should not happen, should throw exception
+                    throw new System.Exception($"{Name()}: cwipc_realsense2 could not be created"); // Should not happen, should throw exception
             }
             catch (System.Exception e)
             {

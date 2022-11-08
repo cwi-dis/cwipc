@@ -59,11 +59,13 @@ namespace cwipc
 
         private void Update()
         {
+            if (preparer == null) return;
             preparer.Synchronize();
         }
 
         private void LateUpdate()
         {
+            if (preparer == null) return;
             bool fresh = preparer.LatchFrame();
             float pointSize = 0;
             System.TimeSpan sinceEpoch = System.DateTime.UtcNow - new System.DateTime(1970, 1, 1);

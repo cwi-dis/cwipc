@@ -655,7 +655,18 @@ namespace cwipc
         public static source synthetic(int fps = 0, int npoints = 0)
         {
             IntPtr errorPtr = IntPtr.Zero;
-            IntPtr rdr = _API_cwipc_util.cwipc_synthetic(fps, npoints, ref errorPtr);
+            IntPtr rdr = IntPtr.Zero;
+            try
+            {
+                rdr = _API_cwipc_util.cwipc_synthetic(fps, npoints, ref errorPtr);
+            }
+            catch (System.DllNotFoundException e)
+            {
+                UnityEngine.Debug.LogError($"cwipc.synthetic: cannot load cwipc_util DLL.");
+                UnityEngine.Debug.LogError($"cwipc.synthetic: Exception: {e.ToString()}");
+                UnityEngine.Debug.LogError($"cwipc.synthetic: see https://github.com/cwi-dis/cwipc for installation instructions.");
+                throw new Exception("cwipc.synthetic: cwipc DLLs not installed correctly. See log.");
+            }
             if (rdr == IntPtr.Zero)
             {
                 if (errorPtr == IntPtr.Zero)
@@ -682,7 +693,18 @@ namespace cwipc
         public static source proxy(string ip, int port)
         {
             IntPtr errorPtr = IntPtr.Zero;
-            IntPtr rdr = _API_cwipc_util.cwipc_proxy(ip, port, ref errorPtr);
+            IntPtr rdr = IntPtr.Zero;
+            try
+            {
+                rdr = _API_cwipc_util.cwipc_proxy(ip, port, ref errorPtr);
+            }
+            catch (System.DllNotFoundException e)
+            {
+                UnityEngine.Debug.LogError($"cwipc.proxy: cannot load cwipc_util DLL.");
+                UnityEngine.Debug.LogError($"cwipc.proxy: Exception: {e.ToString()}");
+                UnityEngine.Debug.LogError($"cwipc.proxy: see https://github.com/cwi-dis/cwipc for installation instructions.");
+                throw new Exception("cwipc.proxy: cwipc DLLs not installed correctly. See log.");
+            }
             if (rdr == IntPtr.Zero)
             {
                 if (errorPtr == IntPtr.Zero)
@@ -709,7 +731,18 @@ namespace cwipc
         public static source realsense2(string filename)
         {
             IntPtr errorPtr = IntPtr.Zero;
-            IntPtr rdr = _API_cwipc_realsense2.cwipc_realsense2(filename, ref errorPtr);
+            IntPtr rdr = IntPtr.Zero;
+            try
+            {
+                rdr = _API_cwipc_realsense2.cwipc_realsense2(filename, ref errorPtr);
+            }
+            catch (System.DllNotFoundException e)
+            {
+                UnityEngine.Debug.LogError($"cwipc.realsense2: cannot load cwipc_realsense2 DLL.");
+                UnityEngine.Debug.LogError($"cwipc.realsense2: Exception: {e.ToString()}");
+                UnityEngine.Debug.LogError($"cwipc.realsense2: see https://github.com/cwi-dis/cwipc for installation instructions.");
+                throw new Exception("cwipc.realsense2: cwipc DLLs not installed correctly. See log.");
+            }
             if (rdr == IntPtr.Zero)
             {
                 if (errorPtr == IntPtr.Zero)
@@ -736,7 +769,19 @@ namespace cwipc
         public static source kinect(string filename)
         {
             IntPtr errorPtr = IntPtr.Zero;
-            IntPtr rdr = _API_cwipc_kinect.cwipc_kinect(filename, ref errorPtr);
+            IntPtr rdr = IntPtr.Zero;
+            try
+            {
+                rdr = _API_cwipc_kinect.cwipc_kinect(filename, ref errorPtr);
+            }
+            catch (System.DllNotFoundException e)
+            {
+                UnityEngine.Debug.LogError($"cwipc.kinect: cannot load cwipc_kinect DLL.");
+                UnityEngine.Debug.LogError($"cwipc.kinect: Exception: {e.ToString()}");
+                UnityEngine.Debug.LogError($"cwipc.kinect: see https://github.com/cwi-dis/cwipc for installation instructions.");
+                throw new Exception("cwipc.kinect: cwipc DLLs not installed correctly. See log.");
+            }
+          
             if (rdr == IntPtr.Zero)
             {
                 if (errorPtr == IntPtr.Zero)
@@ -759,7 +804,18 @@ namespace cwipc
         public static decoder new_decoder()
         {
             IntPtr errorPtr = IntPtr.Zero;
-            IntPtr dec = _API_cwipc_codec.cwipc_new_decoder(ref errorPtr);
+            IntPtr dec = IntPtr.Zero;
+            try
+            {
+                dec = _API_cwipc_codec.cwipc_new_decoder(ref errorPtr);
+            }
+            catch (System.DllNotFoundException e)
+            {
+                UnityEngine.Debug.LogError($"cwipc.new_decoder: cannot load cwipc_codec DLL.");
+                UnityEngine.Debug.LogError($"cwipc.new_decoder: Exception: {e.ToString()}");
+                UnityEngine.Debug.LogError($"cwipc.new_decoder: see https://github.com/cwi-dis/cwipc for installation instructions.");
+                throw new Exception("cwipc.new_decoder: cwipc DLLs not installed correctly. See log.");
+            }
             if (dec == IntPtr.Zero)
             {
                 if (errorPtr == IntPtr.Zero)
@@ -784,7 +840,18 @@ namespace cwipc
         public static encoder new_encoder(encoder_params par)
         {
             IntPtr errorPtr = IntPtr.Zero;
-            IntPtr enc = _API_cwipc_codec.cwipc_new_encoder(_API_cwipc_codec.CWIPC_ENCODER_PARAM_VERSION, ref par, ref errorPtr);
+            IntPtr enc = IntPtr.Zero;
+            try
+            {
+                enc = _API_cwipc_codec.cwipc_new_encoder(_API_cwipc_codec.CWIPC_ENCODER_PARAM_VERSION, ref par, ref errorPtr);
+            }
+            catch (System.DllNotFoundException e)
+            {
+                UnityEngine.Debug.LogError($"cwipc.new_encoder: cannot load cwipc_codec DLL.");
+                UnityEngine.Debug.LogError($"cwipc.new_encoder: Exception: {e.ToString()}");
+                UnityEngine.Debug.LogError($"cwipc.new_encoder: see https://github.com/cwi-dis/cwipc for installation instructions.");
+                throw new Exception("cwipc.new_encoder: cwipc DLLs not installed correctly. See log.");
+            }
             if (enc == IntPtr.Zero)
             {
                 if (errorPtr == IntPtr.Zero)
@@ -809,7 +876,18 @@ namespace cwipc
         public static encodergroup new_encodergroup()
         {
             IntPtr errorPtr = IntPtr.Zero;
-            IntPtr enc = _API_cwipc_codec.cwipc_new_encodergroup(ref errorPtr);
+            IntPtr enc = IntPtr.Zero;
+            try
+            {
+                enc = _API_cwipc_codec.cwipc_new_encodergroup(ref errorPtr);
+            }
+            catch (System.DllNotFoundException e)
+            {
+                UnityEngine.Debug.LogError($"cwipc.new_encodergroup: cannot load cwipc_codec DLL.");
+                UnityEngine.Debug.LogError($"cwipc.new_encodergroup: Exception: {e.ToString()}");
+                UnityEngine.Debug.LogError($"cwipc.new_encodergroup: see https://github.com/cwi-dis/cwipc for installation instructions.");
+                throw new Exception("cwipc.new_encodergroup: cwipc DLLs not installed correctly. See log.");
+            }
             if (enc == IntPtr.Zero)
             {
                 if (errorPtr == IntPtr.Zero)
@@ -937,7 +1015,18 @@ namespace cwipc
         {
             IntPtr errorPtr = IntPtr.Zero;
             // Need to pass origin and bbox as array pointers.
-            IntPtr rvPtr = _API_cwipc_util.cwipc_from_certh(certhPC, move, bbox, timestamp, ref errorPtr);
+            IntPtr rvPtr = IntPtr.Zero;
+            try
+            {
+                rvPtr = _API_cwipc_util.cwipc_from_certh(certhPC, move, bbox, timestamp, ref errorPtr);
+            }
+            catch (System.DllNotFoundException e)
+            {
+                UnityEngine.Debug.LogError($"cwipc.from_certh: cannot load cwipc_util DLL.");
+                UnityEngine.Debug.LogError($"cwipc.from_certh: Exception: {e.ToString()}");
+                UnityEngine.Debug.LogError($"cwipc.from_certh: see https://github.com/cwi-dis/cwipc for installation instructions.");
+                throw new Exception("cwipc.from_certh: cwipc DLLs not installed correctly. See log.");
+            }
             if (rvPtr == IntPtr.Zero)
             {
                 if (errorPtr == IntPtr.Zero)
@@ -963,7 +1052,18 @@ namespace cwipc
         public static pointcloud read(string filename, Timestamp timestamp)
         {
             System.IntPtr errorPtr = System.IntPtr.Zero;
-            System.IntPtr rvPtr = _API_cwipc_util.cwipc_read(filename, timestamp, ref errorPtr);
+            System.IntPtr rvPtr = IntPtr.Zero;
+            try
+            {
+                rvPtr = _API_cwipc_util.cwipc_read(filename, timestamp, ref errorPtr);
+            }
+            catch (System.DllNotFoundException e)
+            {
+                UnityEngine.Debug.LogError($"cwipc.read: cannot load cwipc_util DLL.");
+                UnityEngine.Debug.LogError($"cwipc.read: Exception: {e.ToString()}");
+                UnityEngine.Debug.LogError($"cwipc.read: see https://github.com/cwi-dis/cwipc for installation instructions.");
+                throw new Exception("cwipc.read: cwipc DLLs not installed correctly. See log.");
+            }
             if (rvPtr == System.IntPtr.Zero)
             {
                 if (errorPtr == System.IntPtr.Zero)
@@ -985,7 +1085,18 @@ namespace cwipc
         public static pointcloud readdump(string filename)
         {
             System.IntPtr errorPtr = System.IntPtr.Zero;
-            System.IntPtr rvPtr = _API_cwipc_util.cwipc_read_debugdump(filename, ref errorPtr);
+            System.IntPtr rvPtr = IntPtr.Zero;
+            try
+            {
+                rvPtr = _API_cwipc_util.cwipc_read_debugdump(filename, ref errorPtr);
+            }
+            catch (System.DllNotFoundException e)
+            {
+                UnityEngine.Debug.LogError($"cwipc.readdump: cannot load cwipc_util DLL.");
+                UnityEngine.Debug.LogError($"cwipc.readdump: Exception: {e.ToString()}");
+                UnityEngine.Debug.LogError($"cwipc.readdump: see https://github.com/cwi-dis/cwipc for installation instructions.");
+                throw new Exception("cwipc.readdump: cwipc DLLs not installed correctly. See log.");
+            }
             if (rvPtr == System.IntPtr.Zero)
             {
                 if (errorPtr == System.IntPtr.Zero)
@@ -1009,7 +1120,18 @@ namespace cwipc
         public static pointcloud from_packet(IntPtr packet, IntPtr size)
         {
             System.IntPtr errorPtr = System.IntPtr.Zero;
-            System.IntPtr rvPtr = _API_cwipc_util.cwipc_from_packet(packet, size, ref errorPtr);
+            System.IntPtr rvPtr = IntPtr.Zero;
+            try
+            {
+                rvPtr = _API_cwipc_util.cwipc_from_packet(packet, size, ref errorPtr);
+            }
+            catch (System.DllNotFoundException e)
+            {
+                UnityEngine.Debug.LogError($"cwipc.from_packet: cannot load cwipc_util DLL.");
+                UnityEngine.Debug.LogError($"cwipc.from_packet: Exception: {e.ToString()}");
+                UnityEngine.Debug.LogError($"cwipc.from_packet: see https://github.com/cwi-dis/cwipc for installation instructions.");
+                throw new Exception("cwipc.from_packet: cwipc DLLs not installed correctly. See log.");
+            }
             if (rvPtr == System.IntPtr.Zero)
             {
                 if (errorPtr == System.IntPtr.Zero)
