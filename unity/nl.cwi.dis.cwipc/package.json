@@ -1,0 +1,7 @@
+{
+	"name" : "nl.cwi.dis.cwipc",
+	"version" : "0.0.1",
+	"displayName" : "CWI Point Cloud Support",
+	"description" : "The cwipc packages allows capturing point clouds, loading them from disk, displaying them, and serializing and compressing them for transmission",
+	"unity" : "2019.3"
+}
