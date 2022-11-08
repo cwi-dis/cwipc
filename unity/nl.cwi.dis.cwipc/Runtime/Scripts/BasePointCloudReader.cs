@@ -63,11 +63,14 @@ namespace cwipc
         {
             reader?.free();
             reader = null;
+#if CWIPC_WITH_LOGGING
             Debug.Log($"{Name()}: Stopped.");
+#endif
         }
 
         protected void Update()
         {
+            if (reader == null) return;
             //
             // Limit framerate, if required
             //
@@ -149,8 +152,7 @@ namespace cwipc
                         int ret = pc.copy_uncompressed(currentBuffer, currentSize);
                         if (ret * 16 != currentSize)
                         {
-                            Debug.Log($"PointCloudPreparer decompress size problem: currentSize={currentSize}, copySize={ret * 16}, #points={ret}");
-                            Debug.LogError("Programmer error while rendering a participant.");
+                            Debug.LogError($"{Name()}: Pointcloud size error");
                         }
                     }
                     pc.free();

@@ -38,7 +38,7 @@ namespace cwipc
 
         public string Name()
         {
-            return name;
+            return $"{GetType().Name}#{name}";
         }
 
         // Close the queue for further pushes, signals to consumers that we are about to stop
@@ -46,10 +46,12 @@ namespace cwipc
         {
             if (isClosed.Token.IsCancellationRequested)
             {
-                UnityEngine.Debug.LogWarning($"QueueThreadSafe: Close() on closed queue {name}");
+                UnityEngine.Debug.LogWarning($"{Name()}: Close() on closed queue {name}");
                 return;
             }
-            UnityEngine.Debug.Log($"[FPA] Closing {name} queue.");
+#if CWIPC_WITH_LOGGING
+            UnityEngine.Debug.Log($"{Name()}: closing");
+#endif
             isClosed.Cancel();
             while (true)
             {
@@ -237,7 +239,9 @@ namespace cwipc
                     latestTimestamp = item.info.timestamp;
                     if (latestTimestamp == 0)
                     {
-                        UnityEngine.Debug.Log("Warning: Enqueue() got item with timestamp=0");
+#if CWIPC_WITH_LOGGING
+                        UnityEngine.Debug.Log($"{Name()}: Enqueue() got item with timestamp=0");
+#endif
                     }
                     queue.Enqueue(item);
                 }
@@ -246,7 +250,7 @@ namespace cwipc
             }
             catch (System.OperationCanceledException)
             {
-                UnityEngine.Debug.LogWarning($"QueueThreadSafe: Enqueue on closed queue {name}");
+                UnityEngine.Debug.LogWarning($"{Name()}: Enqueue on closed queue {name}");
                 item.free();
             }
             return false;
@@ -273,7 +277,6 @@ namespace cwipc
                         if (oldItem == null)
                         {
                             item.free();
-                            UnityEngine.Debug.Log($"{Name()}: xxxjack EnqueueWithDrop TryDequeue returned null, forestalled livelock");
                             return false;
                         }
                         empty.Wait(isClosed.Token);
@@ -281,7 +284,9 @@ namespace cwipc
                     latestTimestamp = item.info.timestamp;
                     if (latestTimestamp == 0)
                     {
-                        UnityEngine.Debug.Log("Warning: TryEnqueue() got item with timestamp=0");
+#if CWIPC_WITH_LOGGING
+                        UnityEngine.Debug.Log($"{Name()}: TryEnqueue() got item with timestamp=0");
+#endif
                     }
                     queue.Enqueue(item);
                     full.Release();

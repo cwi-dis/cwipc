@@ -40,7 +40,9 @@ namespace cwipc
         public void Stop()
         {
             if (currentByteArray.Length != 0) currentByteArray.Dispose();
+#if CWIPC_WITH_LOGGING
             Debug.Log("PointCloudPreparer Stopped");
+#endif
         }
 
         public void Synchronize()
@@ -92,7 +94,7 @@ namespace cwipc
                         if (ret * 16 != currentSize)
                         {
                             Debug.Log($"PointCloudPreparer decompress size problem: currentSize={currentSize}, copySize={ret * 16}, #points={ret}");
-                            Debug.LogError("Programmer error while rendering a participant.");
+                            Debug.LogError($"{Name()}: Pointcloud size error");
                         }
                     }
                     pc.free();

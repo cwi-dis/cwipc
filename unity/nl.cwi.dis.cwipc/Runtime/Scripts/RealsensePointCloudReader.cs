@@ -19,14 +19,18 @@ namespace cwipc
                 reader = cwipc.realsense2(configFileName);
                 if (reader != null)
                 {
-                    Debug.Log("{Name()}: Started.");
+#if CWIPC_WITH_LOGGING
+                    Debug.Log($"{Name()}: Started.");
+#endif
                 }
                 else
                     throw new System.Exception($"{Name()}: cwipc_synthetic could not be created"); // Should not happen, should throw exception
             }
             catch (System.Exception e)
             {
-                Debug.Log($"{Name()}: Exception: {e.Message}");
+#if CWIPC_WITH_LOGGING
+                Debug.Log($"{Name()}: exception {e.ToString()}");
+#endif
                 throw;
             }
         }

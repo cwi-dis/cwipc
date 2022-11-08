@@ -28,7 +28,9 @@ namespace cwipc
                 reader = cwipc.synthetic((int)frameRate, nPoints);
                 if (reader != null)
                 {
-                    Debug.Log("{Name()}: Started.");
+#if CWIPC_WITH_LOGGING
+                    Debug.Log($"{Name()}: Started.");
+#endif
                 }
                 else
                     throw new System.Exception($"{Name()}: cwipc_synthetic could not be created"); // Should not happen, should throw exception

@@ -50,7 +50,7 @@ namespace cwipc
         {
             if (!isSupported())
             {
-                Debug.LogError($"{Name()}: uses shader that is not supported on this graphics card");
+                Debug.LogError($"{Name()}: uses shader that is not supported on this graphics card.");
             }
             material = new Material(baseMaterial);
             block = new MaterialPropertyBlock();
@@ -74,7 +74,9 @@ namespace cwipc
                 lastDataReceived = now;
                 if (dataIsMissing)
                 {
+#if CWIPC_WITH_LOGGING
                     Debug.Log($"{Name()}: Data received again, set pointsize=1");
+#endif
                     // Was missing previously. Reset pointsize.
                     block.SetFloat("_PointSizeFactor", 1.0f);
                 }
@@ -93,7 +95,9 @@ namespace cwipc
             {
                 if (now > lastDataReceived + (int)(timeoutBeforeGhosting*1000) && !dataIsMissing)
                 {
+#if CWIPC_WITH_LOGGING
                     Debug.Log($"{Name()}: No data for {timeoutBeforeGhosting}, set pointsize=0.2");
+#endif
                     block.SetFloat("_PointSizeFactor", 0.2f);
                     dataIsMissing = true;
                 }
