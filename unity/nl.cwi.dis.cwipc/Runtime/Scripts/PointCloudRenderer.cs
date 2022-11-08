@@ -13,20 +13,27 @@ namespace cwipc
         // Doing this on the GameObject.transform has the drawback that coordinate systems
         // become mirrored, for example when cropping a pointcloud. Therefore, we mirror here,
         // by adjusting the matrix.
-        const bool pcMirrorX = true;
-        const int timeoutBeforeGhosting = 5; // seconds
-        bool dataIsMissing = false;
-        Timestamp lastDataReceived;
         ComputeBuffer pointBuffer = null;
         int pointCount = 0;
+        [Header("Settings")]
         [Tooltip("Source of pointclouds")]
         public IPointCloudPreparer preparer;
         [Tooltip("Material (to be cloned) to use to render pointclouds")]
         public Material baseMaterial;
+        [Tooltip("After how many seconds without data pointcloud becomes ghosted")]
+        [SerializeField] protected int timeoutBeforeGhosting = 5; // seconds
+        [Tooltip("Mirror pointclouds because they use a right-hand coordinate system (usually true)")]
+        [SerializeField] protected bool pcMirrorX = true;
+
+        [Header("Introspection (for debugging)")]
         [Tooltip("Private clone of Material used by this renderer instance")]
-        public Material material;
-        MaterialPropertyBlock block;
-        [Tooltip("Object responsible for receiving pointclouds from the queue")]
+        [SerializeField] protected Material material;
+        [SerializeField] protected MaterialPropertyBlock block;
+        [Tooltip("True if no pointcloud data is being received")]
+        [SerializeField] bool dataIsMissing = false;
+        [Tooltip("Timestamp of most recent pointcloud (system clock)")]
+        [SerializeField] Timestamp lastDataReceived;
+
         static int instanceCounter = 0;
         int instanceNumber = instanceCounter++;
 
@@ -95,7 +102,7 @@ namespace cwipc
             } 
             else
             {
-                if (now > lastDataReceived + (int)(timeoutBeforeGhosting*1000) && !dataIsMissing)
+                if (timeoutBeforeGhosting != 0 && now > lastDataReceived + (int)(timeoutBeforeGhosting*1000) && !dataIsMissing)
                 {
 #if CWIPC_WITH_LOGGING
                     Debug.Log($"{Name()}: No pointcloud received for {timeoutBeforeGhosting} seconds, ghosting with pointsize=0.2");

@@ -8,6 +8,7 @@ namespace cwipc
 
     public class SyntheticPointCloudReader : BasePointCloudReader
     {
+        [Header("Synthetic reader specific fields")]
         [Tooltip("Produce pointclouds at this number of frames per second (if nonzero)")]
         public int frameRate = 0;
         [Tooltip("Approximate number of points per cloud (if nonzero)")]

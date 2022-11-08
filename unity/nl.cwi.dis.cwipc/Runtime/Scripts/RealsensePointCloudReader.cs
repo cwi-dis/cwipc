@@ -8,6 +8,7 @@ namespace cwipc
 
     public class RealsensePointCloudReader : BasePointCloudReader
     {
+        [Header("Realsense reader specific fields")]
         [Tooltip("Filename of cameraconfig.xml file")]
         public string configFileName;
        

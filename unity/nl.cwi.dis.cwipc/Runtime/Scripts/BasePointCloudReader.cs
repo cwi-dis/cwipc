@@ -12,11 +12,21 @@ namespace cwipc
         protected cwipc.pointcloud currentPointcloud = null;
         protected Unity.Collections.NativeArray<byte> currentByteArray;
         protected System.IntPtr currentBuffer;
-        protected int currentSize;
-        public Timestamp currentTimestamp;
-        protected float currentCellSize = 0.008f;
         protected bool isReady;
 
+        [Header("Introspection (for debugging)")]
+        [Tooltip("Size of current pointcloud (in bytes)")]
+        public int currentSize;
+        [Tooltip("Timestamp of current pointcloud")]
+        [SerializeField] protected Timestamp currentTimestamp;
+        [Tooltip("Cell size of current pointcloud cell (in meters)")]
+        [SerializeField] protected float currentCellSize = 0;
+        [Tooltip("How many pointclouds have been read")]
+        [SerializeField] protected int nRead;
+        [Tooltip("How many pointclouds have been read and dropped")]
+        [SerializeField] protected int nDropped;
+
+        [Header("Fields valid for all reader implementations")]
         [Tooltip("Voxelize pointclouds to this size (if nonzero)")]
         public float voxelSize = 0;
         [Tooltip("Cellsize for pointclouds that don't specify a cellsize")]
@@ -118,8 +128,10 @@ namespace cwipc
                 {
                     currentPointcloud.free();
                     currentPointcloud = null;
+                    nDropped++;
                 }
                 currentPointcloud = pc;
+                nRead++;
             }
         }
 
