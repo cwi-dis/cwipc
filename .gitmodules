@@ -18,3 +18,8 @@
 	url = ../cwipc_kinect
 	branch = .
 	update = merge
+[submodule "cwipc_unity"]
+	path = cwipc_unity
+	url = ../cwipc_unity
+	branch = .
+	update = merge
