@@ -2,3 +2,4 @@ installed
 build*/
 .vscode/
 .cachedgitversion.txt
+__pycache__/
