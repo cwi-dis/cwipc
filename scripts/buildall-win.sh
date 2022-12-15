@@ -18,6 +18,11 @@ x--vrtogether)
 	instdir=../installed
 	shift
 	;;
+x--vrtdebug)
+	instdir=../installed
+	config=RelWithDebInfo
+	shift
+	;;
 esac
 mkdir -p $instdir
 instdir=`cd $instdir; pwd`
