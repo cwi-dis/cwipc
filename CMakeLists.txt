@@ -57,7 +57,7 @@ endif()
 #
 
 find_package(libjpeg-turbo REQUIRED)
-find_package(PCL 1.10 REQUIRED COMPONENTS common io octree filters features)
+find_package(PCL 1.13 REQUIRED COMPONENTS octree)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 #
