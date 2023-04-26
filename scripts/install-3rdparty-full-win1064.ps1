@@ -90,8 +90,8 @@ if(Can-Execute-From-Path("jpegtran -help")) {
 	Write-Output "libjpeg-turbo: already installed"
 } else {
 	Write-Output "libjpeg-turbo: downloading..."
-	$installer="$tmpinstalldir\libjpeg-turbo-2.1.3-vc64.exe"
-	(New-Object System.Net.WebClient).DownloadFile("https://sourceforge.net/projects/libjpeg-turbo/files/2.1.3/libjpeg-turbo-2.1.3-vc64.exe",$installer);
+	$installer="$tmpinstalldir\libjpeg-turbo-2.1.5.1-vc64.exe"
+	(New-Object System.Net.WebClient).DownloadFile("https://sourceforge.net/projects/libjpeg-turbo/files/2.1.5.1/libjpeg-turbo-2.1.5.1-vc64.exe",$installer);
 	Write-Output "libjpeg-turbo: installing..."
 	Start-Process -FilePath $installer -ArgumentList "/S" -Wait
 	Add-PathVariable("C:\libjpeg-turbo64\bin")
@@ -99,7 +99,7 @@ if(Can-Execute-From-Path("jpegtran -help")) {
 }
 
 #
-# Install PCL 1.11. At the moment 1.12 has issues on some CI/CD machines.
+# Install PCL 1.13
 #
 $ok = Can-Execute-From-Path("pcl_generate -help")
 if($ok) {
