@@ -172,12 +172,12 @@ if($ok) {
 	Write-Output "opencv: already installed"
 } else {
 	Write-Output "opencv: downloading..."
-	$installer="$tmpinstalldir\opencv-4.5.5-vc14_vc15.exe"
-	(New-Object System.Net.WebClient).DownloadFile("https://github.com/opencv/opencv/releases/download/4.5.5/opencv-4.5.5-vc14_vc15.exe",$installer);
+	$installer="$tmpinstalldir\opencv-4.7.0-windows.exe"
+	(New-Object System.Net.WebClient).DownloadFile("https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-windows.exe",$installer);
 	Write-Output "opencv: installing..."
 	Start-Process $installer -ArgumentList '-o"C:\" -y' -Wait
 	Add-PathVariable("C:\opencv\build\bin")
-	Add-PathVariable("C:\opencv\build\x64\vc15\bin")
+	Add-PathVariable("C:\opencv\build\x64\vc16\bin")
 	Write-Output "opencv: installed"
 }
 
