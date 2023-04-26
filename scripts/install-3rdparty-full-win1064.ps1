@@ -196,8 +196,8 @@ if($ok) {
 	Write-Output "python: already installed"
 } else {
 	Write-Output "python: downloading..."
-	$installer="$tmpinstalldir\python-3.9.13-amd64.exe"
-	(New-Object System.Net.WebClient).DownloadFile("https://www.python.org/ftp/python/3.9.13/python-3.9.13-amd64.exe",$installer);
+	$installer="$tmpinstalldir\python-3.10.10-amd64.exe"
+	(New-Object System.Net.WebClient).DownloadFile("https://www.python.org/ftp/python/3.10.10/python-3.10.10-amd64.exe",$installer);
 	Write-Output "python: installing..."
 	Start-Process -FilePath $installer -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait
 	Write-Output "python: installed"
