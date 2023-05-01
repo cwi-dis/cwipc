@@ -58,7 +58,7 @@ endif()
 
 find_package(libjpeg-turbo REQUIRED)
 find_package(PCL REQUIRED COMPONENTS octree)
-find_package(Python3 REQUIRED COMPONENTS Interpreter)
+find_package(Python3 3.10 EXACT REQUIRED COMPONENTS Interpreter)
 
 #
 # Optional packages, required by some submodules

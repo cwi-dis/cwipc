@@ -5,6 +5,23 @@ dirname=`dirname $0`
 dirname=`cd $dirname/..; pwd`
 cd $dirname
 
+cmakeargs=
+
+#
+# Finding the correct Python version that supports the packages we need
+# (specifically open3d) is hell. Especially on macos. And even more especially
+# on a Silicon mac that has both silicon-brew in /opt and intel-brew in /usr/local.
+#
+# As of this writing (2023-05-01) this is Python 3.10.
+#
+case `uname` in
+Darwin)
+	python=python3.10
+	pythondir=$($python -c 'import sys; print(sys.prefix)')
+	cmakeargs="$cmakeargs -DPython3_ROOT_DIR=$pythondir"
+	;;
+esac
+
 notest=
 case x$1 in
 x--notest)
@@ -21,7 +38,6 @@ x--sudo)
 	;;
 esac
 
-cmakeargs=
 case x$1 in
 x--cicd)
 	cmakeargs="$cmakeargs -DCMAKE_INSTALL_PREFIX=$dirname/installed"
