@@ -26,9 +26,14 @@ jobs:
         - name: Install realsense SDK
           shell: pwsh
           run: |
-                choco install -y realsense-sdk2
+                $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
+                $installer="$thirdpartydir\realsense-installer.exe"
+                (New-Object System.Net.WebClient).DownloadFile(
+                "https://github.com/IntelRealSense/librealsense/releases/download/v2.53.1/Intel.RealSense.SDK-WIN10-2.53.1.4623.exe",$installer);
+                Write-Output "intel-realsense: installing..."
+                Start-Process -FilePath $installer -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOCANCEL /SP-' -Wait
                 Add-Content $env:GITHUB_PATH "C:\Program Files (x86)\Intel RealSense SDK 2.0\bin\x64"
-
+  
         - name: Install opencv (Windows)
           shell: pwsh
           run: |
