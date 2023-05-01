@@ -39,7 +39,7 @@ jobs:
           run: |
                 $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
                 $installer="$thirdpartydir\opencv-installer.exe"
-                (New-Object System.Net.WebClient).DownloadFile("https://github.com/opencv/opencv/releases/download/4.5.5/opencv-4.5.5-vc14_vc15.exe","$installer");
+                (New-Object System.Net.WebClient).DownloadFile("https://github.com/opencv/opencv/releases/download/4.7.0/opencv-47.0-windows.exe","$installer");
                 Start-Process "$installer" -ArgumentList '-o"C:\" -y' -Wait
                 Add-Content $env:GITHUB_PATH "C:/opencv/build/bin"
 
@@ -48,7 +48,7 @@ jobs:
           run: |
                 $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
                 $installer="$thirdpartydir\jpegturbo-installer.exe"
-                (New-Object System.Net.WebClient).DownloadFile("https://sourceforge.net/projects/libjpeg-turbo/files/2.1.3/libjpeg-turbo-2.1.3-vc64.exe","$installer");
+                (New-Object System.Net.WebClient).DownloadFile("https://sourceforge.net/projects/libjpeg-turbo/files/2.1.5.1/libjpeg-turbo-2.1.5.1-vc64.exe","$installer");
                 Start-Process "$installer" -ArgumentList "/S" -Wait
                 Add-Content $env:GITHUB_PATH "C:/libjpeg-turbo64/bin"
 
@@ -74,18 +74,21 @@ jobs:
           run: |
                 $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
                 $installer="$thirdpartydir/pcl-installer.exe"
-                (New-Object System.Net.WebClient).DownloadFile("https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.11.1/PCL-1.11.1-AllInOne-msvc2019-win64.exe","$installer");
+                (New-Object System.Net.WebClient).DownloadFile("https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.13.0/PCL-1.13.0-AllInOne-msvc2022-win64.exe","$installer");
                 & "$installer" /S
                 Start-Sleep -s 300
-                Add-Content $env:GITHUB_PATH "C:/Program Files/PCL 1.11.1/bin"
-                Add-Content $env:GITHUB_PATH "C:/Program Files/PCL 1.11.1/3rdparty/VTK/bin"
+                Add-Content $env:GITHUB_PATH "C:/Program Files/PCL 1.13.0/bin"
+                Add-Content $env:GITHUB_PATH "C:/Program Files/PCL 1.13.0/3rdparty/VTK/bin"
                 Add-Content $env:GITHUB_PATH "C:/Program Files/OpenNI2/redist"
         - name: Install OpenCV (Windows)
           shell: pwsh
           run: |
-                choco install opencv
-                Add-Content $env:GITHUB_PATH "C:/tools/opencv/build/x64/vc15/bin"
-                Add-Content $env:GITHUB_ENV "OPENCV_DIR=C:/tools/opencv/build"
+                $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
+                $installer="$thirdpartydir\opencv-installer.exe"
+                (New-Object System.Net.WebClient).DownloadFile("https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-windows.exe",$installer);
+                Start-Process $installer -ArgumentList '-o"C:\" -y' -Wait
+                Add-Content $env:GITHUB_PATH "C:\opencv\build\bin"
+                Add-Content $env:GITHUB_PATH "C:\opencv\build\x64\vc16\bin"
         - name: Install Python packages (Windows)
           shell: bash
           run: |
