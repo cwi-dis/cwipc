@@ -63,7 +63,7 @@ find_package(PCL REQUIRED COMPONENTS octree)
 if(APPLE)
 	find_package(Python3 3.10 EXACT REQUIRED COMPONENTS Interpreter)
 else()
-	find_package(Python3 3.9...3.10 REQUIRED COMPONENTS Interpreter)
+	find_package(Python3 3.9...<3.11 REQUIRED COMPONENTS Interpreter)
 endif()
 
 #
