@@ -58,7 +58,13 @@ endif()
 
 find_package(libjpeg-turbo REQUIRED)
 find_package(PCL REQUIRED COMPONENTS octree)
-find_package(Python3 3.10 EXACT REQUIRED COMPONENTS Interpreter)
+#
+# On Mac we should pass the correct interpreter on the command line with Python3_ROOT_DIR
+if(APPLE)
+	find_package(Python3 3.10 EXACT REQUIRED COMPONENTS Interpreter)
+else()
+	find_package(Python3 3.9...3.10 REQUIRED COMPONENTS Interpreter)
+endif()
 
 #
 # Optional packages, required by some submodules
