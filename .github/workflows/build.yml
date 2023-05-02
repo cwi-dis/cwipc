@@ -39,7 +39,7 @@ jobs:
           run: |
                 $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
                 $installer="$thirdpartydir\opencv-installer.exe"
-                (New-Object System.Net.WebClient).DownloadFile("https://github.com/opencv/opencv/releases/download/4.7.0/opencv-47.0-windows.exe","$installer");
+                (New-Object System.Net.WebClient).DownloadFile("https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-windows.exe","$installer");
                 Start-Process "$installer" -ArgumentList '-o"C:\" -y' -Wait
                 Add-Content $env:GITHUB_PATH "C:/opencv/build/bin"
 
