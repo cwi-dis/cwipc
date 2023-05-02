@@ -21,11 +21,18 @@ sudo apt-get install -y libglfw3 libglfw3-dev
 sudo apt-get install -y libopencv-dev
 sudo apt-get install -y curl
 sudo apt-get install -y librealsense2-dkms librealsense2-utils librealsense2-dev
+#
+# K4A packages depend on linsoundio1, which is no longer included in 22.04. We temporarily add the 20.04
+# repositories to install it.
+sudo apt-add-repository -y -n 'deb http://archive.ubuntu.com/ubuntu focal main'
+sudo apt-add-repository -y 'deb http://archive.ubuntu.com/ubuntu focal universe'
 sudo apt-get install -y libsoundio1
+sudo apt-add-repository -r -y -n 'deb http://archive.ubuntu.com/ubuntu focal universe'
+sudo apt-add-repository -r -y 'deb http://archive.ubuntu.com/ubuntu focal main'
 #
 # Upgrade essential Python packages that are too old on Ubuntu 20.04
 #
-sudo pip install --upgrade pip setuptools build wheel pillow
+# sudo pip install --upgrade pip setuptools build wheel pillow
 #
 # Install k4a SDK from their repository.
 # Bit of a hack, see https://github.com/microsoft/Azure-Kinect-Sensor-SDK/issues/1263
