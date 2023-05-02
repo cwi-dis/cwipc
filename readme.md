@@ -37,7 +37,7 @@ Sometimes you must manually re-run the _Install cwipc utilities_ from the Window
 
 ### Linux
 
-The installer is currently only available for Ubuntu 20.04.
+The installer is currently only available for Ubuntu 22.04.
 
 Download the debian package for the most recent cwipc release from <https://github.com/cwi-dis/cwipc/releases/latest>.
 
@@ -45,7 +45,7 @@ Install from the command line with `sudo apt install ./yourpackagename.deb`.
 
 The Kinect and Realsense SDKs will not be automatically installed, because they come from different repositories and not from the standard Ubuntu/Debian repositories. 
 
-Inspect `/usr/share/cwipc/scripts/install-3rdparty-ubuntu2004.sh` to see how to install them.
+Inspect `/usr/share/cwipc/scripts/install-3rdparty-ubuntu2204.sh` to see how to install them.
 
 ### Mac
 

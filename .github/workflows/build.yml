@@ -204,13 +204,13 @@ jobs:
         - name: Capture installed folder as artifact
           shell: bash
           run: |
-                tar -c -v -f cwipc_osx1014_${{ github.ref_name }}.tgz -z -C installed .
+                tar -c -v -f cwipc_osx1015_${{ github.ref_name }}.tgz -z -C installed .
                 ls -l
         - name: Upload installed folder
           uses: actions/upload-artifact@v3
           with:
-                name: cwipc_osx1014_${{ github.ref_name }}.tgz
-                path: cwipc_osx1014_${{ github.ref_name }}.tgz
+                name: cwipc_osx1015_${{ github.ref_name }}.tgz
+                path: cwipc_osx1015_${{ github.ref_name }}.tgz
                 
     build-linux:
         name: build-linux
@@ -230,7 +230,7 @@ jobs:
                 git describe --tags --debug
         - name: Install dependencies
           shell: bash
-          run: ./scripts/install-3rdparty-ubuntu2004.sh  
+          run: ./scripts/install-3rdparty-ubuntu2204.sh  
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           with:
@@ -264,13 +264,13 @@ jobs:
         - name: Capture installed folder as artifact
           shell: bash
           run: |
-                tar -c -v -f cwipc_ubuntu2004_${{ github.ref_name }}.tgz -z -C installed .
+                tar -c -v -f cwipc_ubuntu2204_${{ github.ref_name }}.tgz -z -C installed .
                 ls -l
         - name: Upload installed folder
           uses: actions/upload-artifact@v3
           with:
-                name: cwipc_ubuntu2004_${{ github.ref_name }}.tgz
-                path: cwipc_ubuntu2004_${{ github.ref_name }}.tgz
+                name: cwipc_ubuntu2204_${{ github.ref_name }}.tgz
+                path: cwipc_ubuntu2204_${{ github.ref_name }}.tgz
         - name: Upload debian package
           uses: actions/upload-artifact@v3
           with:
@@ -322,12 +322,12 @@ jobs:
         - name: Download MacOS installed folder
           uses: actions/download-artifact@v3
           with:
-                name: cwipc_osx1014_${{ github.ref_name }}.tgz
+                name: cwipc_osx1015_${{ github.ref_name }}.tgz
                 path: ../Assets/
         - name: Download Linux installed folder
           uses: actions/download-artifact@v3
           with:
-                name: cwipc_ubuntu2004_${{ github.ref_name }}.tgz
+                name: cwipc_ubuntu2204_${{ github.ref_name }}.tgz
                 path: ../Assets/
         - name: Download debian package
           uses: actions/download-artifact@v3
@@ -376,7 +376,7 @@ jobs:
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
             asset_path: ${{ env.linux_deb_path }}
-            asset_name: cwipc-ubuntu2004-${{ github.ref_name }}.deb
+            asset_name: cwipc-ubuntu2204-${{ github.ref_name }}.deb
             asset_content_type: application/gzip
 
         - name: Upload complete source (gzipped tar)
@@ -412,7 +412,7 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/cwipc_osx1014_${{ github.ref_name }}.tgz
+            asset_path: ../Assets/cwipc_osx1015_${{ github.ref_name }}.tgz
             asset_name: cwipc-macos1014-intel-${{ github.ref_name }}-built.tgz
             asset_content_type: application/gzip
         - name: Upload Linux installed folder
@@ -421,6 +421,6 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/cwipc_ubuntu2004_${{ github.ref_name }}.tgz
-            asset_name: cwipc-ubuntu2004-${{ github.ref_name }}-built.tgz
+            asset_path: ../Assets/cwipc_ubuntu2204_${{ github.ref_name }}.tgz
+            asset_name: cwipc-ubuntu2204-${{ github.ref_name }}-built.tgz
             asset_content_type: application/gzip
