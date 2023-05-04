@@ -12,9 +12,11 @@ set(CMAKE_MODULE_PATH
 	${CMAKE_MODULE_PATH}
 	)
 
-# Get version from git
-include(GetGitVersion)
-get_git_version(VERSION_VAR CWIPC_VERSION)
+# Get version from git if not specified on the command line
+if(NOT CWIPC_VERSION)
+	include(GetGitVersion)
+	get_git_version(VERSION_VAR CWIPC_VERSION)
+endif()
 if(CWIPC_VERSION)
 	message(STATUS "CWIPC_VERSION=${CWIPC_VERSION}")
 	add_compile_definitions(CWIPC_VERSION=${CWIPC_VERSION})
