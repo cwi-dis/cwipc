@@ -5,11 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [7.4] - 2023-05-02
+## [7.4.1] - 2023-05-04
 
 ### Added
 
 - cwipc\_unity submodule added. Can be added to Unity projects either via inclusion by path from a checkout or by adding the cwipc_unity repo URL.
+- Optional parallel encoding of subsequent point clouds. Does not decrease latency but can increase throughput.
 
 ### Changed
 
@@ -17,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Python 3.10 is now preferred, 3.9 still supported.
 - Dependencies updated to current versions.
 - Various issues with Windows installer fixed.
-- Optional parallel encoding of subsequent point clouds. Does not decrease latency but can increase throughput.
+- Tweaks to allow easier building with brew on macos.
 
 ### Removed
 
