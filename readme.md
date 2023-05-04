@@ -15,6 +15,8 @@ For now, refer to <https://www.dis.cwi.nl/cwipc-sxr-dataset/>.
 
 Documentation on the API can be created using _Doxygen_ in `cwipc_util/doc`, and will be made available here at some point in the future.
 
+The change log can be found at [CHANGELOG.md](CHANGELOG.md).
+
 ## Installation
 
 The simplest way to install cwipc is through a prebuilt installer. This will install everything in the standard location, and it allows running the command line tools as well as developing C, C++ or Python programs that use the cwipc library.
@@ -56,7 +58,13 @@ brew tap cwi-dis/cwipc
 brew install cwipc
 ```
 
-After that you should manually install the Python-based utility scripts with
+Verify that everything (including the Python packages and scripts) is installed correctly by running
+
+```
+cwipc_view --version
+```
+ 
+It should be, but if there are issues with the Python packages you can manually (re-)install them by running 
 
 ```
 cwipc_pymodules_install.sh
@@ -262,6 +270,6 @@ Push the tag to github, this will build the release.
 
 After the release is built copy the relevant new section of `CHANGELOG.md` to the release notes.
 
-After that, update the `brew` formula at <https://github.com/cwi-dis/homebrew-cwipc>. Use `brew edit`, `brew install`, then push the changes.
+After that, update the `brew` formula at <https://github.com/cwi-dis/homebrew-cwipc>. Use `brew edit`, `brew install`, then push the changes. Things to change are the download URL, the sha, possibly the Python version (multiple places), possibly other dependencies.
 
 Finally, when you are happy that everything works, edit the release on the github web interface and clear the `prerelease` flag.
