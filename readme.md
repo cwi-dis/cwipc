@@ -251,6 +251,16 @@ These instructions are primarily for our own benefit. Lest we forget.
 
 When creating a new release, ensure the following have been done
 
+- Dependencies for the `.deb` installer for apt/Ubuntu need to be updated. There may be better ways to do this, but this works:
+  - On the targeted Ubuntu, check out and edit `CMakeFiles/CwipcInstallers.cmake`
+  - Comment out the definitions for `CPACK_DEBIAN_PACKAGE_DEPENDS` and `CPACK_DEBIAN_PACKAGE_RECOMMENDS`.
+  - Un-comment-out `CPACK_DEBIAN_PACKAGE_SHLIBDEPS YES`.
+  - Build, cpack.
+  - Extract the resulting debian package with `ar x`.
+  - Unpack the `control.tar.gz` file.
+  - Inspect the dependencies that cpack auto-generated.
+  - Fix the dependencies and recommendations based on what cpack found.
+
 - `scripts/install-3rdparty-full-win1064.ps1` should be updated to download the most recent compatible packages. Go through each of the packages, determine the current version. Uninstall old versions from your build machine. Run the powershell script to test it installs the new packages. Do the build, to ensure it works with the new packages. Test the build to ensure it runs with the new packages.
 
 - `.github/workflows/build.yml` should be updated to download those same packages.
