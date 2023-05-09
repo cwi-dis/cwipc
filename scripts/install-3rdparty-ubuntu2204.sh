@@ -20,13 +20,13 @@ sudo apt-get install -y libusb-1.0 libusb-dev
 sudo apt-get install -y libglfw3 libglfw3-dev
 sudo apt-get install -y libopencv-dev
 sudo apt-get install -y curl
-sudo apt-get install -y librealsense2-dkms librealsense2-utils librealsense2-dev
 #
-# K4A packages depend on linsoundio1, which is no longer included in 22.04. We temporarily add the 20.04
+# K4A packages depend on linsoundio1 and libssl1.1, which are no longer included in 22.04. We temporarily add the 20.04
 # repositories to install it.
 sudo apt-add-repository -y -n 'deb http://archive.ubuntu.com/ubuntu focal main'
 sudo apt-add-repository -y 'deb http://archive.ubuntu.com/ubuntu focal universe'
-sudo apt-get install -y libsoundio1
+# sudo apt-get install -y libsoundio1 libssl1.1
+sudo apt-get install -y librealsense2-dkms librealsense2-utils librealsense2-dev
 sudo apt-add-repository -r -y -n 'deb http://archive.ubuntu.com/ubuntu focal universe'
 sudo apt-add-repository -r -y 'deb http://archive.ubuntu.com/ubuntu focal main'
 #
