@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.16.0)
 cmake_policy(SET CMP0074 NEW)
 cmake_policy(SET CMP0072 NEW)
+cmake_policy(SET CMP0135 NEW)
 
 # Add extension directories (for things like Find<package>)
 set(CMAKE_MODULE_PATH
@@ -67,6 +68,14 @@ if(APPLE)
 else()
 	find_package(Python3 3.9...<3.11 REQUIRED COMPONENTS Interpreter)
 endif()
+
+#
+# Get the nlohmann/json package
+#
+include(FetchContent)
+
+FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
+FetchContent_MakeAvailable(json)
 
 #
 # Optional packages, required by some submodules

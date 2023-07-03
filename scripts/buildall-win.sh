@@ -12,7 +12,7 @@ trap errorexit ERR
 dirname=`dirname $0`
 dirname=`cd $dirname/..; pwd`
 cd $dirname
-instdir=installed
+instdir=c:/cwipc
 case x$1 in
 x--vrtogether)
 	instdir=../installed

@@ -55,12 +55,12 @@ esac
 # See if we can parallelize the build
 if sysctl -n hw.physicalcpu 2>&1 >/dev/null; then
 	ncpu=`sysctl -n hw.physicalcpu`
-	export CTEST_BUILD_PARALLEL_LEVEL=$ncpu
+	export CMAKE_BUILD_PARALLEL_LEVEL=$ncpu
 	export CTEST_PARALLEL_LEVEL=$ncpu
 else
 	if nproc 2>&1 >/dev/null; then
 		ncpu=`nproc`
-		export CTEST_BUILD_PARALLEL_LEVEL=$ncpu
+		export CMAKE_BUILD_PARALLEL_LEVEL=$ncpu
 		export CTEST_PARALLEL_LEVEL=$ncpu
 	fi
 fi
