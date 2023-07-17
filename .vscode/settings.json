@@ -1,0 +1,4 @@
+{
+    "python.linting.enabled": true,
+    "python.analysis.extraPaths": ["cwipc_util/python", "cwipc_codec/python", "cwipc_realsense2/python", "cwipc_kinect/python"]
+}
