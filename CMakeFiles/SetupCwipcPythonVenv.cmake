@@ -75,6 +75,7 @@ macro(cwipc_build_wheel)
 	set(multiValueArgs)
 	cmake_parse_arguments(MYARGS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 	add_custom_target("${MYARGS_NAME}_wheel" 
+		ALL
 		COMMAND ${Python3_EXECUTABLE} -m build --wheel --no-isolation --outdir ${MYARGS_WHEELDIR} ${MYARGS_SOURCEDIR} 
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 		)
