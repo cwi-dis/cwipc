@@ -30,6 +30,7 @@ project(cwipc VERSION ${CWIPC_BASE_VERSION})
 
 include(CTest)
 include(GNUInstallDirs)
+include(CwipcPythonSupport)
 
 # Ensure all executable, dll/so and link-library outputs end up in the same directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -40,11 +41,18 @@ set(CMAKE_PYWHEELS_INSTALL_DIRECTORY ${CMAKE_INSTALL_DATADIR}/cwipc/python)
 set(CMAKE_TESTDATA_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/share/cwipc/tests)
 set(CMAKE_TESTDATA_INSTALL_DIRECTORY ${CMAKE_INSTALL_DATADIR}/cwipc/tests)
 set(CMAKE_SCRIPTS_INSTALL_DIRECTORY ${CMAKE_INSTALL_DATADIR}/cwipc)
-
+#
+# Ensure we clean out the Python wheels directory before installing 
+#
+GNUInstallDirs_get_absolute_install_dir(WHEELDEST CMAKE_PYWHEELS_INSTALL_DIRECTORY)
+install(CODE "message(\"-- Remove ${WHEELDEST}\")")
+install(CODE "file(REMOVE_RECURSE \"${WHEELDEST}\")")
+#
 # Ensure we use the correct RPATH in installed binaries.
 # This also works in the build tree, because we use the staging area to
 # build all executables and dynamic libraries and it has the
 # same layout as the installed tree
+#
 if(APPLE)
 	set(CMAKE_INSTALL_RPATH "@loader_path/../lib")
 	set(CMAKE_SKIP_BUILD_RPATH FALSE)
@@ -56,18 +64,25 @@ elseif(UNIX)
 endif()
 
 #
-# Packages required by all submodules
-#
-
-find_package(libjpeg-turbo REQUIRED)
-find_package(PCL REQUIRED COMPONENTS octree)
-#
 # On Mac we should pass the correct interpreter on the command line with Python3_ROOT_DIR
+#
 if(APPLE)
 	find_package(Python3 3.10 EXACT REQUIRED COMPONENTS Interpreter)
 else()
 	find_package(Python3 3.9...<3.11 REQUIRED COMPONENTS Interpreter)
 endif()
+#
+# Now we can setup the venv.
+#
+cwipc_setup_python_venv()
+
+#
+# Packages required by all submodules
+#
+
+find_package(libjpeg-turbo REQUIRED)
+find_package(PCL REQUIRED COMPONENTS octree)
+
 
 #
 # Get the nlohmann/json package
