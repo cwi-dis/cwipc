@@ -6,5 +6,6 @@
         "cwipc_realsense2/python",
         "cwipc_kinect/python"
     ],
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "python.analysis.typeCheckingMode": "basic"
 }
