@@ -30,7 +30,7 @@ project(cwipc VERSION ${CWIPC_BASE_VERSION})
 
 include(CTest)
 include(GNUInstallDirs)
-include(SetupCwipcPythonVenv)
+include(CwipcPythonSupport)
 
 # Ensure all executable, dll/so and link-library outputs end up in the same directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
