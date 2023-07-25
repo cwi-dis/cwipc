@@ -78,6 +78,7 @@ macro(cwipc_build_wheel)
 	add_custom_target("${MYARGS_NAME}_wheel" 
 		ALL
 		COMMAND ${CMAKE_COMMAND} -E env "CWIPC_VERSION=${CWIPC_VERSION}" ${Python3_EXECUTABLE} -m build --wheel --no-isolation --outdir ${MYARGS_WHEELDIR} ${MYARGS_SOURCEDIR} 
+		COMMAND ${Python3_EXECUTABLE} -m pip uninstall -qq -y "${MYARGS_NAME}"
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 		)
 endmacro()
@@ -95,7 +96,7 @@ macro(cwipc_install_wheel)
 		message(STATUS "Skip install of Python wheel")
 	else()
 		message(STATUS "Installing Python wheel")
-		install(CODE "execute_process(COMMAND \"${Python3_SYSTEM_EXECUTABLE}\" -m pip --quiet uninstall --yes ${MYARGS_NAME} WORKING_DIRECTORY \"${MYARGS_WHEELDIR}\" )")
+		install(CODE "execute_process(COMMAND \"${Python3_SYSTEM_EXECUTABLE}\" -m pip -qq uninstall --yes ${MYARGS_NAME} WORKING_DIRECTORY \"${MYARGS_WHEELDIR}\" )")
 		install(CODE "execute_process(COMMAND \"${Python3_SYSTEM_EXECUTABLE}\" -m pip --quiet install --find-links=. ${MYARGS_NAME} WORKING_DIRECTORY \"${MYARGS_WHEELDIR}\" )")
 	endif()
 endmacro()
