@@ -70,7 +70,7 @@ cmake -S. -Bbuild $cmakeargs
 
 cmake --build build
 if [ "$notest" != "notest" ]; then
-	(cd build && ctest )
+	ctest --test-dir build
 fi
 
 if [ "$noinstall" != "noinstall" ]; then
