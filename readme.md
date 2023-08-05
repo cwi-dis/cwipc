@@ -19,7 +19,7 @@ The change log can be found at [CHANGELOG.md](CHANGELOG.md).
 
 ## Installation
 
-The simplest way to install cwipc is through a prebuilt installer. This will install everything in the standard location, and it allows running the command line tools as well as developing C, C++ or Python programs that use the cwipc library.
+The simplest way to install cwipc is through a prebuilt installer. This will install everything in the standard location, and it allows running the command line tools as well as developing C, C++, Python or Unity programs that use the cwipc library.
 
 After installation, run `cwipc_view --synthetic` from a shell (terminal window, command prompt). It should show you a window with a rotating synthetic point cloud if everything is installed correctly.
 
@@ -70,7 +70,48 @@ It should be, but if there are issues with the Python packages you can manually 
 cwipc_pymodules_install.sh
 ```
 
-## Advanced usage: Installing a binary zip/tar distribution
+The github location of the brew recipe is at <https://github.com/cwi-dis/homebrew-cwipc>
+
+### Android
+
+The Android build of `cwipc` is API-only, and has only been tested with Unity applications running on Oculus Quest headsets. Pre-built releases are available via <https://github.com/cwi-dis/cwipc_android>.
+
+## Using cwipc
+
+After installation you have a set of command line utilities that you can use from the shell (or Windows command prompt) and a set of APIs that you can use in your C programs, C++ programs, Python programs or C#/Unity projects.
+
+### Command line
+
+Better documentation will be forthcoming. For now: run the program with `--help` argument. The main programs are:
+
+- `cwipc_calibrate` is used to setup your capturer for Realsense or Azure Kinect cameras.
+- `cwipc_grab` is used to capture pointclouds from cameras, but also for converting, compressing, decompressing and a lot more.
+- `cwipc_view` allows you to see your pointcloud stream. Either from camera, or played back from an earlier capture, or from a `cwipc_formward` stream and many other options.
+- `cwipc_forward` streams pointclouds over the net.
+
+### C or C++
+
+Include files and libraries are installed in the standard places, and `pkgconfig` files are included. For example code: get a source distribution and look at `cwipc_util/apps`, `cwipc_codec/apps`, `cwipc_realsense2/apps`, etc.
+
+### Python
+
+The Python `cwipc` package should be installed in your default Python, otherwise you can do so by running `cwipc_pymodules_install.sh` (or `.bat`).
+
+Python example code is installed in `share/cwipc/python/examples` where you will also find a readme file.
+
+### Unity
+
+At the moment the C# API is only packaged for use from Unity. Let us know if you have another application for it, then we can investigate `nuget` or something like that.
+
+The cwipc Unity package lives in a separate repository, <https://github.com/cwi-dis/cwipc_unity>.
+
+Install it by opening the Package Manager in the Unity Editor, _Add Package from git URL..._ and passing the URL ``git+https://github.com/cwi-dis/cwipc_unity?path=/nl.cwi.dis.cwipc``.
+
+More complete instructions can be found at <https://github.com/cwi-dis/cwipc_unity/blob/master/nl.cwi.dis.cwipc/README.md> .
+
+
+
+## Advanced installation: Installing a binary zip/tar distribution
 
 If the installers do not fit your need you can install prebuilt binaries to a place of your liking.
 
@@ -87,7 +128,7 @@ Prebuilt binary releases are available at <https://github.com/cwi-dis/cwipc/rele
 
   ```
 
-- On Linux and Mac, if you did not install to `/usr/local`, add the `bin` directory to your `PATH` environment variable.
+- On Linux and Mac, if you did not install to `/usr/local`, add the `bin` directory to your `PATH` environment variable. You may also need to modify `LD_LIBRARY_PATH` or `DYLD_LIBRARY_PATH`.
 - Optionally, if you want to use a python virtual environment so the cwipc modules and dependencies are not installed into your normal Python environment, create a Python venv:
 
   ```
