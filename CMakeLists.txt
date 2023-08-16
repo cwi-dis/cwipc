@@ -82,7 +82,7 @@ cwipc_setup_python_venv()
 #
 
 find_package(libjpeg-turbo REQUIRED)
-find_package(PCL REQUIRED COMPONENTS common io octree filters features geometry)
+find_package(PCL REQUIRED COMPONENTS common io octree filters features geometry kdtree)
 
 
 #
