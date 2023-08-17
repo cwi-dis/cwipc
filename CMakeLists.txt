@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.16.0)
 cmake_policy(SET CMP0074 NEW)
 cmake_policy(SET CMP0072 NEW)
 cmake_policy(SET CMP0135 NEW)
+cmake_policy(SET CMP0144 NEW)
 
 # Add extension directories (for things like Find<package>)
 set(CMAKE_MODULE_PATH
@@ -44,7 +45,7 @@ set(CMAKE_SCRIPTS_INSTALL_DIRECTORY ${CMAKE_INSTALL_DATADIR}/cwipc)
 #
 # Ensure we clean out the Python wheels directory before installing 
 #
-GNUInstallDirs_get_absolute_install_dir(WHEELDEST CMAKE_PYWHEELS_INSTALL_DIRECTORY)
+GNUInstallDirs_get_absolute_install_dir(WHEELDEST CMAKE_PYWHEELS_INSTALL_DIRECTORY WHEELDEST)
 install(CODE "message(\"-- Remove ${WHEELDEST}\")")
 install(CODE "file(REMOVE_RECURSE \"${WHEELDEST}\")")
 #
@@ -81,7 +82,7 @@ cwipc_setup_python_venv()
 #
 
 find_package(libjpeg-turbo REQUIRED)
-find_package(PCL REQUIRED COMPONENTS octree)
+find_package(PCL REQUIRED COMPONENTS common io octree filters features geometry kdtree)
 
 
 #
