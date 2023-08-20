@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.16.0)
 cmake_policy(SET CMP0074 NEW)
 cmake_policy(SET CMP0072 NEW)
 cmake_policy(SET CMP0135 NEW)
-cmake_policy(SET CMP0144 NEW)
 
 # Add extension directories (for things like Find<package>)
 set(CMAKE_MODULE_PATH
