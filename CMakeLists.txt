@@ -54,11 +54,11 @@ install(CODE "file(REMOVE_RECURSE \"${WHEELDEST}\")")
 # same layout as the installed tree
 #
 if(APPLE)
-	set(CMAKE_INSTALL_RPATH "@loader_path/../lib")
+	set(CMAKE_INSTALL_RPATH "@loader_path/../lib;@loader_path/../../lib")
 	set(CMAKE_SKIP_BUILD_RPATH FALSE)
 	set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 elseif(UNIX)
-	set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+	set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib;$ORIGIN/../../lib")
 	set(CMAKE_SKIP_BUILD_RPATH FALSE)
 	set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 endif()
