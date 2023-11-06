@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [unreleased]
+
+### Added
+
+- Cameraconfig files are now JSON by default (but XML is still supported for backward compatibility).
+- The default camera type is now determined from `cameraconfig.json`, so you normally don't have to specify `--kinect` or similar to `cwipc_view` and other utilities
+- There is a new API call `cwipc_capturer` that will return the correct capturer for what is specified in `cameraconfig.json`. You can also give it a `configFilename` parameter of `"auto"` and it will determine what type of camera is attached to your system.
+- cwipc has been ported to Android, specifically for use on the Oculus Quest. 
+- Python modules now have type annotations, which should make it much easier to use cwipc in your programs (auto-complete, documentation, etc)
+- Python example programs have been added.
+- `cwipc_check` program helps with checking that everything is installed (especially on Windows)
+
+### Changed
+
+- Build process and CMakefiles have been streamlined, specifically the way the Python support is installed.
+- `cwipc_unity` is no longer a submodule of cwipc but its own toplevel repository.
+- `cwipc_calibrate` should now be easier to use.
+
+### Removed
+
 ## [7.4.2] - 2023-05-07
 
 ### Added
