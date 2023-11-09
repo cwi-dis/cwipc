@@ -1,20 +1,31 @@
 import sys
+import os
 import cwipc
+
+# At a cellsize of approximately this size voxelizing will stop working,
+# because the integers used as indices would overflow. Unsure whether this is actually a fixed number.
+MAGIC_CELLSIZE_VALUE = 0.0005
 
 def main():
     if len(sys.argv) != 2:
         print(f"Usage: {sys.argv[0]} plyfile", file=sys.stderr)
         sys.exit(1)
-    pc = cwipc.cwipc_read(sys.argv[1], 0)
+    basefilename, ext = os.path.splitext(sys.argv[1])
+    if ext.lower() == '.ply':
+        pc = cwipc.cwipc_read(sys.argv[1], 0)
+    else:
+        pc = cwipc.cwipc_read_debugdump(sys.argv[1])
     originalCount = pc.count()
     originalCellsize = pc.cellsize()
-    print("iteration,cellSize,pointCount,increaseFactor,perTileCountCount")
-    print(f"0,{originalCellsize},{originalCount},{0},,")
+    csv_filename = basefilename + ".csv"
+    csv_file = open(csv_filename, "w")
+    print("iteration,cellSize,pointCount,increaseFactor,nCam1Count,nCam2Count,nCam3Count,nCam4Count,plyFile", file=csv_file)
+    print(f"0,{originalCellsize},{originalCount}", file=csv_file)
     newCount = -1
     cellSize = 1
     iteration = 1
     oldCount = 0
-    while cellSize > originalCellsize:
+    while cellSize > originalCellsize and cellSize > MAGIC_CELLSIZE_VALUE:
         try:
             newPc = cwipc.cwipc_downsample(pc, cellSize)
         except cwipc.CwipcError as e:
@@ -28,8 +39,11 @@ def main():
         oldCount = newCount
         histogram = tileHistogram(newPc)
         histCombined = histogramCombine(histogram)
-        print(f"{iteration},{cellSize},{newCount},{increaseFactor},{histCombined}")
-        cwipc.cwipc_write(f"downsample-{iteration}.ply", newPc)
+        p0, p1, p2, p3, p4 = histCombined
+        tmpPathname = f"{basefilename}-{iteration}.ply"
+        _, tmpFilename = os.path.split(tmpPathname)
+        print(f"{iteration},{cellSize},{newCount},{increaseFactor},{p1},{p2},{p3},{p4},{tmpFilename}", file=csv_file)
+        cwipc.cwipc_write(tmpPathname, newPc)
         newPc.free()
         cellSize = cellSize * 0.7071
         iteration += 1
