@@ -17,6 +17,15 @@ def main():
         pc = cwipc.cwipc_read_debugdump(sys.argv[1])
     originalCount = pc.count()
     originalCellsize = pc.cellsize()
+    originalHistogram = tileHistogram(pc)
+    originalHistCombined = histogramCombine(originalHistogram)
+    print(f"original: {originalCount} points, {len(originalHistogram)} tiles")
+    for i in range(len(originalHistogram)):
+        if originalHistogram[i]:
+            print(f"original: tile {i}: {originalHistogram[i]} points")
+    for i in range(len(originalHistCombined)):
+        print(f"original: {i}-camera tiles: {originalHistCombined[i]} points")
+       
     csv_filename = basefilename + ".csv"
     csv_file = open(csv_filename, "w")
     print("iteration,cellSize,pointCount,increaseFactor,nCam1Count,nCam2Count,nCam3Count,nCam4Count,plyFile", file=csv_file)
