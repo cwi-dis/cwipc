@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build process and CMakefiles have been streamlined, specifically the way the Python support is installed.
 - `cwipc_unity` is no longer a submodule of cwipc but its own toplevel repository.
 - `cwipc_calibrate` should now be easier to use.
+- command line arguments to `cwipc_view` and other utilities have changed a lot. Use `--help` to see the differences.
 
 ### Removed
 
