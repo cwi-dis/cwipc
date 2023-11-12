@@ -25,11 +25,12 @@ def main():
             print(f"original: tile {i}: {originalHistogram[i]} points")
     for i in range(len(originalHistCombined)):
         print(f"original: {i}-camera tiles: {originalHistCombined[i]} points")
+    p0, p1, p2, p3, p4, _, _, _, _ = originalHistCombined
        
     csv_filename = basefilename + ".csv"
     csv_file = open(csv_filename, "w")
     print("iteration,cellSize,pointCount,increaseFactor,nCam1Count,nCam2Count,nCam3Count,nCam4Count,plyFile", file=csv_file)
-    print(f"0,{originalCellsize},{originalCount}", file=csv_file)
+    print(f"0,{originalCellsize},{originalCount},,{p1},{p2},{p3},{p4}", file=csv_file)
     newCount = -1
     cellSize = 1
     iteration = 1
@@ -41,6 +42,7 @@ def main():
             print(f"cwipc_downsample: Exception {e}", file=sys.stderr)
             break
         newCount = newPc.count()
+        print(f"iteration {iteration}: {newCount} points")
         if oldCount == 0:
             increaseFactor = 0
         else:
@@ -48,7 +50,7 @@ def main():
         oldCount = newCount
         histogram = tileHistogram(newPc)
         histCombined = histogramCombine(histogram)
-        p0, p1, p2, p3, p4 = histCombined
+        p0, p1, p2, p3, p4, _, _, _, _ = histCombined
         tmpPathname = f"{basefilename}-{iteration}.ply"
         _, tmpFilename = os.path.split(tmpPathname)
         print(f"{iteration},{cellSize},{newCount},{increaseFactor},{p1},{p2},{p3},{p4},{tmpFilename}", file=csv_file)
@@ -71,12 +73,13 @@ def tileHistogram(pc : cwipc.cwipc_wrapper) -> list[int]:
     return rv
 
 def histogramCombine(counts : list[int]) -> list[int]:
-    maxBitCount = 0
-    for tileMask in range(len(counts)):
-        if counts[tileMask] > 0:
-            bitCount = countBits(tileMask)
-            if bitCount > maxBitCount:
-                maxBitCount = bitCount
+    maxBitCount = 8
+    if False:
+        for tileMask in range(len(counts)):
+            if counts[tileMask] > 0:
+                bitCount = countBits(tileMask)
+                if bitCount > maxBitCount:
+                    maxBitCount = bitCount
     rv = [0]*(maxBitCount+1)
     for tileMask in range(len(counts)):
         if counts[tileMask] > 0:
