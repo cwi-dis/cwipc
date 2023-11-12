@@ -5,7 +5,8 @@ myDir=`dirname $myPath`
 buildDir=`cd $myDir/../build && pwd`
 export PATH="$buildDir/bin:$PATH"
 # Setting DYLD_LIBRARY_PATH doesn't work, but luckily it usually isn't needed
-# export DYLD_LIBRARY_PATH="$buildDir/lib:$DYLD_LIBRARY_PATH"
+export DYLD_LIBRARY_PATH="$buildDir/lib:$DYLD_LIBRARY_PATH"
+export CWIPC_LIBRARY_DIR="$buildDir/lib"
 source $buildDir/venv/bin/activate
 # Install editable Python packages
 (cd $buildDir/../cwipc_util/python && python -m pip install -e .)
