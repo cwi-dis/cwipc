@@ -1,11 +1,10 @@
 # Set PATH and DYLD_LIBRARY_PATH to include built executables and dynamic libraries and enable Python venv.
 # use with "source", don't execute.
-if [ "$BASH_SOURCE" == "" ]; then
+if [[ "${BASH_SOURCE}" == "" ]]; then
     myPath=`realpath "${(%):-%N}"`
 else
-    myPath=`realpath "$BASH_SOURCE"`
+    myPath=`realpath "${BASH_SOURCE}"`
 fi
-set
 myDir=`dirname $myPath`
 buildDir=`cd $myDir/../build && pwd`
 export PATH="$buildDir/bin:$PATH"
