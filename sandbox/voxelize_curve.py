@@ -1,6 +1,7 @@
 import sys
 import os
 import cwipc
+import cwipc.filters.colorize
 
 # At a cellsize of approximately this size voxelizing will stop working,
 # because the integers used as indices would overflow. Unsure whether this is actually a fixed number.
@@ -35,13 +36,20 @@ def main():
     cellSize = 1
     iteration = 1
     oldCount = 0
+    
+    tile_color_filter = cwipc.filters.colorize.ColorizeFilter(1, "contributions")
+
     while cellSize > originalCellsize and cellSize > MAGIC_CELLSIZE_VALUE:
         try:
             newPc = cwipc.cwipc_downsample(pc, cellSize)
         except cwipc.CwipcError as e:
             print(f"cwipc_downsample: Exception {e}", file=sys.stderr)
             break
-        newCount = newPc.count()
+        try:
+            newCount = newPc.count()
+        except AssertionError:
+            print(f"iteration {iteration}: failed")
+            break
         print(f"iteration {iteration}: {newCount} points")
         if oldCount == 0:
             increaseFactor = 0
@@ -55,7 +63,11 @@ def main():
         _, tmpFilename = os.path.split(tmpPathname)
         print(f"{iteration},{cellSize},{newCount},{increaseFactor},{p1},{p2},{p3},{p4},{tmpFilename}", file=csv_file)
         cwipc.cwipc_write(tmpPathname, newPc)
+        newColoredPc = tile_color_filter.filter(newPc)
+        tmpColoredPathname = f"{basefilename}-{iteration}-ncam.ply"
+        cwipc.cwipc_write(tmpColoredPathname, newColoredPc)
         newPc.free()
+        newColoredPc.free()
         cellSize = cellSize * 0.7071
         iteration += 1
 
