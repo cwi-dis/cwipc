@@ -1,11 +1,15 @@
 import sys
 import os
+import math
 import cwipc
 import cwipc.filters.colorize
 
 # At a cellsize of approximately this size voxelizing will stop working,
 # because the integers used as indices would overflow. Unsure whether this is actually a fixed number.
 MAGIC_CELLSIZE_VALUE = 0.0005
+# CELLSIZE_NEXT_FACTOR = math.sqrt(0.5)
+CELLSIZE_NEXT_FACTOR = math.sqrt(math.sqrt(0.5))
+POINTCOUNT_END_FACTOR=0.99
 
 def main():
     if len(sys.argv) != 2:
@@ -36,10 +40,10 @@ def main():
     cellSize = 1
     iteration = 1
     oldCount = 0
-    
+    increaseFactor = 0
     tile_color_filter = cwipc.filters.colorize.ColorizeFilter(1, "contributions")
 
-    while cellSize > originalCellsize and cellSize > MAGIC_CELLSIZE_VALUE:
+    while cellSize > originalCellsize and cellSize > MAGIC_CELLSIZE_VALUE and newCount < originalCount * POINTCOUNT_END_FACTOR:
         try:
             newPc = cwipc.cwipc_downsample(pc, cellSize)
         except cwipc.CwipcError as e:
@@ -68,7 +72,7 @@ def main():
         cwipc.cwipc_write(tmpColoredPathname, newColoredPc)
         newPc.free()
         newColoredPc.free()
-        cellSize = cellSize * 0.7071
+        cellSize = cellSize * CELLSIZE_NEXT_FACTOR
         iteration += 1
 
 def tileHistogram(pc : cwipc.cwipc_wrapper) -> list[int]:
