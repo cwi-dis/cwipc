@@ -16,16 +16,17 @@ def main():
     parser = argparse.ArgumentParser(sys.argv[0], description="Create a PLY point cloud file that can be used to test registration algorithms")
     parser.add_argument("--distance", action="store", type=float, default="0.01", metavar="DIST", help="Camera 2 and 4 point clouds will be move DIST meters out from where they should be")
     parser.add_argument("--npoint", action="store", type=int, default=200000, metavar="COUNT", help="Create original point cloud of approximately this many points")
+    parser.add_argument("--two", action="store_true", help="Output only camera 1 and 2 points (in stead of all 4)")
     parser.add_argument("output", action="store", help="Output ply file")
     args = parser.parse_args()
     distance = args.distance
     npoint = args.npoint
     output = args.output
 
-    pc = create_regtest_pointcloud(npoint, [(0,0,0), (0,0,-distance), (0,0,0), (0,0,distance)])
+    pc = create_regtest_pointcloud(npoint, [(0,0,0), (0,0,-distance), (0,0,0), (0,0,distance)], args.two)
     cwipc.cwipc_write(output, pc)
 
-def create_regtest_pointcloud(npoint : int, offsets : List[MyPoint]) -> cwipc.cwipc_wrapper:
+def create_regtest_pointcloud(npoint : int, offsets : List[MyPoint], twocam : bool=False) -> cwipc.cwipc_wrapper:
     gen = cwipc.cwipc_synthetic(npoints=npoint)
     pc = gen.get()
     assert pc
@@ -36,14 +37,17 @@ def create_regtest_pointcloud(npoint : int, offsets : List[MyPoint]) -> cwipc.cw
     pc.free()
     #
     tmp01 = cwipc.cwipc_join(pc0, pc1)
-    tmp23 = cwipc.cwipc_join(pc2, pc3)
-    rv = cwipc.cwipc_join(tmp01, tmp23)
+    if twocam:
+        rv = tmp01
+    else:
+        tmp23 = cwipc.cwipc_join(pc2, pc3)
+        rv = cwipc.cwipc_join(tmp01, tmp23)
+        tmp01.free()
+        tmp23.free()
     pc0.free()
     pc1.free()
     pc2.free()
     pc3.free()
-    tmp01.free()
-    tmp23.free()
     return rv
 
 def construct_partial_pc(pc : cwipc.cwipc_wrapper, bbox : MyBoundingBox, offset : MyPoint, tilemask : int) -> cwipc.cwipc_wrapper:
