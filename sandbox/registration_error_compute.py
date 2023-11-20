@@ -16,14 +16,14 @@ def main():
         sys.exit(1)
     basefilename, ext = os.path.splitext(sys.argv[1])
     csv_filename = basefilename + ".csv"
-    png_filename = basefilename + "_cumdist.png"
+    png_filename = basefilename + "_cumdist_one2all.png"
 
     if ext.lower() == '.ply':
         pc = cwipc.cwipc_read(sys.argv[1], 0)
     else:
         pc = cwipc.cwipc_read_debugdump(sys.argv[1])
 
-    analyzer = cwipc.registration.analyze.RegistrationAnalyzer()
+    analyzer = cwipc.registration.analyze.RegistrationAnalyzerOneToAll()
     analyzer.add_tiled_pointcloud(pc)
     analyzer.label = basefilename
     analyzer.want_plot = True
