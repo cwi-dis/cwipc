@@ -16,7 +16,7 @@ def main():
         sys.exit(1)
     basefilename, ext = os.path.splitext(sys.argv[1])
     csv_filename = basefilename + ".csv"
-    png_filename = basefilename + "_cumdist_one2all.png"
+    png_filename = basefilename + "_histogram_one2all.png"
 
     if ext.lower() == '.ply':
         pc = cwipc.cwipc_read(sys.argv[1], 0)
@@ -26,7 +26,7 @@ def main():
     analyzer = cwipc.registration.analyze.RegistrationAnalyzerOneToAll()
     analyzer.add_tiled_pointcloud(pc)
     analyzer.label = basefilename
-    analyzer.want_plot = True
+    analyzer.want_histogram_plot = True
     analyzer.run()
     analyzer.save_plot(png_filename, True)
     
