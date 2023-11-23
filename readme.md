@@ -1,4 +1,5 @@
 # cwipc - CWI Point Clouds software suite
+
 ![build](https://github.com/cwi-dis/cwipc/actions/workflows/build.yml/badge.svg)
 
 In order to facilitate working with point clouds as opaque objects - similar to how most software works with images, or audio samples -  our group has developed an open source suite of libraries and tools that we call `cwipc` (abbreviation of CWI Point Clouds). The implementation builds on the PCL pointcloud library and various vendor-specific capturing libraries, but this is transparent to software using the `cwipc` suite (but it can access these representations if it needs to).
@@ -35,7 +36,9 @@ It will _also install all required third party packages_, unless a usable versio
 
 Python requires a specific mention: if you have already installed a version of Python **and** that Python is on your **PATH** environment variable the cwipc Python interface modules will be installed into that Python installation.
 
-Sometimes you must manually re-run the _Install cwipc utilities_ from the Windows start menu after installing. We are unsure why...
+> Windows installers often fail because each Windows computer is different. After installing, run _Start menu_ -> _cwipc_ -> _Check cwipc installation_. If this shows any errors, try _Attempt to fix cwipc installation_. If that still fails, try to uninstall cwipc _and_ Python _and_ LibPCL _and_ opencv _and_ libjpegturbo_ and _librealsense2_ and _Kinect for Azure_. Then try installing cwipc again.
+>
+> Sorry...
 
 ### Linux
 
@@ -83,7 +86,7 @@ After installation you have a set of command line utilities that you can use fro
 ### Command line
 
 Better documentation will be forthcoming. For now: run the program with `--help` argument. The main programs are:
-
+- `cwipc_check` does a basic check of your cwipc installation, verifying everything has been installed correctly.
 - `cwipc_calibrate` is used to setup your capturer for Realsense or Azure Kinect cameras.
 - `cwipc_grab` is used to capture pointclouds from cameras, but also for converting, compressing, decompressing and a lot more.
 - `cwipc_view` allows you to see your pointcloud stream. Either from camera, or played back from an earlier capture, or from a `cwipc_formward` stream and many other options.
