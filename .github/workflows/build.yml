@@ -31,7 +31,7 @@ jobs:
                 (New-Object System.Net.WebClient).DownloadFile(
                 "https://downloads.sourceforge.net/project/nsis/NSIS%203/3.09/nsis-3.09-strlen_8192.zip",$zipfile);
                 Write-Output "NSIS-8192-override: installing..."
-                Expand-Archive -Path $zipfile -DestinationPath "C:\Program Files (x86)\NSIS\"
+                Expand-Archive -Path $zipfile -DestinationPath "C:\Program Files (x86)\NSIS\" -Force
         - name: Install realsense SDK
           shell: pwsh
           run: |
