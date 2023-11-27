@@ -34,11 +34,25 @@ Run it, and it will install the cwipc command line tools and the C++ and Python 
 
 It will _also install all required third party packages_, unless a usable version is detected.
 
+### Windows - check installation
+
+Windows installers often fail because each Windows computer is different. Moreover, cwipc depends on a number of third party packages (such as the Realsense and Kinect support) that we cannot include in our installer because of licensing issues, so we have to rely on official installers for those packages.
+
+After installing, run _Start menu_ -> _cwipc_ -> _Check cwipc installation_. This will open a CMD command window and try to find out if everything has been installed correctly. If there are any errors it may show a dialog which mentions which library has not been installed correctly. And there may be error messages in the output window.
+
+If this shows any errors, try _Attempt to fix cwipc installation_. 
+
+If after that the check command still fails, try to determine which package is responsible for the failure, and uninstall it. Then reboot and re-try the _fix cwipc installation_. Packages that could have problems:
+
+- Python 
+- LibPCL
+- opencv 
+- libjpegturbo
+- librealsense2
+- Kinect for Azure and k4abt (body tracking)
+
 Python requires a specific mention: if you have already installed a version of Python **and** that Python is on your **PATH** environment variable the cwipc Python interface modules will be installed into that Python installation.
 
-> Windows installers often fail because each Windows computer is different. After installing, run _Start menu_ -> _cwipc_ -> _Check cwipc installation_. If this shows any errors, try _Attempt to fix cwipc installation_. If that still fails, try to uninstall cwipc _and_ Python _and_ LibPCL _and_ opencv _and_ libjpegturbo_ and _librealsense2_ and _Kinect for Azure_. Then try installing cwipc again.
->
-> Sorry...
 
 ### Linux
 
