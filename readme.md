@@ -22,7 +22,7 @@ The change log can be found at [CHANGELOG.md](CHANGELOG.md).
 
 The simplest way to install cwipc is through a prebuilt installer. This will install everything in the standard location, and it allows running the command line tools as well as developing C, C++, Python or Unity programs that use the cwipc library.
 
-After installation, run `cwipc_view --synthetic` from a shell (terminal window, command prompt). It should show you a window with a rotating synthetic point cloud if everything is installed correctly. There is also a command line utility `cwipc_check` that will test that all third-party requirements have been installed correctly. Especially on Windows this can be very helpful.
+After installation, run `cwipc_view --synthetic` from a shell (terminal window, command prompt). It should show you a window with a rotating synthetic point cloud if everything is installed correctly. There is also a command line utility `cwipc_check` that will test that all third-party requirements have been installed correctly. Especially on Windows this can be very helpful (see below).
 
 See below if you want to install to a different location, or if you want to modify cwipc itself and build it from source.
 
@@ -42,7 +42,9 @@ After installing, run _Start menu_ -> _cwipc_ -> _Check cwipc installation_. Thi
 
 If this shows any errors, try _Attempt to fix cwipc installation_. 
 
-If after that the check command still fails, try to determine which package is responsible for the failure, and uninstall it. Then reboot and re-try the _fix cwipc installation_. Packages that could have problems:
+If after that the check command still fails, the problem is probably that one of the third party packages _is_ installed on your computer, but it is an incorrect version, or it is installed in a different way than what _cwipc_ expects.
+
+Try to determine which package is responsible for the failure, and uninstall it. Then reboot and re-try the _fix cwipc installation_. This _should_ install the correct version of every package, and install it with the expected options. Packages that could have problems:
 
 - Python 
 - LibPCL
@@ -51,7 +53,9 @@ If after that the check command still fails, try to determine which package is r
 - librealsense2
 - Kinect for Azure and k4abt (body tracking)
 
-Python requires a specific mention: if you have already installed a version of Python **and** that Python is on your **PATH** environment variable the cwipc Python interface modules will be installed into that Python installation.
+Python requires a specific mention: if you have already installed a version of Python **and** that Python is on your **PATH** environment variable the cwipc Python interface modules will be installed into that Python installation. But again: if there is some incompatibility in the way your Python has been installed your only recourse is to uninstall it and let the cwipc installer re-install it.
+
+> As is probably clear from this section, writing Windows installers is not our strong point. Please contact us if you can provide help.
 
 
 ### Linux
