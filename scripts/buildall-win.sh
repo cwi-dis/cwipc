@@ -35,7 +35,19 @@ x--notest)
 	shift
 	;;
 esac
-
+noinstall=
+case x$1 in
+x--noinstall)
+	noinstall="noinstall"
+	shift
+	;;
+esac
+installer=
+case x$1 in
+x--installer)
+	installer="installer"
+	;;
+esac
 if nproc 2>&1 >/dev/null; then
 	ncpu=`nproc`
 	makeargs="$makeargs -j $ncpu"
@@ -49,4 +61,9 @@ cmake --build build --config $config
 if [ "$notest" != "notest" ]; then
 	ctest --test-dir build --build-config $config
 fi
-cmake --install build --config $config
+if [ "$noinstall" != "noinstall" ]; then
+	cmake --install build --config $config
+fi
+if [ "$installer" == "installer" ]; then
+	cpack --config build/CPackConfig.cmake
+fi

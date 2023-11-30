@@ -23,6 +23,15 @@ jobs:
           run: |
                 $thirdpartydir="$((Get-Item ..).FullName)\3rdparty"
                 mkdir $thirdpartydir
+        - name: Install NSIS 8192-character limit override
+          shell: pwsh
+          run: |
+                $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
+                $zipfile="$thirdpartydir\nsis-8192-overrides.zip"
+                (New-Object System.Net.WebClient).DownloadFile(
+                "https://downloads.sourceforge.net/project/nsis/NSIS%203/3.09/nsis-3.09-strlen_8192.zip",$zipfile);
+                Write-Output "NSIS-8192-override: installing..."
+                Expand-Archive -Path $zipfile -DestinationPath "C:\Program Files (x86)\NSIS\" -Force
         - name: Install realsense SDK
           shell: pwsh
           run: |

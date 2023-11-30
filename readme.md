@@ -1,4 +1,5 @@
 # cwipc - CWI Point Clouds software suite
+
 ![build](https://github.com/cwi-dis/cwipc/actions/workflows/build.yml/badge.svg)
 
 In order to facilitate working with point clouds as opaque objects - similar to how most software works with images, or audio samples -  our group has developed an open source suite of libraries and tools that we call `cwipc` (abbreviation of CWI Point Clouds). The implementation builds on the PCL pointcloud library and various vendor-specific capturing libraries, but this is transparent to software using the `cwipc` suite (but it can access these representations if it needs to).
@@ -21,7 +22,7 @@ The change log can be found at [CHANGELOG.md](CHANGELOG.md).
 
 The simplest way to install cwipc is through a prebuilt installer. This will install everything in the standard location, and it allows running the command line tools as well as developing C, C++, Python or Unity programs that use the cwipc library.
 
-After installation, run `cwipc_view --synthetic` from a shell (terminal window, command prompt). It should show you a window with a rotating synthetic point cloud if everything is installed correctly. There is also a command line utility `cwipc_check` that will test that all third-party requirements have been installed correctly. Especially on Windows this can be very helpful.
+After installation, run `cwipc_view --synthetic` from a shell (terminal window, command prompt). It should show you a window with a rotating synthetic point cloud if everything is installed correctly. There is also a command line utility `cwipc_check` that will test that all third-party requirements have been installed correctly. Especially on Windows this can be very helpful (see below).
 
 See below if you want to install to a different location, or if you want to modify cwipc itself and build it from source.
 
@@ -33,9 +34,29 @@ Run it, and it will install the cwipc command line tools and the C++ and Python 
 
 It will _also install all required third party packages_, unless a usable version is detected.
 
-Python requires a specific mention: if you have already installed a version of Python **and** that Python is on your **PATH** environment variable the cwipc Python interface modules will be installed into that Python installation.
+### Windows - check installation
 
-Sometimes you must manually re-run the _Install cwipc utilities_ from the Windows start menu after installing. We are unsure why...
+Windows installers often fail because each Windows computer is different. Moreover, cwipc depends on a number of third party packages (such as the Realsense and Kinect support) that we cannot include in our installer because of licensing issues, so we have to rely on official installers for those packages.
+
+After installing, run _Start menu_ -> _cwipc_ -> _Check cwipc installation_. This will open a CMD command window and try to find out if everything has been installed correctly. If there are any errors it may show a dialog which mentions which library has not been installed correctly. And there may be error messages in the output window.
+
+If this shows any errors, try _Attempt to fix cwipc installation_. 
+
+If after that the check command still fails, the problem is probably that one of the third party packages _is_ installed on your computer, but it is an incorrect version, or it is installed in a different way than what _cwipc_ expects.
+
+Try to determine which package is responsible for the failure, and uninstall it. Then reboot and re-try the _fix cwipc installation_. This _should_ install the correct version of every package, and install it with the expected options. Packages that could have problems:
+
+- Python 
+- LibPCL
+- opencv 
+- libjpegturbo
+- librealsense2
+- Kinect for Azure and k4abt (body tracking)
+
+Python requires a specific mention: if you have already installed a version of Python **and** that Python is on your **PATH** environment variable the cwipc Python interface modules will be installed into that Python installation. But again: if there is some incompatibility in the way your Python has been installed your only recourse is to uninstall it and let the cwipc installer re-install it.
+
+> As is probably clear from this section, writing Windows installers is not our strong point. Please contact us if you can provide help.
+
 
 ### Linux
 
@@ -83,7 +104,7 @@ After installation you have a set of command line utilities that you can use fro
 ### Command line
 
 Better documentation will be forthcoming. For now: run the program with `--help` argument. The main programs are:
-
+- `cwipc_check` does a basic check of your cwipc installation, verifying everything has been installed correctly.
 - `cwipc_calibrate` is used to setup your capturer for Realsense or Azure Kinect cameras.
 - `cwipc_grab` is used to capture pointclouds from cameras, but also for converting, compressing, decompressing and a lot more.
 - `cwipc_view` allows you to see your pointcloud stream. Either from camera, or played back from an earlier capture, or from a `cwipc_formward` stream and many other options.
