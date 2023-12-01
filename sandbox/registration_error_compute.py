@@ -29,6 +29,9 @@ def main():
     analyzer.want_histogram_plot = True
     analyzer.run()
     analyzer.save_plot(png_filename, True)
+    results = analyzer.get_ordered_results()
+    for camnum, correspondence, weight in results:
+        print(f"camnum={camnum}, correspondence={correspondence}, weight={weight}")
     
 
 if __name__ == '__main__':
