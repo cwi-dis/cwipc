@@ -36,14 +36,14 @@ def main():
 
     camnum_to_fix = results[0][0]
     print(f"Will fix camera {camnum_to_fix}")
-    computer = cwipc.registration.compute.RegistrationComputer()
+    computer = cwipc.registration.compute.RegistrationComputer_ICP()
     computer.add_tiled_pointcloud(pc)
     computer.run(camnum_to_fix)
     transform = computer.get_result_transformation()
     print(f"Transformation={transform}")
     new_pc = computer.get_result_pointcloud_full()
     cwipc.cwipc_write("tmp_1_fixed.ply", new_pc)
-    
+
     analyzer = cwipc.registration.analyze.RegistrationAnalyzerOneToAll()
     analyzer.add_tiled_pointcloud(new_pc)
     analyzer.label = basefilename + " after"
