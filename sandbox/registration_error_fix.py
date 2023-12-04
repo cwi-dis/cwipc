@@ -23,37 +23,50 @@ def main():
         pc = cwipc.cwipc_read(sys.argv[1], 0)
     else:
         pc = cwipc.cwipc_read_debugdump(sys.argv[1])
+    camnum_to_fix, correspondence = run_analyzer(pc, basefilename, png_filename, " before", True)
+    
+    step = 1
+    while True:
+        png_filename = basefilename + f"_histogram_after_step_{step}.png"
+        new_pc = run_fixer(pc, camnum_to_fix, correspondence)
+        pc.free()
+        pc = new_pc
+        old_camnum_to_fix, old_correspondence = camnum_to_fix, correspondence
+        
+        camnum_to_fix, correspondence = run_analyzer(pc, basefilename, png_filename, f" after {step}", True)
+        if camnum_to_fix == old_camnum_to_fix and correspondence >= old_correspondence:
+            print(f"No more improvement. Camera {old_camnum_to_fix} was at {old_correspondence}, now camera {camnum_to_fix} is at {correspondence}")
+            break
+        step += 1
+    ply_filename = basefilename + "_after.ply"
+    cwipc.cwipc_write(ply_filename, pc)
 
+def run_analyzer(pc : cwipc.cwipc_wrapper, basefilename : str, png_filename : str, extlabel : str, plot : bool):
     analyzer = cwipc.registration.analyze.RegistrationAnalyzerOneToAll()
     analyzer.add_tiled_pointcloud(pc)
-    analyzer.label = basefilename + " before"
+    analyzer.label = basefilename + extlabel
     analyzer.want_histogram_plot = True
     analyzer.run()
-    analyzer.save_plot(png_filename, True)
     results = analyzer.get_ordered_results()
+    print(f"Sorted correspondences {extlabel}")
     for camnum, correspondence, weight in results:
-        print(f"camnum={camnum}, correspondence={correspondence}, weight={weight}")
-
+        print(f"\tcamnum={camnum}, correspondence={correspondence}, weight={weight}")
     camnum_to_fix = results[0][0]
-    print(f"Will fix camera {camnum_to_fix}")
+    correspondence = results[0][1]
+    if plot:
+        analyzer.save_plot(png_filename, True)
+    return camnum_to_fix, correspondence
+
+def run_fixer(pc : cwipc.cwipc_wrapper, camnum_to_fix : int, correspondence : float) -> cwipc.cwipc_wrapper:
     computer = cwipc.registration.compute.RegistrationComputer_ICP()
+    print(f"Will fix camera {camnum_to_fix}, correspondence={correspondence}, algorithm={computer.__class__.__name__}")
     computer.add_tiled_pointcloud(pc)
+    computer.set_correspondence(correspondence)
     computer.run(camnum_to_fix)
     transform = computer.get_result_transformation()
     print(f"Transformation={transform}")
     new_pc = computer.get_result_pointcloud_full()
-    cwipc.cwipc_write("tmp_1_fixed.ply", new_pc)
-
-    analyzer = cwipc.registration.analyze.RegistrationAnalyzerOneToAll()
-    analyzer.add_tiled_pointcloud(new_pc)
-    analyzer.label = basefilename + " after"
-    analyzer.want_histogram_plot = True
-    analyzer.run()
-    analyzer.save_plot("", True)
-    results = analyzer.get_ordered_results()
-    for camnum, correspondence, weight in results:
-        print(f"camnum={camnum}, correspondence={correspondence}, weight={weight}")
-
+    return new_pc
 
 if __name__ == '__main__':
     main()
