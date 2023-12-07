@@ -58,7 +58,7 @@ def run_analyzer(pc : cwipc.cwipc_wrapper, basefilename : str, png_filename : st
     return camnum_to_fix, correspondence
 
 def run_fixer(pc : cwipc.cwipc_wrapper, camnum_to_fix : int, correspondence : float) -> cwipc.cwipc_wrapper:
-    computer = cwipc.registration.compute.RegistrationComputer_ICP()
+    computer = cwipc.registration.compute.RegistrationComputer_ICP_Point2Point()
     print(f"Will fix camera {camnum_to_fix}, correspondence={correspondence}, algorithm={computer.__class__.__name__}")
     computer.add_tiled_pointcloud(pc)
     computer.set_correspondence(correspondence)
