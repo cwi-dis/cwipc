@@ -7,8 +7,8 @@ import cwipc.filters.transform
 MyPoint = Tuple[float, float, float]
 MyBoundingBox = Tuple[float, float, float, float, float, float]
 
-BBOX_0 = (-10, 0, 0, 3, -10, 10)   # Camera 0: negative X direction
-BBOX_1 = (-10, 10, 0, 3, -10, 0)   # Camera 1: negative Z direction
+BBOX_0 = (-10, -0.0001, 0, 3, -10, 10)   # Camera 0: negative X direction
+BBOX_1 = (-10, 10, 0, 3, -10, -0.0001)   # Camera 1: negative Z direction
 BBOX_2 = (0, 10, 0, 3, -10, 10)     # Camera 2: positive X direction
 BBOX_3 = (-10, 10, 0, 3, 0, 10)     # Camera 3: positive Z direction
 
