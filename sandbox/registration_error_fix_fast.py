@@ -29,7 +29,7 @@ def main():
     original_capture_precision = 0.001
 
     fixer.verbose = True
-    fixer.show_plot = True
+    fixer.show_plot = False
     fixer.add_tiled_pointcloud(pc)
     fixer.run()
     

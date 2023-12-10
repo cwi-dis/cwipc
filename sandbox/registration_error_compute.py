@@ -26,9 +26,8 @@ def main():
     analyzer = cwipc.registration.analyze.RegistrationAnalyzerOneToAll()
     analyzer.add_tiled_pointcloud(pc)
     analyzer.label = basefilename
-    analyzer.want_histogram_plot = True
     analyzer.run()
-    analyzer.save_plot(png_filename, True)
+    analyzer.plot(filename=png_filename, show=True)
     results = analyzer.get_ordered_results()
     for camnum, correspondence, weight in results:
         print(f"camnum={camnum}, correspondence={correspondence}, weight={weight}")

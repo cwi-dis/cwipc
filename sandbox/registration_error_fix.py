@@ -53,7 +53,6 @@ def run_analyzer(pc : cwipc.cwipc_wrapper, original_capture_precision : float, b
     analyzer = cwipc.registration.analyze.RegistrationAnalyzerOneToAll()
     analyzer.add_tiled_pointcloud(pc)
     analyzer.label = basefilename + extlabel
-    analyzer.want_histogram_plot = True
     analyzer.run()
     results = analyzer.get_ordered_results()
     print(f"Sorted correspondences {extlabel}")
@@ -67,7 +66,7 @@ def run_analyzer(pc : cwipc.cwipc_wrapper, original_capture_precision : float, b
             correspondence = results[i][1]
             break
     if plot:
-        analyzer.save_plot(png_filename, True)
+        analyzer.plot(filename=png_filename, show=True)
     return camnum_to_fix, correspondence
 
 def run_fixer(pc : cwipc.cwipc_wrapper, camnum_to_fix : int, correspondence : float) -> cwipc.cwipc_wrapper:
