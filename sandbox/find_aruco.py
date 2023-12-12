@@ -2,6 +2,7 @@ import sys
 import cv2
 from typing import Tuple
 import numpy as np
+import open3d as o3d
 import cv2.typing
 import cv2.aruco
 import cwipc
@@ -62,8 +63,12 @@ def project_pointcloud_to_images(pc : cwipc.cwipc_wrapper, width : int, height :
     img_rgb = np.zeros(shape=(width, height, 3), dtype=np.uint8)
     img_xyz = np.zeros(shape=(width, height, 3), dtype=np.float32)
     cv2.rectangle(img_rgb, pt1=[2,2], pt2=[width-4, height-4], color=[0,255,0], thickness=-1)
-    # xxxjack should do this with numpy
-    xyz_array, rgb_array = _get_nparrays_for_pc(pc)
+
+    xyz_array_orig, rgb_array = _get_nparrays_for_pc(pc)
+    xyz_pointcloud = o3d.geometry.PointCloud()
+    xyz_pointcloud.points = o3d.utility.Vector3dVector(xyz_array_orig)
+    # xxxjack should do transformation here
+    xyz_array = np.asarray(xyz_pointcloud.points)
     x_array = xyz_array[:,0]
     y_array = xyz_array[:,1]
     min_x = np.min(x_array)
@@ -73,14 +78,17 @@ def project_pointcloud_to_images(pc : cwipc.cwipc_wrapper, width : int, height :
     print(f"x range: {min_x}..{max_x}, y range: {min_y}..{max_y}")
     x_factor = (width-1) / (max_x - min_x)
     y_factor = (height-1) / (max_y - min_y)
+    # xxxjack should do this with numpy
     for i in range(len(xyz_array)):
         xyz = xyz_array[i]
+        xyz_orig = xyz_array_orig[i] # Note: this is the original point, before any transformation 
         rgb = rgb_array[i]
         x = xyz[0]
         y = xyz[1]
         img_x = int((x-min_x) * x_factor)
         img_y = int((y-min_y) * y_factor)
         img_rgb[img_x][img_y] = rgb
+        img_xyz[img_x][img_y] = xyz_orig
     return img_rgb, img_xyz
 
 def _get_nparrays_for_pc(pc : cwipc.cwipc_wrapper) -> Tuple[cv2.typing.MatLike, cv2.typing.MatLike]:
