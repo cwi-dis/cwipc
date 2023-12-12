@@ -1,6 +1,6 @@
 import sys
 import cv2
-from typing import Tuple
+from typing import Tuple, List
 import numpy as np
 import open3d as o3d
 import cv2.typing
@@ -23,7 +23,7 @@ def main():
 
 def find_aruco_in_plyfile(filename : str):
     full_pc = cwipc.cwipc_read(filename, 0)
-    for tile in [1, 2, 4, 8]:
+    for tile in [1]:
         pc = cwipc.cwipc_tilefilter(full_pc, tile)
         find_aruco_in_pointcloud(pc)
     
@@ -37,10 +37,13 @@ def find_aruco_in_imagefile(filename : str):
     find_aruco_in_image(img)
 
 def find_aruco_in_pointcloud(pc : cwipc.cwipc_wrapper):
-    width = 512
-    height = 512
-    img_rgb, img_xyz = project_pointcloud_to_images(pc, width, height)
-    find_aruco_in_image(img_rgb)
+    width = 1024
+    height = 1024
+    for rotation in [
+                [0.0, 0.0, 0.0],
+            ]:
+        img_rgb, img_xyz = project_pointcloud_to_images(pc, width, height, rotation)
+        find_aruco_in_image(img_rgb)
 
 
 def find_aruco_in_image(img : cv2.typing.MatLike):
@@ -58,16 +61,18 @@ def find_aruco_in_image(img : cv2.typing.MatLike):
                 break
             print(f"ignoring key {ch}")
 
-def project_pointcloud_to_images(pc : cwipc.cwipc_wrapper, width : int, height : int) -> Tuple[cv2.typing.MatLike, cv2.typing.MatLike]:
+def project_pointcloud_to_images(pc : cwipc.cwipc_wrapper, width : int, height : int, rotation: List[float]) -> Tuple[cv2.typing.MatLike, cv2.typing.MatLike]:
 
     img_rgb = np.zeros(shape=(width, height, 3), dtype=np.uint8)
     img_xyz = np.zeros(shape=(width, height, 3), dtype=np.float32)
-    cv2.rectangle(img_rgb, pt1=[2,2], pt2=[width-4, height-4], color=[0,255,0], thickness=-1)
+    cv2.rectangle(img_rgb, pt1=[2,2], pt2=[width-4, height-4], color=[0,0,0], thickness=-1)
 
     xyz_array_orig, rgb_array = _get_nparrays_for_pc(pc)
     xyz_pointcloud = o3d.geometry.PointCloud()
     xyz_pointcloud.points = o3d.utility.Vector3dVector(xyz_array_orig)
     # xxxjack should do transformation here
+    angles = xyz_pointcloud.get_rotation_matrix_from_xyz(rotation)
+    xyz_pointcloud.rotate(angles, center=[0, 0, 0])
     xyz_array = np.asarray(xyz_pointcloud.points)
     x_array = xyz_array[:,0]
     y_array = xyz_array[:,1]
@@ -85,6 +90,9 @@ def project_pointcloud_to_images(pc : cwipc.cwipc_wrapper, width : int, height :
         rgb = rgb_array[i]
         x = xyz[0]
         y = xyz[1]
+        z = xyz[2]
+        if z < 0:
+            continue
         img_x = int((x-min_x) * x_factor)
         img_y = int((y-min_y) * y_factor)
         img_rgb[img_x][img_y] = rgb
