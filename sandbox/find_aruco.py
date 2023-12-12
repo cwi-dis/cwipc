@@ -23,7 +23,7 @@ def main():
 
 def find_aruco_in_plyfile(filename : str):
     full_pc = cwipc.cwipc_read(filename, 0)
-    for tile in [1]:
+    for tile in [1, 2, 4, 8]:
         pc = cwipc.cwipc_tilefilter(full_pc, tile)
         find_aruco_in_pointcloud(pc)
     
@@ -63,10 +63,9 @@ def find_aruco_in_image(img : cv2.typing.MatLike):
 
 def project_pointcloud_to_images(pc : cwipc.cwipc_wrapper, width : int, height : int, rotation: List[float]) -> Tuple[cv2.typing.MatLike, cv2.typing.MatLike]:
 
-    img_rgb = np.zeros(shape=(width, height, 3), dtype=np.uint8)
+    img_grey = np.zeros(shape=(width, height, 3), dtype=np.uint8)
     img_xyz = np.zeros(shape=(width, height, 3), dtype=np.float32)
-    cv2.rectangle(img_rgb, pt1=[2,2], pt2=[width-4, height-4], color=[0,0,0], thickness=-1)
-
+    
     xyz_array_orig, rgb_array = _get_nparrays_for_pc(pc)
     xyz_pointcloud = o3d.geometry.PointCloud()
     xyz_pointcloud.points = o3d.utility.Vector3dVector(xyz_array_orig)
@@ -83,21 +82,37 @@ def project_pointcloud_to_images(pc : cwipc.cwipc_wrapper, width : int, height :
     print(f"x range: {min_x}..{max_x}, y range: {min_y}..{max_y}")
     x_factor = (width-1) / (max_x - min_x)
     y_factor = (height-1) / (max_y - min_y)
+    # I have _absolutely_ no idea why X has to be inverted....
+    # Or is this yet another case of left-handed versus right-handed coordinate systems?
+    invert_x = True
+    invert_y = False
     # xxxjack should do this with numpy
-    for i in range(len(xyz_array)):
-        xyz = xyz_array[i]
-        xyz_orig = xyz_array_orig[i] # Note: this is the original point, before any transformation 
-        rgb = rgb_array[i]
-        x = xyz[0]
-        y = xyz[1]
-        z = xyz[2]
-        if z < 0:
-            continue
-        img_x = int((x-min_x) * x_factor)
-        img_y = int((y-min_y) * y_factor)
-        img_rgb[img_x][img_y] = rgb
-        img_xyz[img_x][img_y] = xyz_orig
-    return img_rgb, img_xyz
+    for pass_ in (0, 1):
+        for i in range(len(xyz_array)):
+            xyz = xyz_array[i]
+            xyz_orig = xyz_array_orig[i] # Note: this is the original point, before any transformation 
+            rgb = rgb_array[i]
+            x = xyz[0]
+            y = xyz[1]
+            z = xyz[2]
+            if z < 0:
+                continue
+            img_x = int((x-min_x) * x_factor)
+            img_y = int((y-min_y) * y_factor)
+            if invert_x:
+                img_x = width-1-img_x
+            if invert_y:
+                img_y = height-1-img_y
+            grey = max(rgb[0], rgb[1], rgb[2])
+            if pass_ == 0:
+                for iix in range(max(0, img_x-2), min(width-1, img_x+2)):
+                    for iiy in range(max(0, img_y-2), min(height-1, img_y+2)):
+                            img_grey[iix][iiy] = grey
+                            img_xyz[iix][iiy] = xyz_orig
+            else:
+                img_grey[img_x][img_y] = grey
+                img_xyz[img_x][img_y] = xyz_orig
+    return img_grey, img_xyz
 
 def _get_nparrays_for_pc(pc : cwipc.cwipc_wrapper) -> Tuple[cv2.typing.MatLike, cv2.typing.MatLike]:
     # Get the points (as a cwipc-style array) and convert them to a NumPy array-of-structs
