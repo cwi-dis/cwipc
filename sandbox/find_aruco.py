@@ -42,8 +42,8 @@ def find_aruco_in_pointcloud(pc : cwipc.cwipc_wrapper):
     for rotation in [
                 [0.0, 0.0, 0.0],
             ]:
-        img_rgb, img_xyz = project_pointcloud_to_images(pc, width, height, rotation)
-        find_aruco_in_image(img_rgb)
+        img_bgr, img_xyz = project_pointcloud_to_images(pc, width, height, rotation)
+        find_aruco_in_image(img_bgr)
 
 
 def find_aruco_in_image(img : cv2.typing.MatLike):
@@ -63,7 +63,7 @@ def find_aruco_in_image(img : cv2.typing.MatLike):
 
 def project_pointcloud_to_images(pc : cwipc.cwipc_wrapper, width : int, height : int, rotation: List[float]) -> Tuple[cv2.typing.MatLike, cv2.typing.MatLike]:
 
-    img_grey = np.zeros(shape=(width, height, 3), dtype=np.uint8)
+    img_bgr = np.zeros(shape=(width, height, 3), dtype=np.uint8)
     img_xyz = np.zeros(shape=(width, height, 3), dtype=np.float32)
     
     xyz_array_orig, rgb_array = _get_nparrays_for_pc(pc)
@@ -87,11 +87,13 @@ def project_pointcloud_to_images(pc : cwipc.cwipc_wrapper, width : int, height :
     invert_x = True
     invert_y = False
     # xxxjack should do this with numpy
-    for pass_ in (0, 1):
+    passes = (1,)
+    for pass_ in passes:
         for i in range(len(xyz_array)):
             xyz = xyz_array[i]
             xyz_orig = xyz_array_orig[i] # Note: this is the original point, before any transformation 
             rgb = rgb_array[i]
+            bgr = rgb[[2,1,0]]
             x = xyz[0]
             y = xyz[1]
             z = xyz[2]
@@ -103,16 +105,15 @@ def project_pointcloud_to_images(pc : cwipc.cwipc_wrapper, width : int, height :
                 img_x = width-1-img_x
             if invert_y:
                 img_y = height-1-img_y
-            grey = max(rgb[0], rgb[1], rgb[2])
             if pass_ == 0:
                 for iix in range(max(0, img_x-2), min(width-1, img_x+2)):
                     for iiy in range(max(0, img_y-2), min(height-1, img_y+2)):
-                            img_grey[iix][iiy] = grey
-                            img_xyz[iix][iiy] = xyz_orig
+                            img_bgr[iiy][iix] = bgr
+                            img_xyz[iiy][iix] = xyz_orig
             else:
-                img_grey[img_x][img_y] = grey
-                img_xyz[img_x][img_y] = xyz_orig
-    return img_grey, img_xyz
+                img_bgr[img_y][img_x] = bgr
+                img_xyz[img_y][img_x] = xyz_orig
+    return img_bgr, img_xyz
 
 def _get_nparrays_for_pc(pc : cwipc.cwipc_wrapper) -> Tuple[cv2.typing.MatLike, cv2.typing.MatLike]:
     # Get the points (as a cwipc-style array) and convert them to a NumPy array-of-structs
