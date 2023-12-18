@@ -6,6 +6,7 @@ import open3d as o3d
 import cv2.typing
 import cv2.aruco
 import cwipc
+import cwipc.registration.util
 
 ARUCO_PARAMETERS = cv2.aruco.DetectorParameters()
 ARUCO_DICT = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_50)
@@ -25,6 +26,7 @@ def find_aruco_in_plyfile(filename : str):
     full_pc = cwipc.cwipc_read(filename, 0)
     for tile in [1, 2, 4, 8]:
         pc = cwipc.cwipc_tilefilter(full_pc, tile)
+        cwipc.registration.util.show_pointcloud(f"camera {tile}", pc, from000=True)
         find_aruco_in_pointcloud(pc)
     
 
