@@ -24,7 +24,8 @@ def main():
 
 def find_aruco_in_plyfile(filename : str):
     full_pc = cwipc.cwipc_read(filename, 0)
-    for tile in [1, 2, 4, 8]:
+    tiles_used = cwipc.registration.util.get_tiles_used(full_pc)
+    for tile in tiles_used:
         pc = cwipc.cwipc_tilefilter(full_pc, tile)
         cwipc.registration.util.show_pointcloud(f"camera {tile}", pc, from000=True)
         find_aruco_in_pointcloud(pc)
