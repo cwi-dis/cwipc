@@ -26,14 +26,17 @@ def main():
     # Run the coarse calibration
     fixer = cwipc.registration.coarse.MultiCameraCoarseInteractive()
     fixer.add_tiled_pointcloud(pc)
-    fixer.run()
+    ok = fixer.run()
+    if not ok:
+        print("Could not do coarse registration")
+        sys.exit(1)
     # Get the result
     transformations = fixer.get_result_transformations()
     for i in range(len(transformations)):
         camnum = fixer.tilenum_for_camera_index(i)
         print(f"cam-index {i}: camnum {camnum}: matrix {transformations[i]}")
     new_pc = fixer.get_result_pointcloud_full()
-    _ = run_analyzer(new_pc, 1.0, basefilename, "", "", True)
+   # _ = run_analyzer(new_pc, 1.0, basefilename, "", "", True)
     cwipc.registration.util.show_pointcloud("Result", new_pc)
 
 def run_analyzer(pc : cwipc.cwipc_wrapper, original_capture_precision : float, basefilename : str, png_filename : str, extlabel : str, plot : bool) -> Tuple[Optional[int], float]:
