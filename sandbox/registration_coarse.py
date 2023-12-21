@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 import cwipc
 import cwipc.filters.colorize
 import cwipc.registration.analyze
-import cwipc.registration.compute
+import cwipc.registration.fine
 import cwipc.registration.coarse
 import cwipc.registration.util
 
@@ -40,7 +40,7 @@ def main():
     cwipc.registration.util.show_pointcloud("Result", new_pc)
 
 def run_analyzer(pc : cwipc.cwipc_wrapper, original_capture_precision : float, basefilename : str, png_filename : str, extlabel : str, plot : bool) -> Tuple[Optional[int], float]:
-    analyzer = cwipc.registration.analyze.RegistrationAnalyzerOneToAll()
+    analyzer = cwipc.registration.analyze.RegistrationAnalyzer()
     analyzer.add_tiled_pointcloud(pc)
     analyzer.label = basefilename + extlabel
     analyzer.run()

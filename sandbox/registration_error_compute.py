@@ -23,7 +23,7 @@ def main():
     else:
         pc = cwipc.cwipc_read_debugdump(sys.argv[1])
 
-    analyzer = cwipc.registration.analyze.RegistrationAnalyzerOneToAll()
+    analyzer = cwipc.registration.analyze.RegistrationAnalyzer()
     analyzer.add_tiled_pointcloud(pc)
     analyzer.label = basefilename
     analyzer.run()

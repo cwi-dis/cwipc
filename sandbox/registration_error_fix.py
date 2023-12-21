@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 import cwipc
 import cwipc.filters.colorize
 import cwipc.registration.analyze
-import cwipc.registration.compute
+import cwipc.registration.fine
 
 
 def main():
@@ -50,7 +50,7 @@ def main():
     cwipc.cwipc_write(ply_filename, pc)
 
 def run_analyzer(pc : cwipc.cwipc_wrapper, original_capture_precision : float, basefilename : str, png_filename : str, extlabel : str, plot : bool) -> Tuple[Optional[int], float]:
-    analyzer = cwipc.registration.analyze.RegistrationAnalyzerOneToAll()
+    analyzer = cwipc.registration.analyze.RegistrationAnalyzer()
     analyzer.add_tiled_pointcloud(pc)
     analyzer.label = basefilename + extlabel
     analyzer.run()
@@ -70,7 +70,7 @@ def run_analyzer(pc : cwipc.cwipc_wrapper, original_capture_precision : float, b
     return camnum_to_fix, correspondence
 
 def run_fixer(pc : cwipc.cwipc_wrapper, camnum_to_fix : int, correspondence : float) -> cwipc.cwipc_wrapper:
-    computer = cwipc.registration.compute.RegistrationComputer_ICP_Point2Point()
+    computer = cwipc.registration.fine.RegistrationComputer_ICP_Point2Point()
     print(f"Will fix camera {camnum_to_fix}, correspondence={correspondence}, algorithm={computer.__class__.__name__}")
     computer.add_tiled_pointcloud(pc)
     computer.set_correspondence(correspondence)
