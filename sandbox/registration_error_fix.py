@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 import math
 from typing import Optional, List, Any, Tuple
 import numpy as np
@@ -34,7 +35,7 @@ def main():
     step = 1
     while camnum_to_fix != None:
         png_filename = basefilename + f"_histogram_after_step_{step}.png"
-        new_pc = run_fixer(pc, camnum_to_fix, correspondence_error)
+        new_pc = run_aligner(pc, camnum_to_fix, correspondence_error)
         pc.free()
         pc = new_pc
         old_camnum_to_fix, old_correspondence_error = camnum_to_fix, correspondence_error
@@ -53,7 +54,10 @@ def run_analyzer(pc : cwipc.cwipc_wrapper, original_capture_precision : float, b
     analyzer = cwipc.registration.analyze.RegistrationAnalyzer()
     analyzer.add_tiled_pointcloud(pc)
     analyzer.label = basefilename + extlabel
+    start_time = time.time()
     analyzer.run()
+    stop_time = time.time()
+    print(f"analyzer ran for {stop_time-start_time:.3f} seconds")
     results = analyzer.get_ordered_results()
     print(f"Sorted correspondences {extlabel}")
     for camnum, correspondence, weight in results:
@@ -69,15 +73,18 @@ def run_analyzer(pc : cwipc.cwipc_wrapper, original_capture_precision : float, b
         analyzer.plot(filename=png_filename, show=True)
     return camnum_to_fix, correspondence
 
-def run_fixer(pc : cwipc.cwipc_wrapper, camnum_to_fix : int, correspondence : float) -> cwipc.cwipc_wrapper:
-    computer = cwipc.registration.fine.RegistrationComputer_ICP_Point2Point()
-    print(f"Will fix camera {camnum_to_fix}, correspondence={correspondence}, algorithm={computer.__class__.__name__}")
-    computer.add_tiled_pointcloud(pc)
-    computer.set_correspondence(correspondence)
-    computer.run(camnum_to_fix)
-    transform = computer.get_result_transformation()
+def run_aligner(pc : cwipc.cwipc_wrapper, camnum_to_fix : int, correspondence : float) -> cwipc.cwipc_wrapper:
+    aligner = cwipc.registration.fine.RegistrationComputer_ICP_Point2Point()
+    print(f"Will fix camera {camnum_to_fix}, correspondence={correspondence}, algorithm={aligner.__class__.__name__}")
+    aligner.add_tiled_pointcloud(pc)
+    aligner.set_correspondence(correspondence)
+    start_time = time.time()
+    aligner.run(camnum_to_fix)
+    stop_time = time.time()
+    print(f"aligner ran for {stop_time-start_time:.3f} seconds")
+    transform = aligner.get_result_transformation()
     print(f"Transformation={transform}")
-    new_pc = computer.get_result_pointcloud_full()
+    new_pc = aligner.get_result_pointcloud_full()
     return new_pc
 
 if __name__ == '__main__':

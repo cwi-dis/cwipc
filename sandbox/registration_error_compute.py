@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 import math
 from typing import Optional, List, Any
 import numpy as np
@@ -26,7 +27,10 @@ def main():
     analyzer = cwipc.registration.analyze.RegistrationAnalyzer()
     analyzer.add_tiled_pointcloud(pc)
     analyzer.label = basefilename
+    start_time = time.time()
     analyzer.run()
+    stop_time = time.time()
+    print(f"analyzer ran for {stop_time-start_time:.3f} seconds")
     analyzer.plot(filename=png_filename, show=True)
     results = analyzer.get_ordered_results()
     for camnum, correspondence, weight in results:
