@@ -84,7 +84,10 @@ def run_aligner(pc : cwipc.cwipc_wrapper, camnum_to_fix : int, correspondence : 
     print(f"aligner ran for {stop_time-start_time:.3f} seconds")
     transform = aligner.get_result_transformation()
     print(f"Transformation={transform}")
+    start_time = time.time()
     new_pc = aligner.get_result_pointcloud_full()
+    stop_time = time.time()
+    print(f"transformer ran for {stop_time-start_time:.3f} seconds")
     return new_pc
 
 if __name__ == '__main__':

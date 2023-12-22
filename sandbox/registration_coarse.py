@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 import math
 from typing import Optional, List, Any, Tuple
 import numpy as np
@@ -18,32 +19,43 @@ def main():
         print(f"Usage: {sys.argv[0]} plyfile", file=sys.stderr)
         sys.exit(1)
     basefilename, ext = os.path.splitext(sys.argv[1])
-   
     if ext.lower() == '.ply':
         pc = cwipc.cwipc_read(sys.argv[1], 0)
     else:
         pc = cwipc.cwipc_read_debugdump(sys.argv[1])
     # Run the coarse calibration
-    fixer = cwipc.registration.coarse.MultiCameraCoarseInteractive()
-    fixer.add_tiled_pointcloud(pc)
-    ok = fixer.run()
+    aligner = cwipc.registration.coarse.MultiCameraCoarseInteractive()
+    aligner.add_tiled_pointcloud(pc)
+    start_time = time.time()
+    ok = aligner.run()
+    stop_time = time.time()
+    print(f"aligner ran for {stop_time-start_time:.3f} seconds")
     if not ok:
         print("Could not do coarse registration")
         sys.exit(1)
     # Get the result
-    transformations = fixer.get_result_transformations()
+    transformations = aligner.get_result_transformations()
     for i in range(len(transformations)):
-        camnum = fixer.tilenum_for_camera_index(i)
+        camnum = aligner.tilenum_for_camera_index(i)
         print(f"cam-index {i}: camnum {camnum}: matrix {transformations[i]}")
-    new_pc = fixer.get_result_pointcloud_full()
-   # _ = run_analyzer(new_pc, 1.0, basefilename, "", "", True)
+    start_time = time.time()
+    new_pc = aligner.get_result_pointcloud_full()
+    stop_time = time.time()
+    print(f"transformer ran for {stop_time-start_time:.3f} seconds")
     cwipc.registration.util.show_pointcloud("Result", new_pc)
-
+    ply_filename = basefilename + "_after.ply"
+    cwipc.cwipc_write(ply_filename, new_pc)
+    pngfilename = basefilename + ".png"
+    _ = run_analyzer(new_pc, 1.0, basefilename, pngfilename, "", True)
+    
 def run_analyzer(pc : cwipc.cwipc_wrapper, original_capture_precision : float, basefilename : str, png_filename : str, extlabel : str, plot : bool) -> Tuple[Optional[int], float]:
     analyzer = cwipc.registration.analyze.RegistrationAnalyzer()
     analyzer.add_tiled_pointcloud(pc)
     analyzer.label = basefilename + extlabel
+    start_time = time.time()
     analyzer.run()
+    stop_time = time.time()
+    print(f"analyzer ran for {stop_time-start_time:.3f} seconds")
     results = analyzer.get_ordered_results()
     print(f"Sorted correspondences {extlabel}")
     for camnum, correspondence, weight in results:
