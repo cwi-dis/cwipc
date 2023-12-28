@@ -17,3 +17,4 @@ source $buildDir/venv/bin/activate
 (cd $buildDir/../cwipc_codec/python && python -m pip install -e .)
 (cd $buildDir/../cwipc_realsense2/python && python -m pip install -e .)
 (cd $buildDir/../cwipc_kinect/python && python -m pip install -e .)
+
