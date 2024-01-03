@@ -97,6 +97,9 @@
         "stop_token": "cpp",
         "cinttypes": "cpp",
         "typeindex": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "__hash_table": "cpp",
+        "queue": "cpp",
+        "future": "cpp"
     }
 }
