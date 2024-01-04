@@ -18,9 +18,13 @@ def main():
     basefilename, ext = os.path.splitext(sys.argv[1])
     csv_filename = basefilename + ".csv"
 
-    reverse = True
-    filtered = True
-    if reverse:
+    pair_finder = True
+    reverse = False
+    filtered = False
+    if pair_finder:
+        png_filename = basefilename + "_histogram_paired.png"
+        analyzer = cwipc.registration.analyze.RegistrationPairFinder()
+    elif reverse:
         if filtered:
             png_filename = basefilename + "_histogram_one2all_reverse_filtered.png"
             analyzer = cwipc.registration.analyze.RegistrationAnalyzerFilteredReverse()
