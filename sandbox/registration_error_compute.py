@@ -17,16 +17,33 @@ def main():
         sys.exit(1)
     basefilename, ext = os.path.splitext(sys.argv[1])
     csv_filename = basefilename + ".csv"
-    png_filename = basefilename + "_histogram_one2all_reverse.png"
+
+    reverse = True
+    filtered = True
+    if reverse:
+        if filtered:
+            png_filename = basefilename + "_histogram_one2all_reverse_filtered.png"
+            analyzer = cwipc.registration.analyze.RegistrationAnalyzerFilteredReverse()
+        else:
+            png_filename = basefilename + "_histogram_one2all_reverse.png"
+            analyzer = cwipc.registration.analyze.RegistrationAnalyzerReverse()
+    else:
+        if filtered:
+            png_filename = basefilename + "_histogram_one2all_filtered.png"
+            analyzer = cwipc.registration.analyze.RegistrationAnalyzerFiltered()
+        else:
+            png_filename = basefilename + "_histogram_one2all.png"
+            analyzer = cwipc.registration.analyze.RegistrationAnalyzer()
 
     if ext.lower() == '.ply':
         pc = cwipc.cwipc_read(sys.argv[1], 0)
     else:
         pc = cwipc.cwipc_read_debugdump(sys.argv[1])
 
-    analyzer = cwipc.registration.analyze.RegistrationAnalyzerReverse()
     analyzer.add_tiled_pointcloud(pc)
     analyzer.plot_label = basefilename
+    analyzer.distance_upper_bound = 0.1
+    analyzer.eps = 0.001
     start_time = time.time()
     analyzer.run()
     stop_time = time.time()
