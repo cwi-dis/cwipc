@@ -17,21 +17,21 @@ def main():
         sys.exit(1)
     basefilename, ext = os.path.splitext(sys.argv[1])
     csv_filename = basefilename + ".csv"
-    png_filename = basefilename + "_histogram_one2all.png"
+    png_filename = basefilename + "_histogram_one2all_reverse.png"
 
     if ext.lower() == '.ply':
         pc = cwipc.cwipc_read(sys.argv[1], 0)
     else:
         pc = cwipc.cwipc_read_debugdump(sys.argv[1])
 
-    analyzer = cwipc.registration.analyze.RegistrationAnalyzer()
+    analyzer = cwipc.registration.analyze.RegistrationAnalyzerReverse()
     analyzer.add_tiled_pointcloud(pc)
-    analyzer.label = basefilename
+    analyzer.plot_label = basefilename
     start_time = time.time()
     analyzer.run()
     stop_time = time.time()
     print(f"analyzer ran for {stop_time-start_time:.3f} seconds")
-    analyzer.plot(filename=png_filename, show=True)
+    analyzer.plot(filename=png_filename, show=True, cumulative=True)
     results = analyzer.get_ordered_results()
     for camnum, correspondence, weight in results:
         print(f"camnum={camnum}, correspondence={correspondence}, weight={weight}")

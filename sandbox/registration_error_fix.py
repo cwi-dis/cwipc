@@ -53,7 +53,7 @@ def main():
 def run_analyzer(pc : cwipc.cwipc_wrapper, original_capture_precision : float, basefilename : str, png_filename : str, extlabel : str, plot : bool) -> Tuple[Optional[int], float]:
     analyzer = cwipc.registration.analyze.RegistrationAnalyzer()
     analyzer.add_tiled_pointcloud(pc)
-    analyzer.label = basefilename + extlabel
+    analyzer.plot_label = basefilename + extlabel
     start_time = time.time()
     analyzer.run()
     stop_time = time.time()
