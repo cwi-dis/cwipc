@@ -24,7 +24,11 @@ def main():
     else:
         pc = cwipc.cwipc_read_debugdump(sys.argv[1])
     # Run the coarse calibration
-    aligner = cwipc.registration.coarse.MultiCameraCoarseInteractive()
+    interactive = False
+    if interactive:
+        aligner = cwipc.registration.coarse.MultiCameraCoarseInteractive()
+    else:
+        aligner = cwipc.registration.coarse.MultiCameraCoarsePointcloud()
     aligner.add_tiled_pointcloud(pc)
     start_time = time.time()
     ok = aligner.run()
