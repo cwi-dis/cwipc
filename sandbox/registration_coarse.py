@@ -24,8 +24,8 @@ def main():
     else:
         pc = cwipc.cwipc_read_debugdump(sys.argv[1])
     # Run the coarse calibration
-    interactive = False
-    if interactive:
+    pointcloud = True
+    if not pointcloud:
         aligner = cwipc.registration.coarse.MultiCameraCoarseInteractive()
     else:
         aligner = cwipc.registration.coarse.MultiCameraCoarsePointcloud()
