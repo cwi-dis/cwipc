@@ -26,9 +26,9 @@ def main():
     # Run the coarse calibration
     pointcloud = True
     if not pointcloud:
-        aligner = cwipc.registration.coarse.MultiCameraCoarseInteractive()
+        aligner = cwipc.registration.coarse.MultiCameraCoarseColorTarget()
     else:
-        aligner = cwipc.registration.coarse.MultiCameraCoarsePointcloud()
+        aligner = cwipc.registration.coarse.MultiCameraCoarseAruco()
     aligner.debug = False
     aligner.verbose = False
     aligner.add_tiled_pointcloud(pc)
