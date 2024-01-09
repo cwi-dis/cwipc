@@ -9,7 +9,7 @@ $topDir = Split-Path $myDir -Parent
 Write-Output $topDir
 $buildDir = $topDir + "\build"
 Write-Output $buildDir
-$binDir = $buildDir + "bin\Release"
+$binDir = $buildDir + "\bin\Release"
 Write-Output $binDir
 $Env:PATH = $binDir + ";" + $Env:PATH
 Write-Output $Env:PATH
