@@ -29,6 +29,8 @@ def main():
         aligner = cwipc.registration.coarse.MultiCameraCoarseInteractive()
     else:
         aligner = cwipc.registration.coarse.MultiCameraCoarsePointcloud()
+    aligner.debug = False
+    aligner.verbose = False
     aligner.add_tiled_pointcloud(pc)
     start_time = time.time()
     ok = aligner.run()
@@ -46,7 +48,7 @@ def main():
     new_pc = aligner.get_result_pointcloud_full()
     stop_time = time.time()
     print(f"transformer ran for {stop_time-start_time:.3f} seconds")
-    cwipc.registration.util.show_pointcloud("Result", new_pc)
+    cwipc.registration.util.show_pointcloud("Result for all cameras in 3D. ESC to close.", new_pc)
     ply_filename = basefilename + "_after.ply"
     cwipc.cwipc_write(ply_filename, new_pc)
     pngfilename = basefilename + ".png"
