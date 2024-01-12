@@ -43,7 +43,8 @@ def main():
     transformations = aligner.get_result_transformations()
     for i in range(len(transformations)):
         camnum = aligner.tilenum_for_camera_index(i)
-        print(f"cam-index {i}: camnum {camnum}: matrix {transformations[i]}")
+        is_identity = (transformations[i] == cwipc.registration.util.transformation_identity()).all()
+        print(f"cam-index {i}: camnum {camnum}: registered={not is_identity}, matrix {transformations[i]}")
     start_time = time.time()
     new_pc = aligner.get_result_pointcloud_full()
     stop_time = time.time()
@@ -52,7 +53,7 @@ def main():
     ply_filename = basefilename + "_after.ply"
     cwipc.cwipc_write(ply_filename, new_pc)
     pngfilename = basefilename + ".png"
-    _ = run_analyzer(new_pc, 1.0, basefilename, pngfilename, "", True)
+    # This is very expensive and not very helpful._ = run_analyzer(new_pc, 1.0, basefilename, pngfilename, "", True)
     
 def run_analyzer(pc : cwipc.cwipc_wrapper, original_capture_precision : float, basefilename : str, png_filename : str, extlabel : str, plot : bool) -> Tuple[Optional[int], float]:
     analyzer = cwipc.registration.analyze.RegistrationAnalyzer()
