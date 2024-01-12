@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- There is a new utility `cwipc_register` to do registration of multiple cameras (replacing the old `cwipc_calibrate`).
+- There is a new capturer `realsense_playback` which reads `.bag` recordings captured earlier. It behaves much more like a camera than the older `realsense_offline`.
 - Cameraconfig files are now JSON by default (but XML is still supported for backward compatibility).
 - The default camera type is now determined from `cameraconfig.json`, so you normally don't have to specify `--kinect` or similar to `cwipc_view` and other utilities
 - There is a new API call `cwipc_capturer` that will return the correct capturer for what is specified in `cameraconfig.json`. You can also give it a `configFilename` parameter of `"auto"` and it will determine what type of camera is attached to your system.
