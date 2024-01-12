@@ -29,8 +29,8 @@ def main():
         aligner = cwipc.registration.coarse.MultiCameraCoarseColorTarget()
     else:
         aligner = cwipc.registration.coarse.MultiCameraCoarseAruco()
-    aligner.debug = False
-    aligner.verbose = False
+    aligner.debug = True
+    aligner.verbose = True
     aligner.add_tiled_pointcloud(pc)
     start_time = time.time()
     ok = aligner.run()
