@@ -44,6 +44,8 @@ def main():
     else:
         pc = cwipc.cwipc_read_debugdump(sys.argv[1])
 
+    analyzer.verbose = True
+
     analyzer.add_tiled_pointcloud(pc)
     analyzer.plot_label = basefilename
     analyzer.distance_upper_bound = 0.1
