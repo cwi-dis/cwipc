@@ -14,6 +14,9 @@ try:
 except:
     pass
 
+import os
+print(f"PID={os.getpid()}")
+
 def _parse_aux_description(description : str) -> Dict[str, Any]:
     rv = {}
     fields = description.split(',')
@@ -49,7 +52,7 @@ def main():
     depth_images = {}
     print(f"auxdata has {auxdata.count()} items")
     for i in range(auxdata.count()):
-        # print(f"auxdata {i}: name={auxdata.name(i)}, description={auxdata.description(i)}")
+        print(f"auxdata {i}: name={auxdata.name(i)}, description={auxdata.description(i)}")
         name = auxdata.name(i)
         if name.startswith("rgb."):
             serial = name[4:]
@@ -58,10 +61,22 @@ def main():
             width = descr["width"]
             height = descr["height"]
             stride = descr["stride"]
-            bpp = descr["bpp"]
+            bpp = 0
+            if "bpp" in descr:
+                bpp = descr["bpp"]
+            else:
+                image_format = descr['format']
+                if image_format == 2:
+                    bpp = 3 # RGB
+                elif image_format == 3:
+                    bpp = 4 # RGBA
+                elif image_format == 4:
+                    bpp = 2 # 16-bit grey
+            assert bpp
             image_data = auxdata.data(i)
             np_image_data_bytes = np.array(image_data)
             np_image_data = np.reshape(np_image_data_bytes, (height, width, bpp))
+            np_image_data = np_image_data[:,:,[0,1,2]]
             # Select B, G, R channels
             # np_image_data = np_image_data[:,:,[2,1,0]]
             rgb_images[serial] = np_image_data
@@ -72,7 +87,18 @@ def main():
             width = descr["width"]
             height = descr["height"]
             stride = descr["stride"]
-            bpp = descr["bpp"]
+            bpp = 0
+            if "bpp" in descr:
+                bpp = descr["bpp"]
+            else:
+                image_format = descr['format']
+                if image_format == 2:
+                    bpp = 3 # RGB
+                elif image_format == 3:
+                    bpp = 4 # RGBA
+                elif image_format == 4:
+                    bpp = 2 # 16-bit grey
+            assert bpp
             image_data = auxdata.data(i)
             np_image_data_bytes = np.array(image_data)
             np_image_data = np.reshape(np_image_data_bytes, (height, width, bpp))
