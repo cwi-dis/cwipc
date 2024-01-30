@@ -104,7 +104,7 @@ def main():
         if not ok:
             print(f"serial {serial}: map2d3d failed")
             continue
-        _, rv_x, rv_y, rv_z = struct.unpack("ffff", outargs)
+        rv_x, rv_y, rv_z = struct.unpack("fff", outargs)
         print(f"serial {serial}: x={rv_x}, y={rv_y}, z={rv_z}")
 
 
