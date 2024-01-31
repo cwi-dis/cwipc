@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New API call `cwipc_tiledsource_auxiliary_operation` to have a capturer do a special operation, such as mapping 2D points to 3D points.
 - There is a new utility `cwipc_register` to do registration of multiple cameras (replacing the old `cwipc_calibrate`).
 - There is a new capturer `realsense_playback` which reads `.bag` recordings captured earlier. It behaves much more like a camera than the older `realsense_offline`.
 - Cameraconfig files are now JSON by default (but XML is still supported for backward compatibility).
