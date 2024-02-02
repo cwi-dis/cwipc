@@ -63,6 +63,7 @@ def find_aruco_in_image(img : cv2.typing.MatLike):
             if ch == 27:
                 break
             print(f"ignoring key {ch}")
+        cv2.destroyWindow("Detected markers")
 
 def project_pointcloud_to_images(pc : cwipc.cwipc_wrapper, width : int, height : int, rotation: List[float]) -> Tuple[cv2.typing.MatLike, cv2.typing.MatLike]:
 
