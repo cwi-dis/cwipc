@@ -276,6 +276,8 @@ Both these scripts configures, builds, tests and installs each of the submodules
 
 ## Debugging
 
+Nowadays (2024) debugging with Python and VSCode may be the easiest way. See below.
+
 A note here on how to debug the cwipc code, because it needs to go somewhere. When debugging it is easiest to build the whole package not with the command line tools but with Visual Studio (Windows) or Xcode (Mac). To debug with XCode create a toplevel folder `build-xcode` and in that folder run
 
 ```
@@ -307,6 +309,37 @@ Some issues are easier to debug with the Python scripts. There are some hooks in
   ```
 
 Additionally, you can send `SIGQUIT` to all the Python scripts (installed or when running from the build folder) to cause them to dump the Python stacktraces of all threads.
+
+### Debugging with vscode
+
+If you open the project with VSCode debugging the Python scripts is fairly easy. The main issue is that you need to ensure that the correct dynamic libraries are used (i.e. the ones that are built within this directory).
+
+On Mac or Linux, in the VSCode terminal window (or the VSCode Python debugger terminal window), run
+
+```
+. scripts/activate.sh
+```
+
+On Windows powershell, use
+
+```
+&scripts\activate.ps1
+```
+
+Both of these will modify `PATH` or `DYLD_LIBRARY_PATH` or whatever to ensure the dynamic libraries built here take precedence over other versions. Also, they will activate the Python venv built here, and `pip install -e` the cwipc Python modules.
+
+Debugging the Python code is now very easy: just run with the Python debugger from within VSCode.
+
+Debugging the native code in a native app is also easy: again use the normal lldb debugger from within VSCode.
+
+Debugging the native code when running within a Python app is slightly more convoluted:
+
+- In the VSCode terminal window run the Python app with `--pausefordebug`. Take note of the PID.
+- Run the `lldb` debugger in "Attach Process" mode, and specify that PID.
+- Set any breakpoints you need.
+- Type `Y` in the Python app to make it continue.
+
+On Windows I have not been able to use the native debugger in this way, but using Visual Studio attack works, as explained in the previous subsection.
 
 ## Creating a release
 
