@@ -16,6 +16,7 @@ if (Test-Path -Path $candidateBinDir) {
     $binDir = $buildDir + "\bin\Release"
 }
 Write-Output $binDir
+$Env:CWIPC_LIBRARY_DIR = $binDir
 $Env:PATH = $binDir + ";" + $Env:PATH
 Write-Output $Env:PATH
 & $buildDir/venv/Scripts/Activate.ps1
