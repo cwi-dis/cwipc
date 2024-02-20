@@ -127,6 +127,9 @@ class TimingTest:
         assert self.pc
         while True:
             packet = None
+            # De-initialized cached points and bytes
+            self.pc._points = None
+            self.pc._bytes = None
             packet = self.pc.get_packet()
             assert len(packet) > self.pc.count()*16
             count += 1
@@ -137,6 +140,48 @@ class TimingTest:
                 break
         assert self.pc
         print(f"time_test_get_packet: {duration / count:.6f} seconds")
+
+    def time_test_get_numpy_array(self):
+        start_time = self._time()
+        count = 0
+        assert self.pc
+        while True:
+            points = None
+            # De-initialized cached points and bytes
+            self.pc._points = None
+            self.pc._bytes = None
+
+            numpy_array = self.pc.get_numpy_array()
+            assert numpy_array.shape[0] == self.pc.count()
+            count += 1
+            duration = self._time() - start_time
+            if duration > MAX_TIME_PER_STEP:
+                break
+            if count >= MAX_ITERATIONS_PER_STEP:
+                break
+        assert self.pc
+        print(f"time_test_get_numpy_array: {duration / count:.6f} seconds")
+
+    def time_test_get_numpy_matrix(self):
+        start_time = self._time()
+        count = 0
+        assert self.pc
+        while True:
+            points = None
+            # De-initialized cached points and bytes
+            self.pc._points = None
+            self.pc._bytes = None
+
+            numpy_matrix = self.pc.get_numpy_matrix()
+            assert numpy_matrix.shape == (self.pc.count(), 7)
+            count += 1
+            duration = self._time() - start_time
+            if duration > MAX_TIME_PER_STEP:
+                break
+            if count >= MAX_ITERATIONS_PER_STEP:
+                break
+        assert self.pc
+        print(f"time_test_get_numpy_matrix: {duration / count:.6f} seconds")
 
     def time_test_get_points_roundtrip(self):
         start_time = self._time()
@@ -180,6 +225,8 @@ class TimingTest:
 
     def run(self):
         #self.time_test_none()
+        self.time_test_get_numpy_array()
+        self.time_test_get_numpy_matrix()
         self.time_test_get_bytes()
         self.time_test_get_packet()
         self.time_test_get_points()
