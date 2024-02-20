@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- New Python methods (on cwipc objects) `as_numpy_array()` and `as_numpy_matrix()` and corresponding constructors `from_numpy_array()` and `from_numpy_matrix()` to allow easier analysis.
 - New API call `cwipc_tiledsource_auxiliary_operation` to have a capturer do a special operation, such as mapping 2D points to 3D points.
 - There is a new utility `cwipc_register` to do registration of multiple cameras (replacing the old `cwipc_calibrate`).
 - There is a new capturer `realsense_playback` which reads `.bag` recordings captured earlier. It behaves much more like a camera than the older `realsense_offline`.
@@ -16,9 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The default camera type is now determined from `cameraconfig.json`, so you normally don't have to specify `--kinect` or similar to `cwipc_view` and other utilities
 - There is a new API call `cwipc_capturer` that will return the correct capturer for what is specified in `cameraconfig.json`. You can also give it a `configFilename` parameter of `"auto"` and it will determine what type of camera is attached to your system.
 - cwipc has been ported to Android, specifically for use on the Oculus Quest. 
-- Python modules now have type annotations, which should make it much easier to use cwipc in your programs (auto-complete, documentation, etc)
+- Python modules now have type annotations, which should make it much easier to use cwipc in your programs (auto-complete, documentation, etc). The cwipc package is usable from Jupyter.
 - Python example programs have been added.
-- `cwipc_check` program helps with checking that everything is installed (especially on Windows)
+- `cwipc_check` program helps with checking that everything is installed (especially on Windows). Windows Start Menu has entries to do this check, and also to try and fix issues.
 
 ### Changed
 
