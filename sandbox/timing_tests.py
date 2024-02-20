@@ -223,10 +223,60 @@ class TimingTest:
         assert self.pc
         print(f"time_test_get_packet_roundtrip: {duration / count:.6f} seconds")
 
+    def time_test_get_numpy_array_roundtrip(self):
+        start_time = self._time()
+        count = 0
+        assert self.pc
+        while True:
+            points = None
+            # De-initialized cached points and bytes
+            self.pc._points = None
+            self.pc._bytes = None
+
+            numpy_array = self.pc.get_numpy_array()
+            new_pc = cwipc.cwipc_from_numpy_array(numpy_array, 0)
+            assert new_pc.count() == self.pc.count()
+            self.pc.free()
+            self.pc = new_pc
+            count += 1
+            duration = self._time() - start_time
+            if duration > MAX_TIME_PER_STEP:
+                break
+            if count >= MAX_ITERATIONS_PER_STEP:
+                break
+        assert self.pc
+        print(f"time_test_get_numpy_array_roundtrip: {duration / count:.6f} seconds")
+
+    def time_test_get_numpy_matrix_roundtrip(self):
+        start_time = self._time()
+        count = 0
+        assert self.pc
+        while True:
+            points = None
+            # De-initialized cached points and bytes
+            self.pc._points = None
+            self.pc._bytes = None
+
+            numpy_matrix = self.pc.get_numpy_matrix()
+            new_pc = cwipc.cwipc_from_numpy_matrix(numpy_matrix, 0)
+            assert new_pc.count() == self.pc.count()
+            self.pc.free()
+            self.pc = new_pc
+            count += 1
+            duration = self._time() - start_time
+            if duration > MAX_TIME_PER_STEP:
+                break
+            if count >= MAX_ITERATIONS_PER_STEP:
+                break
+        assert self.pc
+        print(f"time_test_get_numpy_matrix_roundtrip: {duration / count:.6f} seconds")
+
     def run(self):
         #self.time_test_none()
         self.time_test_get_numpy_array()
+        self.time_test_get_numpy_array_roundtrip()
         self.time_test_get_numpy_matrix()
+        self.time_test_get_numpy_matrix_roundtrip()
         self.time_test_get_bytes()
         self.time_test_get_packet()
         self.time_test_get_points()
