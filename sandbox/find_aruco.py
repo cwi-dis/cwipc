@@ -121,8 +121,7 @@ def project_pointcloud_to_images(pc : cwipc.cwipc_wrapper, width : int, height :
 
 def _get_nparrays_for_pc(pc : cwipc.cwipc_wrapper) -> Tuple[cv2.typing.MatLike, cv2.typing.MatLike]:
     # Get the points (as a cwipc-style array) and convert them to a NumPy array-of-structs
-    pointarray = np.ctypeslib.as_array(pc.get_points())
-    # Extract the relevant fields (X, Y, Z coordinates)
+    pointarray = pc.get_numpy_array()
     xyzarray = pointarray[['x', 'y', 'z']]
     rgbarray = pointarray[['r', 'g', 'b']]
     # Turn this into an N by 3 2-dimensional array
