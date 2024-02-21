@@ -183,6 +183,27 @@ class TimingTest:
         assert self.pc
         print(f"time_test_get_numpy_matrix: {duration / count:.6f} seconds")
 
+    def time_test_get_numpy_matrix_onlyGeometry(self):
+        start_time = self._time()
+        count = 0
+        assert self.pc
+        while True:
+            points = None
+            # De-initialized cached points and bytes
+            self.pc._points = None
+            self.pc._bytes = None
+
+            numpy_matrix = self.pc.get_numpy_matrix(onlyGeometry=True)
+            assert numpy_matrix.shape == (self.pc.count(), 3)
+            count += 1
+            duration = self._time() - start_time
+            if duration > MAX_TIME_PER_STEP:
+                break
+            if count >= MAX_ITERATIONS_PER_STEP:
+                break
+        assert self.pc
+        print(f"time_test_get_numpy_matrix_onlyGeometry: {duration / count:.6f} seconds")
+
     def time_test_get_o3d_pointcloud(self):
         start_time = self._time()
         count = 0
@@ -322,6 +343,7 @@ class TimingTest:
         self.time_test_get_packet()
         self.time_test_get_points()
         self.time_test_get_numpy_matrix()
+        self.time_test_get_numpy_matrix_onlyGeometry()
         self.time_test_get_o3d_pointcloud()
         self.time_test_get_numpy_array()
         self.time_test_get_packet_roundtrip()
