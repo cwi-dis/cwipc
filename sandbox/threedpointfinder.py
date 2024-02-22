@@ -48,61 +48,66 @@ def main():
         assert auxdata
         if auxdata.count() > 0:
             break
-    rgb_images = {}
-    depth_images = {}
-    print(f"auxdata has {auxdata.count()} items")
-    for i in range(auxdata.count()):
-        print(f"auxdata {i}: name={auxdata.name(i)}, description={auxdata.description(i)}")
-        name = auxdata.name(i)
-        if name.startswith("rgb."):
-            serial = name[4:]
-            descrstr = auxdata.description(i)
-            descr = _parse_aux_description(descrstr)
-            width = descr["width"]
-            height = descr["height"]
-            stride = descr["stride"]
-            bpp = 0
-            if "bpp" in descr:
-                bpp = descr["bpp"]
-            else:
-                image_format = descr['format']
-                if image_format == 2:
-                    bpp = 3 # RGB
-                elif image_format == 3:
-                    bpp = 4 # RGBA
-                elif image_format == 4:
-                    bpp = 2 # 16-bit grey
-            assert bpp
-            image_data = auxdata.data(i)
-            np_image_data_bytes = np.array(image_data)
-            np_image_data = np.reshape(np_image_data_bytes, (height, width, bpp))
-            np_image_data = np_image_data[:,:,[0,1,2]]
-            # Select B, G, R channels
-            # np_image_data = np_image_data[:,:,[2,1,0]]
-            rgb_images[serial] = np_image_data
-        elif name.startswith("depth."):
-            serial = name[6:]
-            descrstr = auxdata.description(i)
-            descr = _parse_aux_description(descrstr)
-            width = descr["width"]
-            height = descr["height"]
-            stride = descr["stride"]
-            bpp = 0
-            if "bpp" in descr:
-                bpp = descr["bpp"]
-            else:
-                image_format = descr['format']
-                if image_format == 2:
-                    bpp = 3 # RGB
-                elif image_format == 3:
-                    bpp = 4 # RGBA
-                elif image_format == 4:
-                    bpp = 2 # 16-bit grey
-            assert bpp
-            image_data = auxdata.data(i)
-            np_image_data_bytes = np.array(image_data)
-            np_image_data = np.reshape(np_image_data_bytes, (height, width, bpp))
-            depth_images[serial] = np_image_data
+    old_code = False
+    if old_code:
+        rgb_images = {}
+        depth_images = {}
+        print(f"auxdata has {auxdata.count()} items")
+        for i in range(auxdata.count()):
+            print(f"auxdata {i}: name={auxdata.name(i)}, description={auxdata.description(i)}")
+            name = auxdata.name(i)
+            if name.startswith("rgb."):
+                serial = name[4:]
+                descrstr = auxdata.description(i)
+                descr = _parse_aux_description(descrstr)
+                width = descr["width"]
+                height = descr["height"]
+                stride = descr["stride"]
+                bpp = 0
+                if "bpp" in descr:
+                    bpp = descr["bpp"]
+                else:
+                    image_format = descr['format']
+                    if image_format == 2:
+                        bpp = 3 # RGB
+                    elif image_format == 3:
+                        bpp = 4 # RGBA
+                    elif image_format == 4:
+                        bpp = 2 # 16-bit grey
+                assert bpp
+                image_data = auxdata.data(i)
+                np_image_data_bytes = np.array(image_data)
+                np_image_data = np.reshape(np_image_data_bytes, (height, width, bpp))
+                np_image_data = np_image_data[:,:,[0,1,2]]
+                # Select B, G, R channels
+                # np_image_data = np_image_data[:,:,[2,1,0]]
+                rgb_images[serial] = np_image_data
+            elif name.startswith("depth."):
+                serial = name[6:]
+                descrstr = auxdata.description(i)
+                descr = _parse_aux_description(descrstr)
+                width = descr["width"]
+                height = descr["height"]
+                stride = descr["stride"]
+                bpp = 0
+                if "bpp" in descr:
+                    bpp = descr["bpp"]
+                else:
+                    image_format = descr['format']
+                    if image_format == 2:
+                        bpp = 3 # RGB
+                    elif image_format == 3:
+                        bpp = 4 # RGBA
+                    elif image_format == 4:
+                        bpp = 2 # 16-bit grey
+                assert bpp
+                image_data = auxdata.data(i)
+                np_image_data_bytes = np.array(image_data)
+                np_image_data = np.reshape(np_image_data_bytes, (height, width, bpp))
+                depth_images[serial] = np_image_data
+    else:
+        rgb_images = auxdata.get_all_images("rgb.")
+        depth_images = auxdata.get_all_images("depth.")
     serials = rgb_images.keys()
     serial_to_tilenum = {}
     for t in range(grabber.maxtile()):
@@ -116,8 +121,11 @@ def main():
         rgb_image = rgb_images[serial]
         depth_image = depth_images[serial]
         rgb = rgb_image[y, x]
-        depth_bytes = depth_image[y, x]
-        depth = float(depth_bytes[0] + depth_bytes[1]*256)
+        if old_code:
+            depth_bytes = depth_image[y, x]
+            depth = float(depth_bytes[0] + depth_bytes[1]*256)
+        else:
+            depth = float(depth_image[y, x])
         print(f"serial {serial}: point={(x, y)}, distance={depth}, color={rgb}")
         # Pack the arguments
         arg_tilenum = float(serial_to_tilenum[serial])

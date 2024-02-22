@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - New Python methods (on cwipc objects) `as_numpy_array()`, `as_numpy_matrix()`, `as_o3d_pointcloud()` and corresponding constructors `from_numpy_array()`, `from_numpy_matrix()` and `from_o3d_pointcloud()` to allow easier analysis with numpy or open3d.
+- New Python methods on `cwipc_auxiliary_data` objects `get_image()` and `get_all_images()` allow you to get the RGB and Depth images as numpy arrays.
 - New API call `cwipc_tiledsource_auxiliary_operation` to have a capturer do a special operation, such as mapping 2D points to 3D points.
 - There is a new utility `cwipc_register` to do registration of multiple cameras (replacing the old `cwipc_calibrate`).
 - There is a new capturer `realsense_playback` which reads `.bag` recordings captured earlier. It behaves much more like a camera than the older `realsense_offline`.
