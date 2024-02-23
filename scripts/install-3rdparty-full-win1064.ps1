@@ -106,12 +106,12 @@ if($ok) {
 	Write-Output "pcl: already installed"
 } else {
 	Write-Output "pcl: downloading..."
-	$installer="$tmpinstalldir\PCL-1.13.0-AllInOne-msvc2022-win64.exe"
-	(New-Object System.Net.WebClient).DownloadFile("https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.13.0/PCL-1.13.0-AllInOne-msvc2022-win64.exe",$installer);
+	$installer="$tmpinstalldir\PCL-1.14.0-AllInOne-msvc2022-win64.exe"
+	(New-Object System.Net.WebClient).DownloadFile("https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.14.0/PCL-1.14.0-AllInOne-msvc2022-win64.exe",$installer);
 	Write-Output "pcl: installing..."
 	Start-Process -FilePath $installer -ArgumentList "/S" -Wait
-	Add-PathVariable("C:\Program Files\PCL 1.13.0\bin")
-	Add-PathVariable("C:\Program Files\PCL 1.13.0\3rdParty\VTK\bin")
+	Add-PathVariable("C:\Program Files\PCL 1.14.0\bin")
+	Add-PathVariable("C:\Program Files\PCL 1.14.0\3rdParty\VTK\bin")
 	Add-PathVariable("C:\Program Files\OpenNI2\Redist")
 	Write-Output "pcl: installed"
 }
@@ -124,9 +124,9 @@ if($ok) {
 	Write-Output "intel-realsense: already installed"
 } else {
 	Write-Output "intel-realsense: downloading..."
-	$installer="$tmpinstalldir\Intel.RealSense.SDK-WIN10-2.53.1.4623.exe"
+	$installer="$tmpinstalldir\Intel.RealSense.SDK-WIN10-2.54.2.5684.exe"
 	(New-Object System.Net.WebClient).DownloadFile(
-	"https://github.com/IntelRealSense/librealsense/releases/download/v2.53.1/Intel.RealSense.SDK-WIN10-2.53.1.4623.exe",$installer);
+	"https://github.com/IntelRealSense/librealsense/releases/download/v2.52.2/Intel.RealSense.SDK-WIN10-2.52.2.5684.exe",$installer);
 	Write-Output "intel-realsense: installing..."
 	Start-Process -FilePath $installer -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOCANCEL /SP-' -Wait
 	Add-PathVariable("C:\Program Files (x86)\Intel RealSense SDK 2.0\bin\x64")
@@ -172,8 +172,8 @@ if($ok) {
 	Write-Output "opencv: already installed"
 } else {
 	Write-Output "opencv: downloading..."
-	$installer="$tmpinstalldir\opencv-4.7.0-windows.exe"
-	(New-Object System.Net.WebClient).DownloadFile("https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-windows.exe",$installer);
+	$installer="$tmpinstalldir\opencv-4.9.0-windows.exe"
+	(New-Object System.Net.WebClient).DownloadFile("https://github.com/opencv/opencv/releases/download/4.9.0/opencv-4.9.0-windows.exe",$installer);
 	Write-Output "opencv: installing..."
 	Start-Process $installer -ArgumentList '-o"C:\" -y' -Wait
 	Add-PathVariable("C:\opencv\build\bin")
@@ -197,8 +197,8 @@ if($ok) {
 	Write-Output "python: already installed"
 } else {
 	Write-Output "python: downloading..."
-	$installer="$tmpinstalldir\python-3.10.10-amd64.exe"
-	(New-Object System.Net.WebClient).DownloadFile("https://www.python.org/ftp/python/3.10.10/python-3.10.10-amd64.exe",$installer);
+	$installer="$tmpinstalldir\python-3.11.8-amd64.exe"
+	(New-Object System.Net.WebClient).DownloadFile("https://www.python.org/ftp/python/3.11.8/python-3.11.8-amd64.exe",$installer);
 	Write-Output "python: installing..."
 	Start-Process -FilePath $installer -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait
 	Write-Output "python: installed"

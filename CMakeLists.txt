@@ -70,7 +70,10 @@ endif()
 if(APPLE)
 	find_package(Python3 3.10 EXACT REQUIRED COMPONENTS Interpreter)
 else()
-	find_package(Python3 3.9...<3.11 REQUIRED COMPONENTS Interpreter)
+	# The upper limit on the Python version is caused by opencv and open3d,
+	# which can lag behind some times. As soon as those packages are available
+	# for a new release of Python we can update this version.
+	find_package(Python3 3.9...<3.12 REQUIRED COMPONENTS Interpreter)
 endif()
 #
 # Now we can setup the venv.

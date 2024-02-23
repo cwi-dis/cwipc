@@ -2,8 +2,8 @@ set -x
 brew install pkg-config || brew upgrade pkg-config
 brew install cmake || brew upgrade cmake
 brew install pcl || brew upgrade pcl
-brew install python@3.10 || brew upgrade python@3.10
-brew link python@3.10
+brew install python@3.11 || brew upgrade python@3.11
+brew link python@3.11
 brew install pkg-config || brew upgrade pkg-config
 brew install homebrew/core/glfw3 || brew upgrade homebrew/core/glfw3
 brew install librealsense || brew upgrade librealsense
