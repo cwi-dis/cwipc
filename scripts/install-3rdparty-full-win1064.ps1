@@ -105,7 +105,7 @@ $ok = Can-Execute-From-Path("pcl_generate -help")
 $skip_pcl = 1
 if($skip_pcl) {
 	Write-Output "pcl: skipped"
-} elsif($ok) {
+} elseif($ok) {
 	Write-Output "pcl: already installed"
 } else {
 	Write-Output "pcl: downloading..."
