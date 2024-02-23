@@ -8,7 +8,6 @@ brew install pkg-config || brew upgrade pkg-config
 brew install homebrew/core/glfw3 || brew upgrade homebrew/core/glfw3
 brew install librealsense || brew upgrade librealsense
 brew install jpeg-turbo || brew upgrade jpeg-turbo
-brew unlink jpeg
 brew link --force jpeg-turbo
 
 # Install Python delendencies

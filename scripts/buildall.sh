@@ -7,21 +7,6 @@ cd $dirname
 
 cmakeargs=""
 
-#
-# Finding the correct Python version that supports the packages we need
-# (specifically open3d) is hell. Especially on macos. And even more especially
-# on a Silicon mac that has both silicon-brew in /opt and intel-brew in /usr/local.
-#
-# As of this writing (2023-05-01) this is Python 3.10.
-#
-case `uname` in
-Darwin)
-	python=python3.10
-	pythondir=$($python -c 'import sys; print(sys.prefix)')
-	cmakeargs="$cmakeargs -DPython3_ROOT_DIR=$pythondir -DCWIPC_SKIP_PYTHON_INSTALL=1"
-	;;
-esac
-
 notest=
 case x$1 in
 x--notest)
@@ -75,9 +60,5 @@ fi
 
 if [ "$noinstall" != "noinstall" ]; then
 	$sudo cmake --install build
-	case `uname` in
-	Darwin)
-		CWIPC_PYTHON=python3.10 $sudo cwipc_pymodules_install.sh
-		;;
-	esac
+	
 fi
