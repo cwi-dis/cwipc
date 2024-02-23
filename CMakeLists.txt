@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16.0)
 cmake_policy(SET CMP0074 NEW)
 cmake_policy(SET CMP0072 NEW)
-cmake_policy(SET CMP0135 NEW)
+#cmake_policy(SET CMP0135 NEW)
 
 # Add extension directories (for things like Find<package>)
 set(CMAKE_MODULE_PATH
@@ -81,7 +81,24 @@ cwipc_setup_python_venv()
 # Packages required by all submodules
 #
 
-find_package(libjpeg-turbo REQUIRED)
+if(CMAKE_SYSTEM_NAME STREQUAL Linux)
+	message(WARNING "Need to find jpeg-turbo")
+	include(FindPkgConfig)
+	pkg_check_modules(libturbojpeg REQUIRED libturbojpeg)
+	pkg_get_variable(libturbojpeg_LIBDIR libturbojpeg libdir)
+	add_library(libjpeg-turbo::jpeg SHARED IMPORTED)
+	add_library(libjpeg-turbo::turbojpeg SHARED IMPORTED)
+	
+	set_target_properties(libjpeg-turbo::jpeg PROPERTIES
+		IMPORTED_LOCATION "${libturbojpeg_LIBDIR}/libjpeg.so"
+	)
+	set_target_properties(libjpeg-turbo::turbojpeg PROPERTIES
+		IMPORTED_LOCATION "${libturbojpeg_LIBDIR}/libturbojpeg.so"
+	)
+	
+else()
+	find_package(libjpeg-turbo REQUIRED)
+endif()
 find_package(PCL REQUIRED COMPONENTS common io octree filters features geometry kdtree)
 
 
