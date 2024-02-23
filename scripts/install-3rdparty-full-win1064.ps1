@@ -129,7 +129,7 @@ if($ok) {
 	Write-Output "intel-realsense: downloading..."
 	$installer="$tmpinstalldir\Intel.RealSense.SDK-WIN10-2.54.2.5684.exe"
 	(New-Object System.Net.WebClient).DownloadFile(
-	"https://github.com/IntelRealSense/librealsense/releases/download/v2.52.2/Intel.RealSense.SDK-WIN10-2.52.2.5684.exe",$installer);
+	"https://github.com/IntelRealSense/librealsense/releases/download/v2.54.2/Intel.RealSense.SDK-WIN10-2.54.2.5684.exe",$installer);
 	Write-Output "intel-realsense: installing..."
 	Start-Process -FilePath $installer -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOCANCEL /SP-' -Wait
 	Add-PathVariable("C:\Program Files (x86)\Intel RealSense SDK 2.0\bin\x64")
