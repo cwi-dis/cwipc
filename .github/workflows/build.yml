@@ -36,6 +36,10 @@ jobs:
           shell: pwsh
           run: scripts\install-3rdparty-full-win1064.ps1
 
+        - name: Bootstrap vcpkg
+          shell: pwsh
+          run: vcpkg\bootstrap-vcpkg.bat
+
         - name: Install Python packages (Windows)
           shell: bash
           run: |
@@ -49,7 +53,7 @@ jobs:
           uses: ashutoshvarma/action-cmake-build@master
           with:
                 build-dir: ${{ github.workspace }}/build
-                configure-options: -Wno-dev -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -DOpenCV_ROOT=${{ env.OPENCV_DIR }}
+                configure-options: -Wno-dev -DCMAKE_TOOLCHAIN_FILE=scripts/buildsystems/vcpkg.cmake -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -DOpenCV_ROOT=${{ env.OPENCV_DIR }}
                 build-type: Release
                 run-test: true
                 install-build: true

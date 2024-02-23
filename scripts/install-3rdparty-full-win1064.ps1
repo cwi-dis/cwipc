@@ -104,7 +104,7 @@ if(Can-Execute-From-Path("jpegtran -help")) {
 $ok = Can-Execute-From-Path("pcl_generate -help")
 $skip_pcl = 1
 if($skip_pcl) {
-	Write-Output: "pcl: skipped"
+	Write-Output "pcl: skipped"
 } elsif($ok) {
 	Write-Output "pcl: already installed"
 } else {
