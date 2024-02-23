@@ -32,72 +32,10 @@ jobs:
                 "https://downloads.sourceforge.net/project/nsis/NSIS%203/3.09/nsis-3.09-strlen_8192.zip",$zipfile);
                 Write-Output "NSIS-8192-override: installing..."
                 Expand-Archive -Path $zipfile -DestinationPath "C:\Program Files (x86)\NSIS\" -Force
-        - name: Install realsense SDK
+        - name: Install thirdparty packages
           shell: pwsh
-          run: |
-                $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
-                $installer="$thirdpartydir\realsense-installer.exe"
-                (New-Object System.Net.WebClient).DownloadFile(
-                "https://github.com/IntelRealSense/librealsense/releases/download/v2.53.1/Intel.RealSense.SDK-WIN10-2.53.1.4623.exe",$installer);
-                Write-Output "intel-realsense: installing..."
-                Start-Process -FilePath $installer -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOCANCEL /SP-' -Wait
-                Add-Content $env:GITHUB_PATH "C:\Program Files (x86)\Intel RealSense SDK 2.0\bin\x64"
-  
-        - name: Install opencv (Windows)
-          shell: pwsh
-          run: |
-                $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
-                $installer="$thirdpartydir\opencv-installer.exe"
-                (New-Object System.Net.WebClient).DownloadFile("https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-windows.exe","$installer");
-                Start-Process "$installer" -ArgumentList '-o"C:\" -y' -Wait
-                Add-Content $env:GITHUB_PATH "C:/opencv/build/bin"
+          run: scripts\install-3rdparty-full-win1064.ps1
 
-        - name: Install libturbojpeg (Windows)
-          shell: pwsh
-          run: |
-                $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
-                $installer="$thirdpartydir\jpegturbo-installer.exe"
-                (New-Object System.Net.WebClient).DownloadFile("https://sourceforge.net/projects/libjpeg-turbo/files/2.1.5.1/libjpeg-turbo-2.1.5.1-vc64.exe","$installer");
-                Start-Process "$installer" -ArgumentList "/S" -Wait
-                Add-Content $env:GITHUB_PATH "C:/libjpeg-turbo64/bin"
-
-        - name: Install K4A (Windows)
-          shell: pwsh
-          run: |
-                $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
-                $installer="$thirdpartydir\k4a-installer.exe"
-                (New-Object System.Net.WebClient).DownloadFile("https://download.microsoft.com/download/3/d/6/3d6d9e99-a251-4cf3-8c6a-8e108e960b4b/Azure%20Kinect%20SDK%201.4.1.exe","$installer");
-                Start-Process "$installer" -ArgumentList "/S" -Wait
-                Add-Content $env:GITHUB_PATH "C:/Program Files/Azure Kinect SDK v1.4.1/sdk/windows-desktop/amd64/release/bin"
-                
-        - name: Install K4ABT (Windows)
-          shell: pwsh
-          run: |
-                $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
-                $msifile="$thirdpartydir\k4abt-installer.msi"
-                (New-Object System.Net.WebClient).DownloadFile("https://download.microsoft.com/download/9/d/b/9dbe0fbe-c9c3-4228-a64c-1e0a08736ec1/Azure%20Kinect%20Body%20Tracking%20SDK%201.1.1.msi","$msifile");
-                Start-Process "$msifile" -ArgumentList '/quiet /passive' -Wait
-                Add-Content $env:GITHUB_PATH "C:/Program Files/Azure Kinect Body Tracking SDK/tools"
-        - name: Install PCL (Windows)
-          shell: pwsh
-          run: |
-                $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
-                $installer="$thirdpartydir/pcl-installer.exe"
-                (New-Object System.Net.WebClient).DownloadFile("https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.13.0/PCL-1.13.0-AllInOne-msvc2022-win64.exe","$installer");
-                & "$installer" /S
-                Start-Sleep -s 300
-                Add-Content $env:GITHUB_PATH "C:/Program Files/PCL 1.13.0/bin"
-                Add-Content $env:GITHUB_PATH "C:/Program Files/PCL 1.13.0/3rdparty/VTK/bin"
-                Add-Content $env:GITHUB_PATH "C:/Program Files/OpenNI2/redist"
-        - name: Install OpenCV (Windows)
-          shell: pwsh
-          run: |
-                $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
-                $installer="$thirdpartydir\opencv-installer.exe"
-                (New-Object System.Net.WebClient).DownloadFile("https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-windows.exe",$installer);
-                Start-Process $installer -ArgumentList '-o"C:\" -y' -Wait
-                Add-Content $env:GITHUB_PATH "C:\opencv\build\bin"
-                Add-Content $env:GITHUB_PATH "C:\opencv\build\x64\vc16\bin"
         - name: Install Python packages (Windows)
           shell: bash
           run: |
