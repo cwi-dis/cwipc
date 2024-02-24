@@ -23,6 +23,12 @@ jobs:
           run: |
                 $thirdpartydir="$((Get-Item ..).FullName)\3rdparty"
                 mkdir $thirdpartydir
+        - name: Export GitHub Actions cache environment variables for vcpkg
+          uses: actions/github-script@v6
+          with:
+                script: |
+                      core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+                      core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
         - name: Install NSIS 8192-character limit override
           shell: pwsh
           run: |
@@ -51,6 +57,8 @@ jobs:
                 echo "Python3_EXECUTABLE=$pythonExecutable" >> $GITHUB_ENV
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
+          env: 
+                VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
           with:
                 build-dir: ${{ github.workspace }}/build
                 configure-options: -Wno-dev -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -DOpenCV_ROOT=${{ env.OPENCV_DIR }}
