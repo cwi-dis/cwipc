@@ -5,7 +5,6 @@
     "libjpeg-turbo",
     "opencv4",
     "pcl",
-    "realsense2",
-    "azure-kinect-sensor-sdk"
+    "realsense2"
   ]
 }
