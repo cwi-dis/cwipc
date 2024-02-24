@@ -2,6 +2,10 @@
   "name": "cwipc",
   "version": "7.5.0",
   "dependencies": [
-    "pcl"
+    "libjpeg-turbo",
+    "opencv4",
+    "pcl",
+    "realsense2",
+    "azure-kinect-sensor-sdk"
   ]
 }
