@@ -96,7 +96,7 @@ $tmpinstalldir="$((Get-Item $env:TEMP\cwipc-3rdparty-downloads).FullName)"
 #
 if ($global:ghActionRunner) {
 	Write-Output "libjpeg-turbo: skipped"
-} elif(Can-Execute-From-Path("jpegtran -help")) {
+} elseif (Can-Execute-From-Path("jpegtran -help")) {
 	Write-Output "libjpeg-turbo: already installed"
 } else {
 	Write-Output "libjpeg-turbo: downloading..."
@@ -111,9 +111,9 @@ if ($global:ghActionRunner) {
 #
 # Install PCL 1.14
 #
-if($global:ghActionRunner) {
+if ($global:ghActionRunner) {
 	Write-Output "pcl: skipped"
-} elseif(Can-Execute-From-Path("pcl_generate -help")) {
+} elseif (Can-Execute-From-Path("pcl_generate -help")) {
 	Write-Output "pcl: already installed"
 } else {
 	Write-Output "pcl: downloading..."
@@ -130,9 +130,9 @@ if($global:ghActionRunner) {
 #
 # Install Realsense SDK. 
 #
-if($global:ghActionRunner) {
+if ($global:ghActionRunner) {
 	Write-Output "intel-realsense: skipped"
-if(Is-DLL-On-Path("realsense2.dll")) {
+} elseif (Is-DLL-On-Path("realsense2.dll")) {
 	Write-Output "intel-realsense: already installed"
 } else {
 	Write-Output "intel-realsense: downloading..."
@@ -148,7 +148,7 @@ if(Is-DLL-On-Path("realsense2.dll")) {
 #
 # Install Kinect SDK
 #
-if(Is-DLL-On-Path("k4a.dll")) {
+if (Is-DLL-On-Path("k4a.dll")) {
 	Write-Output "k4a: already installed"
 } else {
 	Write-Output "k4a: downloading..."
@@ -163,7 +163,7 @@ if(Is-DLL-On-Path("k4a.dll")) {
 #
 # Install Kinect Body Tracking SDK
 #
-if(Is-DLL-On-Path("k4abt.dll")) {
+if (Is-DLL-On-Path("k4abt.dll")) {
 	Write-Output "k4a-bt: already installed"
 } else {
 	Write-Output "k4a-bt: downloading..."
@@ -177,10 +177,9 @@ if(Is-DLL-On-Path("k4abt.dll")) {
 #
 # Install OpenCV
 #
-if($global:ghActionRunner) {
+if ($global:ghActionRunner) {
 	Write-Output "opencv: skipped"
-
-if(Can-Execute-From-Path("opencv_version")) {
+} elseif (Can-Execute-From-Path("opencv_version")) {
 	Write-Output "opencv: already installed"
 } else {
 	Write-Output "opencv: downloading..."
