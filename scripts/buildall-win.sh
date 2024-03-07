@@ -56,7 +56,7 @@ if nproc 2>&1 >/dev/null; then
 fi
 
 mkdir -p build
-cmake -S . -B build -DCMAKE_INSTALL_PREFIX="$instdir"
+cmake -S . -B build -DCMAKE_INSTALL_PREFIX="$instdir" -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake
 cmake --build build --config $config
 if [ "$notest" != "notest" ]; then
 	ctest --test-dir build --build-config $config
