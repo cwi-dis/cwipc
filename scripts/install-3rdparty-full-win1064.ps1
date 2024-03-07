@@ -22,7 +22,7 @@ Function Add-PathVariable {
 		if ($global:ghActionRunner) {
 			echo $addPath | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 		}
-		Write-Output "Added to PATH: " + $addPath
+		Write-Output "Added to PATH: "  $addPath
     } else {
         Throw "'$addPath' is not a valid path."
     }
