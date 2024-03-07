@@ -55,6 +55,12 @@ jobs:
                 pythonExecutable=`cygpath --windows "$pythonExecutable"`
                 echo "Python_ROOT_DIR=$pythonRoot" >> $GITHUB_ENV
                 echo "Python3_EXECUTABLE=$pythonExecutable" >> $GITHUB_ENV
+                
+        - name: Print Path
+          shell: pwsh
+          run: |
+               $env:path -split ";"
+               
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           env: 
