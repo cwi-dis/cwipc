@@ -2,7 +2,10 @@
 #
 # Install required third party packages.
 # NEEDS ADMIN RIGHTS
-# xxxjack Need to add entries to PATH environment
+#
+# First check whether we are running under gitbuh actions
+#
+$global:ghActionRunner = Test-Path env:\GITHUB_ACTIONS
 #
 # Function to add entries to PATH environment variable
 #
@@ -15,6 +18,11 @@ Function Add-PathVariable {
         $arrPath = $env:Path -split ';' | Where-Object {$_ -notMatch 
 "^$regexAddPath\\?"}
         $env:Path = ($arrPath + $addPath) -join ';'
+		# For github actions we also add to the runner path
+		if ($global:ghActionRunner) {
+			echo $addPath | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+		}
+		Write-Output "Added to PATH: " + $addPath
     } else {
         Throw "'$addPath' is not a valid path."
     }
@@ -86,7 +94,9 @@ $tmpinstalldir="$((Get-Item $env:TEMP\cwipc-3rdparty-downloads).FullName)"
 #
 # Install libjpeg-turbo
 #
-if(Can-Execute-From-Path("jpegtran -help")) {
+if ($global:ghActionRunner) {
+	Write-Output "libjpeg-turbo: skipped"
+} elif(Can-Execute-From-Path("jpegtran -help")) {
 	Write-Output "libjpeg-turbo: already installed"
 } else {
 	Write-Output "libjpeg-turbo: downloading..."
@@ -99,13 +109,11 @@ if(Can-Execute-From-Path("jpegtran -help")) {
 }
 
 #
-# Install PCL 1.13
+# Install PCL 1.14
 #
-$ok = Can-Execute-From-Path("pcl_generate -help")
-$skip_pcl = 1
-if($skip_pcl) {
+if($global:ghActionRunner) {
 	Write-Output "pcl: skipped"
-} elseif($ok) {
+} elseif(Can-Execute-From-Path("pcl_generate -help")) {
 	Write-Output "pcl: already installed"
 } else {
 	Write-Output "pcl: downloading..."
@@ -122,8 +130,9 @@ if($skip_pcl) {
 #
 # Install Realsense SDK. 
 #
-$ok = Is-DLL-On-Path("realsense2.dll")
-if($ok) {
+if($global:ghActionRunner) {
+	Write-Output "intel-realsense: skipped"
+if(Is-DLL-On-Path("realsense2.dll")) {
 	Write-Output "intel-realsense: already installed"
 } else {
 	Write-Output "intel-realsense: downloading..."
@@ -139,8 +148,7 @@ if($ok) {
 #
 # Install Kinect SDK
 #
-$ok = Is-DLL-On-Path("k4a.dll")
-if($ok) {
+if(Is-DLL-On-Path("k4a.dll")) {
 	Write-Output "k4a: already installed"
 } else {
 	Write-Output "k4a: downloading..."
@@ -155,8 +163,7 @@ if($ok) {
 #
 # Install Kinect Body Tracking SDK
 #
-$ok = Is-DLL-On-Path("k4abt.dll")
-if($ok) {
+if(Is-DLL-On-Path("k4abt.dll")) {
 	Write-Output "k4a-bt: already installed"
 } else {
 	Write-Output "k4a-bt: downloading..."
@@ -170,8 +177,10 @@ if($ok) {
 #
 # Install OpenCV
 #
-$ok = Can-Execute-From-Path("opencv_version")
-if($ok) {
+if($global:ghActionRunner) {
+	Write-Output "opencv: skipped"
+
+if(Can-Execute-From-Path("opencv_version")) {
 	Write-Output "opencv: already installed"
 } else {
 	Write-Output "opencv: downloading..."
