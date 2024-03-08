@@ -1,0 +1,10 @@
+{
+  "name": "cwipc",
+  "version": "7.5.0",
+  "dependencies": [
+    "libjpeg-turbo",
+    "opencv4",
+    "pcl",
+    "realsense2"
+  ]
+}

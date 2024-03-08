@@ -4,4 +4,4 @@
 git fetch --recurse-submodules
 gh release delete nightly --cleanup-tag --yes
 git tag -f nightly origin/master
-git push origin nightly
+git push -f origin nightly

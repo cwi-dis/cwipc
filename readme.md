@@ -22,7 +22,8 @@ The change log can be found at [CHANGELOG.md](CHANGELOG.md).
 
 The simplest way to install cwipc is through a prebuilt installer. This will install everything in the standard location, and it allows running the command line tools as well as developing C, C++, Python or Unity programs that use the cwipc library.
 
-After installation, run `cwipc_view --synthetic` from a shell (terminal window, command prompt). It should show you a window with a rotating synthetic point cloud if everything is installed correctly. There is also a command line utility `cwipc_check` that will test that all third-party requirements have been installed correctly. Especially on Windows this can be very helpful (see below).
+After installation, run `cwipc_view --synthetic` from a shell (terminal window, command prompt). It should show you a window with a rotating synthetic point cloud if everything is installed correctly. There is also a command line utility `cwipc_check` that will test that all third-party requirements have been installed correctly.
+On Windows you can find these in the start menu too.
 
 See below if you want to install to a different location, or if you want to modify cwipc itself and build it from source.
 
@@ -31,6 +32,8 @@ See below if you want to install to a different location, or if you want to modi
 Download the windows installer `.exe` for the most recent cwipc release from <https://github.com/cwi-dis/cwipc/releases/latest>.
 
 Run it, and it will install the cwipc command line tools and the C++ and Python APIs.
+
+> If the installer does not run you must install the "Microsoft VC++ Redistributable" first (64 bit version).
 
 It will _also install all required third party packages_, unless a usable version is detected.
 
