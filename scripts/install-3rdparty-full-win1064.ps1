@@ -92,42 +92,6 @@ if (Test-Path $env:TEMP\cwipc-3rdparty-downloads) {
 $tmpinstalldir="$((Get-Item $env:TEMP\cwipc-3rdparty-downloads).FullName)"
 
 #
-# Install libjpeg-turbo
-#
-if ($global:ghActionRunner) {
-	Write-Output "libjpeg-turbo: skipped"
-} elseif (Can-Execute-From-Path("jpegtran -help")) {
-	Write-Output "libjpeg-turbo: already installed"
-} else {
-	Write-Output "libjpeg-turbo: downloading..."
-	$installer="$tmpinstalldir\libjpeg-turbo-2.1.5.1-vc64.exe"
-	(New-Object System.Net.WebClient).DownloadFile("https://sourceforge.net/projects/libjpeg-turbo/files/2.1.5.1/libjpeg-turbo-2.1.5.1-vc64.exe",$installer);
-	Write-Output "libjpeg-turbo: installing..."
-	Start-Process -FilePath $installer -ArgumentList "/S" -Wait
-	Add-PathVariable("C:\libjpeg-turbo64\bin")
-	Write-Output "libjpeg-turbo: installed"
-}
-
-#
-# Install PCL 1.14
-#
-if ($global:ghActionRunner) {
-	Write-Output "pcl: skipped"
-} elseif (Can-Execute-From-Path("pcl_generate -help")) {
-	Write-Output "pcl: already installed"
-} else {
-	Write-Output "pcl: downloading..."
-	$installer="$tmpinstalldir\PCL-1.14.0-AllInOne-msvc2022-win64.exe"
-	(New-Object System.Net.WebClient).DownloadFile("https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.14.0/PCL-1.14.0-AllInOne-msvc2022-win64.exe",$installer);
-	Write-Output "pcl: installing..."
-	Start-Process -FilePath $installer -ArgumentList "/S" -Wait
-	Add-PathVariable("C:\Program Files\PCL 1.14.0\bin")
-	Add-PathVariable("C:\Program Files\PCL 1.14.0\3rdParty\VTK\bin")
-	Add-PathVariable("C:\Program Files\OpenNI2\Redist")
-	Write-Output "pcl: installed"
-}
-
-#
 # Install Realsense SDK. 
 #
 if ($global:ghActionRunner) {
@@ -174,23 +138,7 @@ if (Is-DLL-On-Path("k4abt.dll")) {
 	Add-PathVariable("C:\Program Files\Azure Kinect Body Tracking SDK\tools")
 	Write-Output "k4a-bt: installed"
 }
-#
-# Install OpenCV
-#
-if ($global:ghActionRunner) {
-	Write-Output "opencv: skipped"
-} elseif (Can-Execute-From-Path("opencv_version")) {
-	Write-Output "opencv: already installed"
-} else {
-	Write-Output "opencv: downloading..."
-	$installer="$tmpinstalldir\opencv-4.9.0-windows.exe"
-	(New-Object System.Net.WebClient).DownloadFile("https://github.com/opencv/opencv/releases/download/4.9.0/opencv-4.9.0-windows.exe",$installer);
-	Write-Output "opencv: installing..."
-	Start-Process $installer -ArgumentList '-o"C:\" -y' -Wait
-	Add-PathVariable("C:\opencv\build\bin")
-	Add-PathVariable("C:\opencv\build\x64\vc16\bin")
-	Write-Output "opencv: installed"
-}
+
 
 #
 # Finally save modified PATH environment variable to the registry.
