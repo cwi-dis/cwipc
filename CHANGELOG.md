@@ -24,13 +24,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Build process on Windows now uses vcpkg for most dependencies, streamlining both CI/CD builds and local builds.
 - Build process and CMakefiles have been streamlined, specifically the way the Python support is installed.
-- `cwipc_unity` is no longer a submodule of cwipc but its own toplevel repository.
-- `cwipc_calibrate` should now be easier to use.
 - command line arguments to `cwipc_view` and other utilities have changed a lot. Use `--help` to see the differences.
 - Windows installer should now be more robust.
 
 ### Removed
+
+- `cwipc_calibrate` is deprecated, replaced by `cwipc_register`.
+- `cwipc_unity` is no longer a submodule of cwipc but its own toplevel repository.
 
 ## [7.4.2] - 2023-05-07
 
