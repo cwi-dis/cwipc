@@ -91,6 +91,26 @@ if (Test-Path $env:TEMP\cwipc-3rdparty-downloads) {
 }
 $tmpinstalldir="$((Get-Item $env:TEMP\cwipc-3rdparty-downloads).FullName)"
 
+
+#
+# Install PCL 1.14
+#
+if ($global:ghActionRunner) {
+	Write-Output "pcl: skipped"
+} elseif (Can-Execute-From-Path("pcl_generate -help")) {
+	Write-Output "pcl: already installed"
+} else {
+	Write-Output "pcl: downloading..."
+	$installer="$tmpinstalldir\PCL-1.14.0-AllInOne-msvc2022-win64.exe"
+	(New-Object System.Net.WebClient).DownloadFile("https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.14.0/PCL-1.14.0-AllInOne-msvc2022-win64.exe",$installer);
+	Write-Output "pcl: installing..."
+	Start-Process -FilePath $installer -ArgumentList "/S" -Wait
+	Add-PathVariable("C:\Program Files\PCL 1.14.0\bin")
+	Add-PathVariable("C:\Program Files\PCL 1.14.0\3rdParty\VTK\bin")
+	Add-PathVariable("C:\Program Files\OpenNI2\Redist")
+	Write-Output "pcl: installed"
+}
+
 #
 # Install Realsense SDK. 
 #
