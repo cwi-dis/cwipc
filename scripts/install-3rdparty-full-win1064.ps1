@@ -185,7 +185,11 @@ if($ok) {
 #
 # Install Python packages
 #
-Write-Output "cwipc_check install: python: cwipc packages: installing..."
-& cwipc_pymodules_install.ps1
-Write-Output "cwipc_check install: python: cwipc packages: All done."
-Write-Output "cwipc_check install: python: cwipc packages: You can close this Powershell window."
+if ($global:ghActionRunner) {
+	Write-Output "cwipc_check install: python: cwipc packages: skipping."
+} else {
+	Write-Output "cwipc_check install: python: cwipc packages: installing..."
+	& cwipc_pymodules_install.ps1
+	Write-Output "cwipc_check install: python: cwipc packages: All done."
+}
+Write-Output "cwipc_check install: All done: You can close this Powershell window."
