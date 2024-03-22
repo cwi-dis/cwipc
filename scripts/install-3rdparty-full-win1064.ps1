@@ -188,6 +188,8 @@ if($ok) {
 if ($global:ghActionRunner) {
 	Write-Output "cwipc_check install: python: cwipc packages: skipping."
 } else {
+	Write-Output "cwipc_check install: python: reload PATH..."
+	$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User") 
 	Write-Output "cwipc_check install: python: cwipc packages: installing..."
 	& cwipc_pymodules_install.ps1
 	Write-Output "cwipc_check install: python: cwipc packages: All done."
