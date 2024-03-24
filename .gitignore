@@ -1,5 +1,6 @@
 installed
 build*/
+vcpkg_installed/
 .vscode/
 .cachedgitversion.txt
 __pycache__/
