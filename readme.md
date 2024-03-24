@@ -2,13 +2,25 @@
 
 ![build](https://github.com/cwi-dis/cwipc/actions/workflows/build.yml/badge.svg)
 
+## Overview
+
 In order to facilitate working with point clouds as opaque objects - similar to how most software works with images, or audio samples -  our group has developed an open source suite of libraries and tools that we call `cwipc` (abbreviation of CWI Point Clouds). The implementation builds on the PCL pointcloud library and various vendor-specific capturing libraries, but this is transparent to software using the `cwipc` suite (but it can access these representations if it needs to).
 
 The idea behind a `cwipc` object is that it represents a point cloud (a collection of points with x/y/z coordinates, r/g/b values and possibly information on which camera angle the point was captured from, plus additional global information such as timestamp captured and voxel size, and optionally original RGB and D images or skeleton data). A cwipc object can be passed around without knowing what is inside it, and this can be done across implementation language boundaries while minimizing unnecessary memory copies. The library makes it possible to create end-to-end pipelines in order to capture, send, receive, and render dynamic point clouds. It is suitable for real-time applications and because point clouds can become very large special care is given to memory management and minimizing the amount of copying needed.
 
 The core of the suite is `cwipc_util`, which handles the `cwipc` object implementation, its memory management and the multiple language bindings (C, C++, Python and C#). It also contains utility functions to read and write a `cwipc` object from a .ply file, apply different filters and transformations to the `cwipc` objects. In addition, it contains a set of tools (`cwipc_calibrate`) to align point clouds obtained from multiple cameras, a customized viewer (`cwipc_view`) to playback dynamic point clouds and a grabber tool (`cwipc_grab`) that allows you to grab point cloud frames from multiple devices or  from offline prerecorded files (which is what we used for creating the dataset).
 
-The suite also contains modules `cwipc_kinect` and `cwipc_realsense2` that which capture point clouds from one or multiple cameras (Kinects and Realsense), and a module `cwipc_codec` that has the functionality to compress and decompress point clouds to make them suitable for real-time transmission. 
+The suite also contains modules `cwipc_kinect` and `cwipc_realsense2` that which capture point clouds from one or multiple cameras (Kinects and Realsense), and a module `cwipc_codec` that has the functionality to compress and decompress point clouds to make them suitable for real-time transmission.
+
+## Use cases
+
+The use cases for `cwipc` that we foresee and try to support:
+
+- Creating C or C++ programs that capture point cloud streams, compress them, and transmit them over the net. On Linux, Windows, MacOS or Android.
+- Create Python programs with the same functionality.
+- Create Python programs or Jupyter notebooks to do analysis of point clouds or point cloud streams, for example using `numpy` or `pyopen3d`.
+- Create Unity applications that can capture, compress, transmit, decompress and render live point cloud streams.
+- Allow some of the above functionality to be used without any programming at all, through command line programs.
 
 ## More information
 
@@ -107,10 +119,11 @@ After installation you have a set of command line utilities that you can use fro
 ### Command line
 
 Better documentation will be forthcoming. For now: run the program with `--help` argument. The main programs are:
+
 - `cwipc_check` does a basic check of your cwipc installation, verifying everything has been installed correctly.
-- `cwipc_calibrate` is used to setup your capturer for Realsense or Azure Kinect cameras.
+- `cwipc_register` is used to setup your capturer for Realsense or Azure Kinect cameras.
 - `cwipc_grab` is used to capture pointclouds from cameras, but also for converting, compressing, decompressing and a lot more.
-- `cwipc_view` allows you to see your pointcloud stream. Either from camera, or played back from an earlier capture, or from a `cwipc_formward` stream and many other options.
+- `cwipc_view` allows you to see your pointcloud stream. Either from camera, or played back from an earlier capture, or from a `cwipc_forward` stream and many other options.
 - `cwipc_forward` streams pointclouds over the net.
 
 ### C or C++
@@ -157,10 +170,10 @@ Prebuilt binary releases are available at <https://github.com/cwi-dis/cwipc/rele
 
   ```
   python3 -m venv venv
-  . venv/bin/activate # Note the dot space. 
+  . venv/bin/activate # Note the space after the dot...
   ```
   
-- Run `cwipc_pymodules_install.sh` to install the Python components. (On windows you can use this script when you are using bash, or you can run `cwipc_pymodules_install.bat` if you are using CMD).
+- Run `cwipc_pymodules_install.sh` to install the Python components. (On windows you can use this script when you are using bash, or you can run `cwipc_pymodules_install.bat` if you are using CMD). Also, for Windows, it may be best to run this as `Administrator`.
 
 - Check that everything is installed correctly by running
 
@@ -177,7 +190,7 @@ Prebuilt binary releases are available at <https://github.com/cwi-dis/cwipc/rele
 
 Building from source requires `cmake`, `python3`, `libpcl`, `glfw3`, `jpeg-turbo` and optionally (for Intel Realsense support) `librealsense` and/or (for Azure Kinect support)  `Azure Kinect SDK`, `Azure Kinect Body Tracking SDK` and `OpenCV`.
 
-Running binaries needs most of those requirements are well (but note that the installers should take care of all of these).
+Running binaries need most of those requirements are well, but the installers should take care of all of these.
 
 ### Linux
 
@@ -187,36 +200,23 @@ There is a script `scripts/install-thirdparty-ubuntu2004.sh` that installs all r
 
 There is a script `scripts/install-thirdparty-osx1015.sh` that installs all requirements on MacOS 10.15 or later. This script requires [HomeBrew](https://brew.sh) and the XCode Command Line Tools. Installing HomeBrew will help you install the command line tools.
 
-Building and installing natively on Apple Silicon (M1 machines) might work and might not work. A workaround is to install HomeBrew for Intel (which can be installed alongside HomeBrew for M1, because they use different locations) and ensure that `/usr/local/bin` is in your `$PATH` before `/opt/homebrew/bin`. Then everything is built for Intel and Rosetta.
+Building and installing should work for both Apple Silicon (M1 machines) and Intel machines.
 
 ### Windows
 
-There are two things you always need to install (independent of whether you want to use a binary installer or build from source):
+There are a few things you need to install before building from source on Windows:
 
-- `git` and `bash`, from <https://git-scm.com/downloads>.
-- Python, from <https://www.python.org/downloads>. 3.10 is preferred, as of this writing (April 2023) python 3.10 does not work because some required packages are not available for 3.11 yet.
+- Visual Studio. Community Edition 2022 is known to work, but probably anything after 2019 will work.
+- CMake, from <https://cmake.org/install/>.
+- Python, from <https://www.python.org/downloads>. 3.11 is preferred, as of this writing (March 2024).
 	- Note: you should install Python *"For All Users"*. 
 	- Note: You should install into a writeable directory, such as `C:/Python39` otherwise you will have to use _Run as Administrator_ for various build steps.
-
-If you want to build from source you first need to install some developer resources:
-
-- Visual Studio. Community Edition 2019 is known to work.
-- CMake, from <https://cmake.org/install/>.
+- `git` and `bash`, from <https://git-scm.com/downloads>. We are not quite sure whether these are actually required...
+- Visual Studio Code is not really needed, but debugging or developing the Python code is much easier with VSCode than with VS.
 
 Next, you need to install the third-party libraries and tools mentioned above.
 
 - Run the script `scripts/install-3rdparty-full-win1064.ps1` in a PowerShell **with Administrator rights**. Note the bold font.
-
-Finally, you need to ensure that all DLLs from the packages installed above or on the environment `%PATH%` variable:
-
-- Open the `install-3rdparty-full-win1064.ps1` script in a text editor, and inspect the comments that state what should be added to path.
-- Open `Control Panel` -> `System Properties` -> `Environment Variables` -> `System Variables` -> `Path`.
-- Check that each of the folders mentioned in the script exist (otherwise something went wrong during the installation step).
-- Add each folder to the `Path`.
-- Press `OK` to close the dialogs.
-- Close all command prompt windows, bash windows and powershell windows and re-open them.
-
-If you don't follow these steps you will later get obscure errors. Windows will tell you that (for example) `"The cwipc_realsense2 DLL could not be found"`, and you see it right in front of you. The _actual_ problem is going to be with one of the dependency DLLs (but it would be far to helpful if Windows told you this:-), and the problem invariably is that something has not been added to `Path`.
 
 For the rest of the build instructions it is probably best to use `bash`, not `CMD` or powershell.
 
@@ -263,23 +263,24 @@ You can run the usual `cmake`, `cmake --build`, `ctest`, `cmake --install` comma
   ./scripts/buildall.sh
   ```
   
-  This will build everything, do a limited self-test and install into `/usr/local`. Note that on the Mac _everything_ does not include the Kinect grabber: the Microsoft Kinect SDK is not yet available for MacOS.
-  
-  As of this writing some of the dependencies are not available yet for the M1 chip, but building for Rosetta 2 works. Please _do_ ensure that Python for the correct architecture has been selected.
+  This will build everything, do a limited self-test and install into `/usr/local`. Note that on the Mac _everything_ does not include the Kinect grabber: the Microsoft Kinect SDK is not available for MacOS.
+
 
 - Windows:
 
   ```
   bash ./scripts/buildall-win.sh
   ```
-  This will build everything, do a limited self-test and install into `./installed`.
+  This will build everything, do a limited self-test and install into `C:/cwipc`.
   
-Both these scripts configures, builds, tests and installs each of the submodules individually (in `build` directories under the submodule directory). If you need to tweak the build procedure, for example by adding `cmake` flags, you can use `rm -rf build` to do a complete clean build.
+Both these scripts configure, build, tests and installs each of the submodules individually (in `build` directories under the submodule directory). If you need to tweak the build procedure, for example by adding `cmake` flags, you can use `rm -rf build` to do a complete clean build.
 
 
 ## Debugging
 
 Nowadays (2024) debugging with Python and VSCode may be the easiest way. See below.
+
+### Debugging with Visual Studio or XCode
 
 A note here on how to debug the cwipc code, because it needs to go somewhere. When debugging it is easiest to build the whole package not with the command line tools but with Visual Studio (Windows) or Xcode (Mac). To debug with XCode create a toplevel folder `build-xcode` and in that folder run
 
@@ -342,7 +343,7 @@ Debugging the native code when running within a Python app is slightly more conv
 - Set any breakpoints you need.
 - Type `Y` in the Python app to make it continue.
 
-On Windows I have not been able to use the native debugger in this way, but using Visual Studio attack works, as explained in the previous subsection.
+On Windows I have not been able to use the native debugger in this way, but using Visual Studio approach works, as explained in the previous subsection.
 
 ## Creating a release
 
@@ -361,8 +362,19 @@ When creating a new release, ensure the following have been done
   - Fix the dependencies and recommendations based on what cpack found.
 
 - `scripts/install-3rdparty-full-win1064.ps1` should be updated to download the most recent compatible packages. Go through each of the packages, determine the current version. Uninstall old versions from your build machine. Run the powershell script to test it installs the new packages. Do the build, to ensure it works with the new packages. Test the build to ensure it runs with the new packages.
+- For Windows, the `vcpkg` dependent packages should all be updated to the most recent version.
 
-- `.github/workflows/build.yml` should be updated to download those same packages.
+  ```
+  cd .\vcpkg
+  git pull
+  .\bootstrap-vcpkg.bat
+  cd ..
+  .\vcpkg\vcpkg.exe install
+  git commit -a -m "Vcpkg packages updated to most recent version"
+  ```
+
+- `.github/workflows/build.yml` should be checked to ensure it downloads the same packages (but it could be that it is now always using the scripts you updated in the previous steps)
+- `setup.py` may still have a version string somewhere.
 
 - `CWIPC_API_VERSION` incremented if there are any API changes (additions only).
 - `CWIPC_API_VERSION_OLD` incremented if there are API changes that are not backward compatible.
