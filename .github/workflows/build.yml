@@ -46,6 +46,10 @@ jobs:
           shell: pwsh
           run: vcpkg\bootstrap-vcpkg.bat
 
+        - name: Install vcpkg packages
+          shell: pwsh
+          run: vcpkg\vcpkg.exe install
+
         - name: Install Python packages (Windows)
           shell: bash
           run: |
