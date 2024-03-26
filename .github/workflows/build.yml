@@ -49,6 +49,8 @@ jobs:
         - name: Install vcpkg packages
           shell: pwsh
           run: vcpkg\vcpkg.exe install
+          env: 
+            VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
 
         - name: Install Python packages (Windows)
           shell: bash
