@@ -373,7 +373,6 @@ When creating a new release, ensure the following have been done
   git commit -a -m "Vcpkg packages updated to most recent version"
   ```
 
-- `.github/workflows/build.yml` should be checked to ensure it downloads the same packages (but it could be that it is now always using the scripts you updated in the previous steps)
 - `setup.py` may still have a version string somewhere.
 
 - `CWIPC_API_VERSION` incremented if there are any API changes (additions only).
