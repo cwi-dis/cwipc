@@ -116,6 +116,10 @@ The Android build of `cwipc` is API-only, and has only been tested with Unity ap
 
 After installation you have a set of command line utilities that you can use from the shell (or Windows command prompt) and a set of APIs that you can use in your C programs, C++ programs, Python programs or C#/Unity projects.
 
+### Setting up your cameras
+
+Initial documentation on setting up your cameras can be found in [Setting up your cameras](doc/registration.md).
+
 ### Command line
 
 Better documentation will be forthcoming. For now: run the program with `--help` argument. The main programs are:
