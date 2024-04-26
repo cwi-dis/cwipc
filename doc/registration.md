@@ -148,7 +148,12 @@ There is a way to register a single camera without any makers at all. If your ca
 
 Incidentally, this is exactly what happens if you put the camera on your desk, on a small tripod, next to your monitor.
 
+
 If you now run `cwipc_register --tabletop` you will get a `cameraconfig.json` that will capture a head and shoulders shot of you.
+
+Here is a picture of the setup and the resulting point cloud in `cwipc_view`:
+
+![Tabletop Setup](tabletop-setup.jpg)
 
 This is useful for developer testing, but it may also be usable for virtual meetings, etc.
 
