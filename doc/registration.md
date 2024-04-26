@@ -10,7 +10,7 @@ The preferred way to use your cameras is to put them on tripods, in _portait mod
 
 > For testing it may be possible that you don't have to do any registration at all, see the _Head and Shoulders_ section below.
 
-You need to print the [origin marker](../cwipc_util/data/target-a4-aruco-0.pdf). If that link does not work: you can also find the origin marker in your installation directory, in `share/cwipc/registration/target-a4-aruco-0.pdf`, or online, at <https://github.com/cwi-dis/cwipc_util/blob/master/data/target-a4-aruco-0.pdf>.
+You need to print the [origin marker](../cwipc_util/data/target-a4-aruco-0.pdf). If that link does not work: you can also find the origin marker in your installation directory, in `share/cwipc/registration/target-a4-aruco-0.pdf`, or online, at <https://github.com/cwi-dis/cwipc_util/blob/master/data/target-a4-aruco-0.pdf>, and use the `...` menu and _Download Raw File Content_ from there.
 
 Registering your cameras consists of a number of steps:
 
