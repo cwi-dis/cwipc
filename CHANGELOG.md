@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Registration procedure documented
 
+### Changed
+
+- Do not attempt fine calibration with a single camera (#104)
+
 ## [7.5.1] - 2024-03-27
 
 ### Added
