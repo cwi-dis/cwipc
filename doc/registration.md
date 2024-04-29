@@ -10,7 +10,13 @@ The preferred way to use your cameras is to put them on tripods, in _portait mod
 
 > For testing it may be possible that you don't have to do any registration at all, see the _Head and Shoulders_ section below.
 
-You need to print the [origin marker](../cwipc_util/data/target-a4-aruco-0.pdf). If that link does not work: you can also find the origin marker in your installation directory, in `share/cwipc/registration/target-a4-aruco-0.pdf`, or online, at <https://github.com/cwi-dis/cwipc_util/blob/master/data/target-a4-aruco-0.pdf>, and use the `...` menu and _Download Raw File Content_ from there.
+Here is a picture of a four-camera setup:
+
+![Pyisical setup of four cameras](camera-setup.jpg)
+
+
+
+You need to print the [origin Aruco marker](../cwipc_util/data/target-a4-aruco-0.pdf), which you see in the center of the picture above. If that link does not work: you can also find the origin marker in your installation directory, in `share/cwipc/registration/target-a4-aruco-0.pdf`, or online, at <https://github.com/cwi-dis/cwipc_util/blob/master/data/target-a4-aruco-0.pdf>, and use the `...` menu and _Download Raw File Content_ from there.
 
 Registering your cameras consists of a number of steps:
 
@@ -32,6 +38,7 @@ Use `cwipc_register --help` to see all the command line options it has. For now,
 - The `--verbose` option will show verbose output, and it will also bring up windows to show you the result of every step. Close the window (or press `ESC` with the window active) to proceed with the next step.
 - The `--rgb` will use the RGB and Depth images to do the coarse registration (in stead of the point clouds), if possible. This will give much better results. 
 - The `--interactive` option will show you the point cloud currently captured. You can press `w` in the point cloud window to use this capture for your calibration step. If `--rgb` is also given you will be shown the captured RGB data, in a separate window. The `--rgb_cw` and `--rgb_ccw` options can be given to rotate the RGB images.
+	- In `--interactive` mode the `cwipc_register` point cloud window works similar to the `cwipc_view` window. So you can use left-mouse-drag to pan around the point cloud, right-mouse-drag to move up and down, scrollwheel to zoom. `?` will print some limited help on `stdout`.
 
 So, with all of these together, using `cwipc_register --rgb --interactive` may allow you to go through the whole procedure in one single step.
 
@@ -43,7 +50,9 @@ You may need USB3 range extenders (also known as active cables) to be able to ge
 
 Put your origin marker on the floor and ensure all cameras can see it in RGB and Depth. The latter may be a bit difficult (because you can't see the marker in Depth). 
 
-> **xxxjack here we need a screenshot**
+Here is an example of what you should see in Kinect Viewer (or similar in Realsense Viewer):
+
+![Screenshot of RGB and D capture](rgbd-capture.jpg)
 
 Have a person stand at the origin and ensure their head is not cut off. Adjust camera angles and such. Lock down the cameras, all of the adjustable screws and bolts and such on your tripods. And lock the tripods to the floor with gaffer tape.
 
@@ -55,7 +64,9 @@ Usually it will find what type of camera you have attached automatically. If thi
 
 ## Coarse registration
 
-The easiest way to do coarse calibration is to put the origin marker on the floor and run `cwipc_register --rgb --nofine`. This will run a coarse calibration step for each camera in turn, _but only if the camera has not been coarse-calibrated before_. In other words, you can run this multiple times if some cameras were missed the previous time. But on the other hand if you had to move cameras you should remove `cameraconfig.json` and restart at the previous step.
+The easiest way to do coarse calibration is to put the origin marker on the floor (the picture above gives you an idea of where you should place your origin marker) and run `cwipc_register --rgb --nofine`. 
+
+This will run a coarse calibration step for each camera in turn, _but only if the camera has not been coarse-calibrated before_. In other words, you can run this multiple times if some cameras were missed the previous time. But on the other hand if you had to move cameras you should remove `cameraconfig.json` and restart at the previous step.
 
 For each camera, the RGB image is used to find the origin marker Aruco pattern. The Depth image is then used to find the distance and orientation of the Aruco marker from the camera. This information is then used to compute the `4*4` transformation matrix from camera coordinates to world coordinates, and this information is stored in `cameraconfig.json`.
 
@@ -63,7 +74,7 @@ If the Aruco marker cannot be found automatically you can also use a manual proc
 
 After this step you have a complete registration. You can run `cwipc_view` to see your point cloud. It should be approximately correct, but in the areas that are seen by multiple cameras you will see the the alignment is not perfect.
 
-> **xxxjack here we need a screenshot**
+![Captured point cloud from all cameras after coarse registration](coarse-pointcloud.jpg)
 
 ## Fine registration
 
@@ -115,6 +126,12 @@ Next adjust `height_min` and `height_max` to get rid of floor and ceiling. Both 
 You probably want to play with the various exposure parameters such as `color_whitebalance` and `color_exposure_time` to get the best color fidelity, but you really have to experiment here.
 
 We are working on partially automating this process, but that is not done yet.
+
+### Final results
+
+After all the steps have been done you should be able to get point clouds like the one below. 
+
+![Calibrated point cloud captured with cwipc_view](calibrated.jpg)
 
 ## Special cases
 
