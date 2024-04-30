@@ -386,7 +386,9 @@ When creating a new release, ensure the following have been done
 
 Version numbers for the release no longer need to be updated manually, they are generated from the git tag name.
 
-After making all these changes push to github. Ensure the CI/CD build passes.
+After making all these changes push to github. Ensure the CI/CD build passes. This build will take a looooong time, most likely, because the `vcpkg` dependencies have been updated and the Windows runner will have to rebuild the world.
+
+Now do a nightly build, using `scripts/nightly.sh`.
 
 After that tag all submodules and the main module with *v_X_._Y_._Z_*.
 
