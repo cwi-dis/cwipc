@@ -78,7 +78,6 @@ cwipc_setup_python_venv()
 #
 # Packages required by all submodules
 #
-
 if(CMAKE_SYSTEM_NAME STREQUAL Linux)
 	message(WARNING "Need to find jpeg-turbo")
 	include(FindPkgConfig)
@@ -103,6 +102,11 @@ find_package(PCL REQUIRED COMPONENTS common io octree filters features geometry 
 #
 # Get the nlohmann/json package
 #
+# Use the next line to get it through normal means
+# find_package(nlohmann_json 3.2.0 REQUIRED)
+# Or use these lines to fetch it as needed.
+
+set(FETCHCONTENT_QUIET OFF)
 include(FetchContent)
 
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz)
