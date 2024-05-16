@@ -159,6 +159,23 @@ You may want to print the markers at 140% (i.e. on A3 paper).
 
 `cwipc_register` will first do the coarse alignment only of the cameras that can see the origin marker. But after that it will have recorded the position of some of the auxiliary markers. It will then do a second pass, in which it will align the cameras that could see that second marker but not the origin marker. This is then repeated until all cameras are registered.
 
+### Registering without Aruco markers
+
+If you need to register cameras but you cannot print the Aruco markers you can do a manual coarse registration if you have a piece of paper that is approximately A4-sized. And if you don't even have that you can still follow this procedure but you will have to guess how big a piece of A4 paper would be, approximately, and simply select points on the floor where the A4 paper would have been.
+
+Place it on the ground in the origin position and run `cwipc_register --no_aruco --nofine`.
+
+You will be presented with a 3D view of the capture. You can use the mouse and scrollwheel to change your viewpoint.
+
+You must now select 4 points (with shift-left-click) in a specific order:
+
+1. Near-left point of the A4 (from the camera view point),
+2. Near-right point,
+3. Far-right point,
+4. Far-left point.
+
+Inspect the result of this coarse calibration with `cwipc_view`, and make double-sure that the blue, red and green axes are pointing in the right direction (see image above).
+
 ### Registering head-and-shoulders shots
 
 There is a way to register a single camera without any makers at all. If your camera is in landscape orientation, at approximately `1.20m` height, and approximately `1m` away from a seated subject.
