@@ -12,6 +12,11 @@ The core of the suite is `cwipc_util`, which handles the `cwipc` object implemen
 
 The suite also contains modules `cwipc_kinect` and `cwipc_realsense2` that which capture point clouds from one or multiple cameras (Kinects and Realsense), and a module `cwipc_codec` that has the functionality to compress and decompress point clouds to make them suitable for real-time transmission.
 
+## Unity
+
+There is a separate repository <https://github.com/cwi-dis/cwipc_unity> that contains the Unity package needed to use cwipc from Unity. See there for instructions. You will still need to install this package.
+
+If you ended up on this web page because you got an error from Unity that pointed you here: you are using some Unity project that uses `cwipc_unity` but the native package (this one) has not been installed correctly. See the _Installation_ section below.
 ## Use cases
 
 The use cases for `cwipc` that we foresee and try to support:
@@ -69,6 +74,8 @@ Try to determine which package is responsible for the failure, and uninstall it.
 - Kinect for Azure and k4abt (body tracking)
 
 Python requires a specific mention: if you have already installed a version of Python **and** that Python is on your **PATH** environment variable the cwipc Python interface modules will be installed into that Python installation. But again: if there is some incompatibility in the way your Python has been installed your only recourse is to uninstall it and let the cwipc installer re-install it.
+
+And actually Realsense also requires a specific mention: if you already have it installed but have have a different version than what cwipc expects your only recourse is to uninstall it and then re-run the cwipc installer so it will install the correct version.
 
 > As is probably clear from this section, writing Windows installers is not our strong point. Please contact us if you can provide help.
 
