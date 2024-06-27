@@ -77,6 +77,12 @@ jobs:
                 build-type: Release
                 run-test: true
                 install-build: true
+        - name: Show Python and Python module versions used
+          if: always()
+          shell: bash
+          run: |
+                ./build/venv/Scripts/python --version
+                ./build/venv/Scripts/python -m pip freeze
         - name: Create installer
           shell: bash
           run: |
@@ -150,6 +156,12 @@ jobs:
                 run-test: true
                 install-build: true
                 install-options: --prefix ${{ github.workspace }}/installed
+        - name: Show Python and Python module versions used
+          if: always()
+          shell: bash
+          run: |
+                ./build/venv/bin/python --version
+                ./build/venv/bin/python -m pip freeze
         - name: Create installer
           shell: bash
           run: |
@@ -210,6 +222,12 @@ jobs:
                 run-test: true
                 install-build: true
                 install-options: --prefix ${{ github.workspace }}/installed
+        - name: Show Python and Python module versions used
+          if: always()
+          shell: bash
+          run: |
+                ./build/venv/bin/python --version
+                ./build/venv/bin/python -m pip freeze
         - name: Create installer
           shell: bash
           run: |
