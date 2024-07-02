@@ -77,6 +77,11 @@ jobs:
                 build-type: Release
                 run-test: true
                 install-build: true
+        - name: Rerun failed tests verbosely
+          if: failure()
+          shell: bash
+          run: |
+                ctest -C Release --rerun-failed --output-on-failure
         - name: Show Python and Python module versions used
           if: always()
           shell: bash
