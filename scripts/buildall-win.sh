@@ -51,7 +51,7 @@ esac
 if nproc 2>&1 >/dev/null; then
 	ncpu=`nproc`
 	makeargs="$makeargs -j $ncpu"
-	export CTEST_PARALLEL_LEVEL=$ncpu
+	#export CTEST_PARALLEL_LEVEL=$ncpu
 	export CMAKE_BUILD_PARALLEL_LEVEL=$ncpu
 fi
 
