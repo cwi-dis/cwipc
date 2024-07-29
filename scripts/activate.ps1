@@ -9,13 +9,19 @@ $topDir = Split-Path $myDir -Parent
 Write-Output $topDir
 $buildDir = $topDir + "\build"
 Write-Output $buildDir
-$candidateBinDir = $buildDir + "\bin\RelWithDebInfo"
-if (Test-Path -Path $candidateBinDir) {
-    $binDir = $candidateBinDir
+$candidate1BinDir = $buildDir + "\bin\Debug"
+$candidate2BinDir = $buildDir + "\bin\RelWithDebInfo"
+$candidate3BinDir = $buildDir + "\bin\Release"
+if (Test-Path -Path $candidate1BinDir) {
+    $binDir = $candidate1BinDir
+} elseif (Test-Path -Path $candidate2BinDir) {
+    $binDir = $candidate2BinDir
+} elseif (Test-Path -Path $candidate3BinDir) {
+    $binDir = $candidate3BinDir
 } else {
-    $binDir = $buildDir + "\bin\Release"
+    $binDir = $buildDir + "\bin"
 }
-Write-Output $binDir
+Write-Output "binDir = " + $binDir
 $Env:CWIPC_LIBRARY_DIR = $binDir
 $Env:PATH = $binDir + ";" + $Env:PATH
 Write-Output $Env:PATH
