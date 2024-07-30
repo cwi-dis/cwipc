@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## Added
+
+- Realsense capturer can now record during live capture, using `system.record_to_directory` config setting. (#119)
+
 ### Changed
 
 - Minor documentation fixes
