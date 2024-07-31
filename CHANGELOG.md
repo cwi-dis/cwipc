@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - More resilience against incomplete installations (#108)
 - Don't use numpy 2.0 until issues with open3d are fixed (#109)
 - Fixed colors for cwipc_view --rgb with RealSense camera (#115)
+- Fixed cwipc_register for multiple RealSense cameras (#106)
 
 ## [7.5.3] - 2024-04-30
 
