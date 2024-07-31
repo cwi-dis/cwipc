@@ -80,7 +80,7 @@ jobs:
                 configure-options: -Wno-dev -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -DOpenCV_ROOT=${{ env.OPENCV_DIR }}
                 build-type: Release
                 run-test: true
-                ctest-options: -E cwipc_codec_python_tests -E cwipc_kinect_python_tests 
+                ctest-options: -E cwipc_(codec|kinect)_python_tests
                 install-build: true
         - name: Rerun failed tests verbosely
           if: failure()
