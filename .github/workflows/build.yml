@@ -18,6 +18,10 @@ jobs:
                 git show-ref --tags
                 git log -40
                 git describe
+        - name: Install correct Python version
+          uses: actions/setup-python@v5
+          with:
+            python-version: '3.11'
         - name: Pre-install (Windows)
           shell: pwsh
           run: |
