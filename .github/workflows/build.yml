@@ -223,7 +223,7 @@ jobs:
                 git describe --tags --debug
         - name: Install dependencies
           shell: bash
-          run: ./scripts/install-3rdparty-ubuntu2204.sh  
+          run: ./scripts/install-3rdparty-ubuntu2204.sh
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           with:
@@ -232,6 +232,10 @@ jobs:
                 run-test: true
                 install-build: true
                 install-options: --prefix ${{ github.workspace }}/installed
+        - name: Find where MSVC Redist comes from
+          if: always()
+          shell: bash
+          run: which msvcp140.dll
         - name: Show Python and Python module versions used
           if: always()
           shell: bash
