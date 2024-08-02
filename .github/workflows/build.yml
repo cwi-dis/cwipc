@@ -82,6 +82,10 @@ jobs:
                 run-test: true
                 ctest-options: -E cwipc_(codec|kinect)_python_tests
                 install-build: true
+        - name: Find where MSVC Redist comes from
+          if: always()
+          shell: bash
+          run: which msvcp140.dll
         - name: Rerun failed tests verbosely
           if: failure()
           shell: bash
@@ -232,10 +236,6 @@ jobs:
                 run-test: true
                 install-build: true
                 install-options: --prefix ${{ github.workspace }}/installed
-        - name: Find where MSVC Redist comes from
-          if: always()
-          shell: bash
-          run: which msvcp140.dll
         - name: Show Python and Python module versions used
           if: always()
           shell: bash
