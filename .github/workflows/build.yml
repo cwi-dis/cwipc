@@ -76,11 +76,7 @@ jobs:
           shell: bash -l {0}
           run: |
               find "C:/hostedtoolcache/windows/Java_Temurin-Hotspot_jdk" -name "msvcp140.dll" -exec rm {} \;
-        - name: Find where MSVC Redist comes from
-          if: always()
-          shell: bash
-          run: which msvcp140.dll
-
+              find "C:/Program Files/ImageMagick-7.1.1-Q16-HDRI" -name "msvcp140.dll" -exec rm {} \;
         - name: Find where MSVC Redist comes from
           if: always()
           shell: bash
