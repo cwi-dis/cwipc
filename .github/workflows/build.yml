@@ -93,6 +93,7 @@ jobs:
                 run-test: true
                 install-build: true
         - name: Remove any msvcp140 installed by Python packages
+          if: always()
           shell: bash
           run:
             find "build/venv" -name "msvcp140*" -exec rm {} \;
@@ -100,7 +101,7 @@ jobs:
           if: failure()
           shell: bash
           run: |
-                ctest --build-dir build -C Release --rerun-failed --output-on-failure
+                ctest --test-dir build -C Release --rerun-failed --output-on-failure
         - name: Show Python and Python module versions used
           if: always()
           shell: bash
