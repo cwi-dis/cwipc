@@ -70,7 +70,22 @@ jobs:
           shell: pwsh
           run: |
                $env:path -split ";"
-               
+
+        # Works around https://github.com/actions/runner-images/issues/10055
+        - name: Remove conflicting libraries
+          shell: bash -l {0}
+          run: |
+              find "C:/hostedtoolcache/windows/Java_Temurin-Hotspot_jdk" -name "msvcp140.dll" -exec rm {} \;
+        - name: Find where MSVC Redist comes from
+          if: always()
+          shell: bash
+          run: which msvcp140.dll
+
+        - name: Find where MSVC Redist comes from
+          if: always()
+          shell: bash
+          run: which msvcp140.dll
+          
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           env: 
@@ -80,12 +95,7 @@ jobs:
                 configure-options: -Wno-dev -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -DOpenCV_ROOT=${{ env.OPENCV_DIR }}
                 build-type: Release
                 run-test: true
-                ctest-options: -E cwipc_(codec|kinect)_python_tests
                 install-build: true
-        - name: Find where MSVC Redist comes from
-          if: always()
-          shell: bash
-          run: which msvcp140.dll
         - name: Rerun failed tests verbosely
           if: failure()
           shell: bash
