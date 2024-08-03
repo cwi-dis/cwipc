@@ -96,7 +96,7 @@ jobs:
           shell: bash
           run:
             find "build/venv" -name "msvcp140*" -exec rm {} \;
-            - name: Rerun failed tests verbosely
+        - name: Rerun failed tests verbosely
           if: failure()
           shell: bash
           run: |
