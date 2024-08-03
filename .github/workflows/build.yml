@@ -92,11 +92,15 @@ jobs:
                 build-type: Release
                 run-test: true
                 install-build: true
-        - name: Rerun failed tests verbosely
+        - name: Remove any msvcp140 installed by Python packages
+          shell: bash
+          run:
+            find "build/venv" -name "msvcp140*" -exec rm {} \;
+            - name: Rerun failed tests verbosely
           if: failure()
           shell: bash
           run: |
-                ctest -C Release --rerun-failed --output-on-failure
+                ctest --build-dir build -C Release --rerun-failed --output-on-failure
         - name: Show Python and Python module versions used
           if: always()
           shell: bash
