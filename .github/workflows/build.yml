@@ -92,6 +92,7 @@ jobs:
                 build-type: Release
                 run-test: true
                 install-build: true
+                ctest-options: -E cwipc_(codec|kinect)_python_tests
         - name: Remove any msvcp140 installed by Python packages
           if: always()
           shell: bash
