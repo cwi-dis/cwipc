@@ -62,14 +62,18 @@ After installing, run _Start menu_ -> _cwipc_ -> _Check cwipc installation_. Thi
 
 If this shows any errors, try _Attempt to fix cwipc installation_. 
 
+> As of July 2024 there is a problem you should check for first, which is not fixed by the automatic fixer.
+> 
+> You should go to _Apps_ -> _Installed apps_ and check that your version of _Microsoft Visual C++ 2015-2022 Redistributable (x64)_ is at least version 14.40.33810.0. If your installed version is older: update. Searching for _MSVC redist_ will find the download links.
+> 
+> This needs to be done because unfortunately Microsoft has made an incompatible change to their C++ Runtime, so any program built after about May 2024 will crash if it uses an older version of the runtime.
+
 If after that the check command still fails, the problem is probably that one of the third party packages _is_ installed on your computer, but it is an incorrect version, or it is installed in a different way than what _cwipc_ expects.
 
 Try to determine which package is responsible for the failure, and uninstall it. Then reboot and re-try the _fix cwipc installation_. This _should_ install the correct version of every package, and install it with the expected options. Packages that could have problems:
 
 - Python 
 - LibPCL
-- opencv 
-- libjpegturbo
 - librealsense2
 - Kinect for Azure and k4abt (body tracking)
 
