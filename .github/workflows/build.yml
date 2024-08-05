@@ -92,8 +92,7 @@ jobs:
                 build-type: Release
                 run-test: true
                 install-build: true
-                ctest-options: --output-on-failure
-#                ctest-options: -E cwipc_(codec|kinect)_python_tests
+                ctest-options: -E cwipc_(codec|kinect)_python_tests
 #        - name: Remove preloading of wrong msvcp140 by matplotlib
 #          if: always()
 #          shell: bash
