@@ -120,9 +120,9 @@ if ($global:ghActionRunner) {
 	Write-Output "cwipc_check install: intel-realsense: already installed"
 } else {
 	Write-Output "cwipc_check install: intel-realsense: downloading..."
-	$installer="$tmpinstalldir\Intel.RealSense.SDK-WIN10-2.54.2.5684.exe"
+	$installer="$tmpinstalldir\Intel.RealSense.SDK-WIN10-2.55.1.6486.exe"
 	(New-Object System.Net.WebClient).DownloadFile(
-	"https://github.com/IntelRealSense/librealsense/releases/download/v2.54.2/Intel.RealSense.SDK-WIN10-2.54.2.5684.exe",$installer);
+	"https://github.com/IntelRealSense/librealsense/releases/download/v2.55.1/Intel.RealSense.SDK-WIN10-2.55.1.6486.exe",$installer);
 	Write-Output "cwipc_check install: intel-realsense: installing..."
 	Start-Process -FilePath $installer -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOCANCEL /SP-' -Wait
 	Add-PathVariable("C:\Program Files (x86)\Intel RealSense SDK 2.0\bin\x64")
