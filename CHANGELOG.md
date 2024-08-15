@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed colors for cwipc_view --rgb with RealSense camera (#115)
 - Fixed cwipc_register for multiple RealSense cameras (#106)
 - Fixed cwipc_synthetic reader to not wait on available(False) (#117)
+- Realsense cameraconfig.json file rationalized. Major code cleanup. (#137, #125, #118)
+- Calibration of Realsense D455 cameras fixed. (#127)
 
 ## [7.5.3] - 2024-04-30
 
