@@ -133,10 +133,12 @@ jobs:
                 name: windows-build-folder
                 path: build.tgz
         - name: Capture installed folder as artifact
+          if: false
           shell: bash
           run: |
                 7z a cwipc_win1064_${{ github.ref_name }}.zip installed/
         - name: Upload installed folder
+          if: false
           uses: actions/upload-artifact@v3
           with:
                 name: cwipc_win1064_${{ github.ref_name }}.zip
