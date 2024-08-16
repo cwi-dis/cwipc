@@ -18,7 +18,7 @@
   		"displayName" : "Build with vcpkg",
   		"binaryDir": "${sourceDir}/build",
       	"cacheVariables": {
-        	"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/scripts/buildsystems/vcpkg.cmake"
+        	"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
       	},
   		"hidden": true
   	},
@@ -35,8 +35,19 @@
 			"type": "equals",
 			"lhs": "${hostSystemName}",
 			"rhs": "Windows"
-		}
+		},
+		"hidden" : true
   	},
+	{
+		"name" : "windows-production",
+		"description" : "Build for production on Windows",
+		"inherits" : "windows"
+	},
+	{
+		"name" : "windows-develop",
+		"description" : "Build for development on Windows",
+		"inherits" : "windows"
+	},
   	{
   		"name" : "mac-production",
   		"description" : "Build for production on Mac",
@@ -97,7 +108,7 @@
   "buildPresets" : [
   	{
   		"name" : "windows-production",
-  		"configurePreset" : "windows",
+  		"configurePreset" : "windows-production",
   		"configuration" : "Release",
 		"condition": {
 			"type": "equals",
@@ -107,7 +118,7 @@
   	},
 	{
   		"name" : "windows-develop",
-  		"configurePreset" : "windows",
+  		"configurePreset" : "windows-develop",
   		"configuration" : "RelWithDebInfo",
 		"condition": {
 			"type": "equals",
