@@ -113,7 +113,6 @@ jobs:
         - name: Create installer
           shell: bash
           run: |
-                cpack --config build/CPackSourceConfig.cmake
                 cpack --config build/CPackConfig.cmake
                 ls -l build/package
         - name: upload CTest output in case of failure
@@ -195,7 +194,6 @@ jobs:
         - name: Create installer
           shell: bash
           run: |
-                cpack --config build/CPackSourceConfig.cmake
                 cpack --config build/CPackConfig.cmake
                 ls -l build/package
         - name: upload CTest output in case of failure
@@ -262,7 +260,6 @@ jobs:
         - name: Create installer
           shell: bash
           run: |
-                cpack --config build/CPackSourceConfig.cmake
                 cpack --config build/CPackConfig.cmake
                 ls -l build/package
         - name: upload CTest output in case of failure
