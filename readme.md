@@ -262,33 +262,11 @@ git clone --recurse-submodules https://github.com/cwi-dis/cwipc.git
 
 ### Build using build script
 
-You can run the usual `cmake`, `cmake --build`, `ctest`, `cmake --install` commands manually, or you can build by using one of the build scripts:
+You can use the usual `cmake`, `cmake --build`, `ctest`, `cmake --install` commands. There are _cmake presets_ for the various platforms and use cases (development or release). Use `cmake --list-presets` to see the ones which are valid for your platform.
 
-- Linux:
+On Linux and Macos this will install into `/usr/local` on Windows it will install into `../installed` by default.
 
-  ```
-  ./scripts/buildall.sh --sudo
-  ```
-  
-  This will build everything, do a limited self-test and install into `/usr/local`.
-
-- MacOS:
-
-  ```
-  ./scripts/buildall.sh
-  ```
-  
-  This will build everything, do a limited self-test and install into `/usr/local`. Note that on the Mac _everything_ does not include the Kinect grabber: the Microsoft Kinect SDK is not available for MacOS.
-
-
-- Windows:
-
-  ```
-  bash ./scripts/buildall-win.sh
-  ```
-  This will build everything, do a limited self-test and install into `C:/cwipc`.
-  
-Both these scripts configure, build, tests and installs each of the submodules individually (in `build` directories under the submodule directory). If you need to tweak the build procedure, for example by adding `cmake` flags, you can use `rm -rf build` to do a complete clean build.
+You can also build right from Visual Studio Code using the cmake plugin.
 
 
 ## Debugging
