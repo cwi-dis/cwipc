@@ -88,11 +88,12 @@ jobs:
                 VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
           with:
                 build-dir: ${{ github.workspace }}/build
-                configure-options: -Wno-dev -DCMAKE_TOOLCHAIN_FILE=vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/installed -DPython3_EXECUTABLE=${{ env.Python3_EXECUTABLE }} -DOpenCV_ROOT=${{ env.OPENCV_DIR }}
+                configure-options: --preset windows-production -Wno-dev
+                build-options: --preset windows-production
                 build-type: Release
                 run-test: true
                 install-build: true
-                ctest-options: -E cwipc_(codec|kinect)_python_tests
+                ctest-options: --preset windows-production -E cwipc_(codec|kinect)_python_tests
 #        - name: Remove preloading of wrong msvcp140 by matplotlib
 #          if: always()
 #          shell: bash
@@ -178,7 +179,9 @@ jobs:
           uses: ashutoshvarma/action-cmake-build@master
           with:
                 build-dir: ${{ github.workspace }}/build
-                configure-options: -Wno-dev 
+                configure-options: --preset mac-production -Wno-dev 
+                build-options: --preset mac-production
+                ctest-options: --preset mac-production
                 run-test: true
                 install-build: true
                 install-options: --prefix ${{ github.workspace }}/installed
@@ -244,7 +247,9 @@ jobs:
           uses: ashutoshvarma/action-cmake-build@master
           with:
                 build-dir: ${{ github.workspace }}/build
-                configure-options: -Wno-dev 
+                configure-options: --preset linux-production -Wno-dev 
+                build-options: --preset linux-production
+                ctest-options: --preset linux-production
                 run-test: true
                 install-build: true
                 install-options: --prefix ${{ github.workspace }}/installed
