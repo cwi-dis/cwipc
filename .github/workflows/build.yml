@@ -135,7 +135,7 @@ jobs:
           if: false
           shell: bash
           run: |
-                7z a cwipc_win1064_${{ github.ref_name }}.zip installed/
+                7z a cwipc_win1064_${{ github.ref_name }}.zip ../installed/
         - name: Upload installed folder
           if: false
           uses: actions/upload-artifact@v3
@@ -332,6 +332,7 @@ jobs:
                 zip -x '*.git*' -r ../Assets/${{ github.ref_name }}-complete.zip .
                 awk '/^## /{if(flag){exit}; flag=1} flag' CHANGELOG.md > ../Assets/changes.md
         - name: Download Windows installed folder
+          if: false
           uses: actions/download-artifact@v3
           with:
                 name: cwipc_win1064_${{ github.ref_name }}.zip
@@ -415,6 +416,7 @@ jobs:
             asset_name: cwipc-${{ github.ref_name }}-source-including-submodules.zip
             asset_content_type: application/zip
         - name: Upload Windows installed folder
+          if: false
           uses: actions/upload-release-asset@v1
           env:
             GITHUB_TOKEN: ${{ github.token }}
