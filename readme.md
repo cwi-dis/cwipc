@@ -141,6 +141,16 @@ Better documentation will be forthcoming. For now: run the program with `--help`
 - `cwipc_view` allows you to see your pointcloud stream. Either from camera, or played back from an earlier capture, or from a `cwipc_forward` stream and many other options.
 - `cwipc_forward` streams pointclouds over the net.
 
+#### Recording
+
+> This will need to go somewhere better. 
+
+You can record your camera capture streams (both Realsense and Kinect) while you are capturing the streams in any program using _cwipc_, so not only `cwipc_view` but also anything like a Unity app using the cameras. Create a directory next to your `cameraconfig.json` file, let's say `recording`, and then set the cameraconfig field `record_to_directory` to `"recording"` (could also be an absolute path).
+
+Now run your application as usual. 
+
+Clear the `record_to_directory` field again. Copy `cameraconfig.json` into the `recording` directory. Change camera and capturer `type` to `kinect_offline` or `realsense_playback`. Add the `filename` field to each `camera` entry. For a single Kinect you may have to set `ignore_sync` to `true`.
+
 ### C or C++
 
 Include files and libraries are installed in the standard places, and `pkgconfig` files are included. For example code: get a source distribution and look at `cwipc_util/apps`, `cwipc_codec/apps`, `cwipc_realsense2/apps`, etc.
