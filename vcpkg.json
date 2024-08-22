@@ -5,6 +5,7 @@
     "libjpeg-turbo",
     "opencv4",
     "pcl",
-    "realsense2"
+    "realsense2",
+    "glfw3"
   ]
 }
