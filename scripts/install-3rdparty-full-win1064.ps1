@@ -93,43 +93,6 @@ $tmpinstalldir="$((Get-Item $env:TEMP\cwipc-3rdparty-downloads).FullName)"
 
 
 #
-# Install PCL 1.14
-#
-if ($global:ghActionRunner) {
-	Write-Output "cwipc_check install: pcl: skipped"
-} elseif (Can-Execute-From-Path("pcl_generate -help")) {
-	Write-Output "cwipc_check install: pcl: already installed"
-} else {
-	Write-Output "cwipc_check install: pcl: downloading..."
-	$installer="$tmpinstalldir\PCL-1.14.0-AllInOne-msvc2022-win64.exe"
-	(New-Object System.Net.WebClient).DownloadFile("https://github.com/PointCloudLibrary/pcl/releases/download/pcl-1.14.0/PCL-1.14.0-AllInOne-msvc2022-win64.exe",$installer);
-	Write-Output "cwipc_check install: pcl: installing..."
-	Start-Process -FilePath $installer -ArgumentList "/S" -Wait
-	Add-PathVariable("C:\Program Files\PCL 1.14.0\bin")
-	Add-PathVariable("C:\Program Files\PCL 1.14.0\3rdParty\VTK\bin")
-	Add-PathVariable("C:\Program Files\OpenNI2\Redist")
-	Write-Output "cwipc_check install: pcl: installed"
-}
-
-#
-# Install Realsense SDK. 
-#
-if ($global:ghActionRunner) {
-	Write-Output "cwipc_check install: intel-realsense: skipped"
-} elseif (Is-DLL-On-Path("realsense2.dll")) {
-	Write-Output "cwipc_check install: intel-realsense: already installed"
-} else {
-	Write-Output "cwipc_check install: intel-realsense: downloading..."
-	$installer="$tmpinstalldir\Intel.RealSense.SDK-WIN10-2.55.1.6486.exe"
-	(New-Object System.Net.WebClient).DownloadFile(
-	"https://github.com/IntelRealSense/librealsense/releases/download/v2.55.1/Intel.RealSense.SDK-WIN10-2.55.1.6486.exe",$installer);
-	Write-Output "cwipc_check install: intel-realsense: installing..."
-	Start-Process -FilePath $installer -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /NOCANCEL /SP-' -Wait
-	Add-PathVariable("C:\Program Files (x86)\Intel RealSense SDK 2.0\bin\x64")
-	Write-Output "cwipc_check install: intel-realsense: installed"
-}
-
-#
 # Install Kinect SDK
 #
 if (Is-DLL-On-Path("k4a.dll")) {
