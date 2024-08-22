@@ -176,6 +176,8 @@ jobs:
         - name: Install dependencies
           shell: bash
           run: ./scripts/install-3rdparty-osx1015.sh
+          env:
+            HOMEBREW_NO_VERIFY_ATTESTATIONS: "1"
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           with:
