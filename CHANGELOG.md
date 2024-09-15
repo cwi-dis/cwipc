@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use cmake presets for building (#120)
 - Use pyproject.toml for Python package generation (#79)
 - Implemented recording while capturing for both Realsense and Kinect (#139)
+- Glfw is now used via normal dependencies, no longer slurped (#123)
 
 ## [7.5.3] - 2024-04-30
 
