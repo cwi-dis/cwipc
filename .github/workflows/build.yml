@@ -284,7 +284,7 @@ jobs:
           shell: bash
           run: |
                 tar -c -v -f cwipc_ubuntu2204_${{ github.ref_name }}.tgz -z -C installed .
-                ls -l
+                ls -la
         - name: Upload installed folder
           uses: actions/upload-artifact@v3
           with:
