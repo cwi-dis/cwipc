@@ -300,6 +300,8 @@ jobs:
           with:
                 name: cached-git-version
                 path: .cachedgitversion.txt
+                if-no-files-found: error
+                include-hidden-files: true
     
     create-release:
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
