@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Added
 
 - Realsense capturer can now record during live capture, using `system.record_to_directory` config setting. (#119)
+- Debian packages for Ubuntu 24.04 (#143)
 
 ### Changed
 
