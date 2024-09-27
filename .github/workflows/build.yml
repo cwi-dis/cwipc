@@ -262,7 +262,7 @@ jobs:
         - name: Create installer
           shell: bash
           run: |
-                cpack --config build/CPackConfig.cmake
+                cpack --config build/CPackConfig.cmake -D CPACK_DEBIAN_FILE_NAME="cwipc_${{ github.ref_name }}_ubuntu2204_amd64.deb"
                 ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
@@ -340,7 +340,7 @@ jobs:
         - name: Create installer
           shell: bash
           run: |
-                cpack --config build/CPackConfig.cmake
+                cpack --config build/CPackConfig.cmake -D CPACK_DEBIAN_FILE_NAME="cwipc_${{ github.ref_name }}_ubuntu2404_amd64.deb"
                 ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
