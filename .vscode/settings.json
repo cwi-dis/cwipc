@@ -102,5 +102,6 @@
         "__hash_table": "cpp",
         "queue": "cpp",
         "future": "cpp"
-    }
+    },
+    "cmake.ctest.allowParallelJobs": true
 }
