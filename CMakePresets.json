@@ -22,6 +22,16 @@
       	},
   		"hidden": true
   	},
+	{
+		"name" : "api-only",
+		"description" : "Build only native API libraries",
+		"generator" : "Unix Makefiles",
+		"inherits" : "non-vcpkg",
+		"cacheVariables" : {
+			"CMAKE_BUILD_TYPE" : "Release",
+			"CWIPC_API_ONLY" : "YES"
+		}
+	},
   	{
   		"name" : "windows",
   		"description" : "Build for production on Windows",
