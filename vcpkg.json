@@ -3,7 +3,10 @@
   "version": "7.5.0",
   "dependencies": [
     "libjpeg-turbo",
-    "pcl"
+    {
+    	"name":"pcl",
+    	"default-features" : false
+	}
   ],
   "features" : {
   	"capturers": {

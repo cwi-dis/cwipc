@@ -63,10 +63,11 @@
   		"description" : "Build for production for Android",
   		"inherits" : "api-only",
   		"cacheVariables" : {
+  			"CWIPC_WITH_CAPTURERS" : "NO",
   			"VCPKG_CHAINLOAD_TOOLCHAIN_FILE" : "${sourceDir}/vcpkg/scripts/toolchains/android.cmake",
   			"VCPKG_TARGET_TRIPLET" : "arm64-android",
   			"ANDROID_ABI" : "arm64-v8a",
-  			"ANDROID_NATIVE_API_LEVEL" : "21"
+  			"ANDROID_NATIVE_API_LEVEL" : "31"
   		},
 		"condition": {
 			"type": "equals",
