@@ -26,7 +26,7 @@
 		"name" : "api-only",
 		"description" : "Build only native API libraries",
 		"generator" : "Unix Makefiles",
-		"inherits" : "non-vcpkg",
+		"inherits" : "vcpkg",
 		"cacheVariables" : {
 			"CMAKE_BUILD_TYPE" : "Release",
 			"CWIPC_API_ONLY" : "YES"
