@@ -150,7 +150,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL Linux)
 else()
 	find_package(libjpeg-turbo REQUIRED)
 endif()
-find_package(PCL REQUIRED COMPONENTS common io octree filters features geometry kdtree)
+find_package(PCL REQUIRED COMPONENTS common io octree filters features geometry kdtree OPTIONAL_COMPONENTS io_ply)
 
 
 #
