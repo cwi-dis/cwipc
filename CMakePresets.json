@@ -186,7 +186,12 @@
 			"lhs": "${hostSystemName}",
 			"rhs": "Linux"
 		}
-  	}
+  	},
+	{
+		"name" : "android-production",
+		"configurePreset" : "android-production",
+		"configuration" : "Release"
+	}
   ],
   "testPresets" : [
   	{
