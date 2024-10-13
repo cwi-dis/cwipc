@@ -1,6 +1,9 @@
 
 # Creating installers
-if(APPLE)
+if(ANDROID)
+    set(CPACK_GENERATOR TGZ)
+    set(CPACK_SOURCE_GENERATOR TGZ)
+elseif(APPLE)
     set(CPACK_GENERATOR TGZ)
     set(CPACK_SOURCE_GENERATOR TGZ)
 elseif(UNIX)
