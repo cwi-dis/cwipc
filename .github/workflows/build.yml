@@ -303,6 +303,63 @@ jobs:
                 if-no-files-found: error
                 include-hidden-files: true
                 
+    build-android:
+        name: build-android
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v3
+          with:
+                submodules: 'recursive'
+                lfs: 'true'
+                fetch-depth: 0
+        - name: Get all tags
+          run: |
+                git show-ref --tags
+                git log -40
+                git describe --debug
+                git describe --tags --debug
+        - name: Install Android NDK
+          uses: nttld/setup-ndk@v1
+          id: setup-ndk
+          with:
+            ndk-version: r27
+            add-to-path: true
+          
+        - name: Build & Test
+          uses: ashutoshvarma/action-cmake-build@master
+          with:
+                build-dir: ${{ github.workspace }}/build
+                configure-options: --preset android-production -Wno-dev 
+                build-options: --preset android-production
+                run-test: false
+                install-build: false
+                install-options: --prefix ${{ github.workspace }}/installed
+          env:
+                ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}        
+        - name: Create installer
+          shell: bash
+          run: |
+                cpack --config build/CPackConfig.cmake"
+                ls -l build/package
+        
+        - name: Capture build folder as artifact
+          if: ${{ failure() }}
+          shell: bash
+          run: tar cfz build.tgz build
+        - name: Upload build folder
+          if: ${{ failure() }}
+          uses: actions/upload-artifact@v3
+          with:
+                name: android-build-folder
+                path: build.tgz
+        
+        - name: Upload installer package
+          uses: actions/upload-artifact@v3
+          with:
+            name: cwipc_android_arm64_${{ github.ref_name }}.tar.gz
+            path: build/package/*.tar.gz
+    
     build-ubuntu2404:
         name: build-ubuntu2404
         runs-on: ubuntu-24.04
@@ -390,6 +447,7 @@ jobs:
             - build-macos
             - build-ubuntu2204
             - build-ubuntu2404
+            - build-android
         steps:
         - name: Checkout code
           uses: actions/checkout@v2
@@ -449,6 +507,11 @@ jobs:
           uses: actions/download-artifact@v3
           with:
                 name: windows-installer.exe
+                path: ../Assets/
+        - name: Download Android installer
+          uses: actions/download-artifact@v3
+          with:
+                name: cwipc_android_arm64_${{ github.ref_name }}.tar.gz
                 path: ../Assets/
         - name: Find Artefact names
           run: |
@@ -511,6 +574,16 @@ jobs:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
             asset_path: ../Assets/${{ github.ref_name }}-complete.tar.gz
             asset_name: cwipc-${{ github.ref_name }}-source-including-submodules.tar.gz
+            asset_content_type: application/zip
+
+        - name: Upload Android package
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: ../Assets/cwipc_android_arm64_${{ github.ref_name }}.tar.gz
+            asset_name: cwipc_android_arm64_${{ github.ref_name }}.tar.gz
             asset_content_type: application/zip
         - name: Upload complete source (zip)
           uses: actions/upload-release-asset@v1
