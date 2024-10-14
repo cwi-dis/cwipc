@@ -323,7 +323,7 @@ jobs:
           uses: nttld/setup-ndk@v1
           id: setup-ndk
           with:
-            ndk-version: r27
+            ndk-version: r27b
             add-to-path: true
           
         - name: Build & Test
