@@ -359,7 +359,7 @@ jobs:
         - name: Create installer
           shell: bash
           run: |
-                cpack --config build/CPackConfig.cmake"
+                cpack --config build/CPackConfig.cmake
                 ls -l build/package
         
         - name: Capture build folder as artifact
