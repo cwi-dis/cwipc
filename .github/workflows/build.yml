@@ -355,7 +355,8 @@ jobs:
                 install-build: false
                 install-options: --prefix ${{ github.workspace }}/installed
           env:
-                ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}        
+                ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+                VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"        
         - name: Create installer
           shell: bash
           run: |
