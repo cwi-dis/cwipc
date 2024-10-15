@@ -321,7 +321,7 @@ jobs:
                 git describe --tags --debug
         - name: Free some space
           run: |
-                dh -h /
+                df -h 
                 # Remove software and language runtimes we're not using
                 sudo rm -rf \
                   "$AGENT_TOOLSDIRECTORY" \
@@ -337,7 +337,7 @@ jobs:
                   /usr/local/share/powershell \
                   /usr/share/dotnet \
                   /usr/share/swift
-                df -h /
+                df -h 
         - name: Install Android NDK
           uses: nttld/setup-ndk@v1
           id: setup-ndk
