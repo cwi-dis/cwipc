@@ -377,7 +377,7 @@ jobs:
         - name: Upload installer package
           uses: actions/upload-artifact@v3
           with:
-            name: cwipc_${{ github.ref_name }}_android_arm64.tar.gz
+            name: android-arm64-package
             path: build/package/*.tar.gz
     
     build-ubuntu2404:
@@ -531,7 +531,7 @@ jobs:
         - name: Download Android installer
           uses: actions/download-artifact@v3
           with:
-                name: cwipc_${{ github.ref_name }}_android_arm64.tar.gz
+                name: android-arm64-package
                 path: ../Assets/
         - name: Find Artefact names
           run: |
