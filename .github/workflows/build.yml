@@ -360,7 +360,7 @@ jobs:
         - name: Create installer
           shell: bash
           run: |
-                cpack --config build/CPackConfig.cmake -D CPACK_PACKAGE_FILE_NAME="cwipc_${{ github.ref_name }}_android_arm64.tar.gz"
+                cpack --config build/CPackConfig.cmake -D CPACK_PACKAGE_FILE_NAME="cwipc_${{ github.ref_name }}_android_arm64"
                 ls -l build/package
         
         - name: Capture build folder as artifact
