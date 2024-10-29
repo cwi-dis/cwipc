@@ -18,15 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Minor documentation fixes
 - More resilience against incomplete installations (#108)
 - Don't use numpy 2.0 until issues with open3d are fixed (#109)
-- Fixed colors for cwipc_view --rgb with RealSense camera (#115)
-- Fixed cwipc_register for multiple RealSense cameras (#106)
-- Fixed cwipc_synthetic reader to not wait on available(False) (#117)
-- Realsense cameraconfig.json file rationalized. Major code cleanup. (#137, #125, #118)
+- Fixed colors for `cwipc_view --rgb` with RealSense camera (#115)
+- Fixed `cwipc_register` for multiple RealSense cameras (#106)
+- Fixed `cwipc_synthetic` reader to not wait on available(False) (#117)
+- Realsense `cameraconfig.json` file rationalized. Major code cleanup. (#137, #125, #118)
 - Calibration of Realsense D455 cameras fixed. (#127)
 - Use cmake presets for building (#120)
-- Use pyproject.toml for Python package generation (#79)
+- Use `pyproject.toml` for Python package generation (#79)
 - Implemented recording while capturing for both Realsense and Kinect (#139)
 - Glfw is now used via normal dependencies, no longer slurped (#123)
+- `cwipc_forward` can now serve streams to multiple connections at the same time (#151)
 
 ## [7.5.3] - 2024-04-30
 
