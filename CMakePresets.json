@@ -22,6 +22,16 @@
       	},
   		"hidden": true
   	},
+	{
+		"name" : "api-only",
+		"description" : "Build only native API libraries",
+		"generator" : "Unix Makefiles",
+		"inherits" : "vcpkg",
+		"cacheVariables" : {
+			"CMAKE_BUILD_TYPE" : "Release",
+			"CWIPC_API_ONLY" : "YES"
+		}
+	},
   	{
   		"name" : "windows",
   		"description" : "Build for production on Windows",
@@ -29,7 +39,7 @@
   		"inherits" : "vcpkg",
 		"cacheVariables": {
         	"VCPKG_TARGET_TRIPLET": "x64-windows"
-      	},
+  		},
   		"installDir": "${sourceDir}/../installed",
 		"condition": {
 			"type": "equals",
@@ -49,6 +59,18 @@
 		"inherits" : "windows"
 	},
   	{
+  		"name" : "android-production",
+  		"description" : "Build for production for Android",
+  		"inherits" : "api-only",
+  		"cacheVariables" : {
+  			"CWIPC_WITH_CAPTURERS" : "NO",
+  			"VCPKG_CHAINLOAD_TOOLCHAIN_FILE" : "${sourceDir}/vcpkg/scripts/toolchains/android.cmake",
+  			"VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/vcpkg-additions/triplets",
+    		"VCPKG_TARGET_TRIPLET" : "arm64-android-release",
+  			"ANDROID_ABI" : "arm64-v8a",
+  			"ANDROID_NATIVE_API_LEVEL" : "32"
+  		}
+  	},{
   		"name" : "mac-production",
   		"description" : "Build for production on Mac",
   		"generator" : "Unix Makefiles",
@@ -165,7 +187,12 @@
 			"lhs": "${hostSystemName}",
 			"rhs": "Linux"
 		}
-  	}
+  	},
+	{
+		"name" : "android-production",
+		"configurePreset" : "android-production",
+		"configuration" : "Release"
+	}
   ],
   "testPresets" : [
   	{

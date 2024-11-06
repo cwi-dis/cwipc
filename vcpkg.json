@@ -3,9 +3,29 @@
   "version": "7.5.0",
   "dependencies": [
     "libjpeg-turbo",
-    "opencv4",
-    "pcl",
-    "realsense2",
-    "glfw3"
-  ]
+    {
+    	"name":"pcl",
+    	"default-features" : false
+	}
+  ],
+  "features" : {
+  	"capturers": {
+  		"description" : "Build camera capturers",
+  		"dependencies" : [
+		    "realsense2"
+  		]
+  	},
+  	"gui" : {
+  		"description" : "Build GUI/window interfaces",
+  		"dependencies" : [
+		    "glfw3"
+  		]
+  	},
+  	"python": {
+  		"description" : "Build Python interfaces and apps",
+  		"dependencies" : [
+		    "opencv4"
+  		]
+  	}
+  }
 }
