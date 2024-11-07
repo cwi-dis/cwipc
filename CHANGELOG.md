@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Realsense capturer can now record during live capture, using `system.record_to_directory` config setting. (#119)
 - Debian packages for Ubuntu 24.04 (#143), for the time being without Kinect and Realsense support.
 - Android-arm64 build added (#91), untested for now.
+- New tool `cwipc_timing` helps with determining whether cameras are correctly synchronized. (#144)
 
 ### Changed
 
