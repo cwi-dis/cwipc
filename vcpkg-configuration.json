@@ -12,6 +12,6 @@
     }
   ],
   "overlay-ports" : [
-    "./vcpkg/ports/pcl"
+    "./vcpkg-additions/ports/pcl"
   ]
 }
