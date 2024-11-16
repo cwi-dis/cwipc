@@ -80,7 +80,6 @@ macro(cwipc_build_wheel)
 		COMMAND ${CMAKE_COMMAND} -E rm -rf ${MYARGS_SOURCEDIR}/build ${MYARGS_SOURCEDIR}/{${MYARGS_NAME}.egg_info 
 		COMMAND ${CMAKE_COMMAND} -E env "CWIPC_VERSION=${CWIPC_VERSION}" ${Python3_EXECUTABLE} -m build --wheel --no-isolation --outdir ${MYARGS_WHEELDIR} ${MYARGS_SOURCEDIR} 
 		COMMAND ${Python3_EXECUTABLE} -m pip uninstall -qq -y "${MYARGS_NAME}"
-		COMMAND ${Python3_EXECUTABLE} -m pip install -e ${MYARGS_SOURCEDIR}
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 		)
 endmacro()
