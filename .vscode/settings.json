@@ -101,7 +101,10 @@
         "valarray": "cpp",
         "__hash_table": "cpp",
         "queue": "cpp",
-        "future": "cpp"
+        "future": "cpp",
+        "print": "cpp",
+        "stack": "cpp",
+        "text_encoding": "cpp"
     },
     "cmake.ctest.allowParallelJobs": true
 }
