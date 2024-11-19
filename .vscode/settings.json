@@ -104,7 +104,8 @@
         "future": "cpp",
         "print": "cpp",
         "stack": "cpp",
-        "text_encoding": "cpp"
+        "text_encoding": "cpp",
+        "execution": "cpp"
     },
     "cmake.ctest.allowParallelJobs": true
 }
