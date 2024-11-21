@@ -10,6 +10,7 @@ buildDir=`cd $myDir/../build && pwd`
 export PATH="$buildDir/bin:$buildDir/bin/RelWithDebInfo:$buildDir/bin/Release:$PATH"
 # Setting DYLD_LIBRARY_PATH doesn't work, but luckily it usually isn't needed
 export DYLD_LIBRARY_PATH="$buildDir/lib:$DYLD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="$buildDir/lib:$LD_LIBRARY_PATH"
 export CWIPC_LIBRARY_DIR="$buildDir/lib"
 if [ -f $buildDir/venv/Scripts/activate ]; then
     # Windows bash
