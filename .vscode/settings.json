@@ -107,5 +107,28 @@
         "text_encoding": "cpp",
         "execution": "cpp"
     },
-    "cmake.ctest.allowParallelJobs": true
+    "cmake.ctest.allowParallelJobs": true,
+    "terminal.integrated.profiles.windows": {
+
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell",
+            "args": [
+                "-noexit",
+                "-file",
+                "${workspaceFolder}\\scripts\\activate.ps1"
+            ]
+        },
+        "Command Prompt": {
+            "path": [
+                "${env:windir}\\Sysnative\\cmd.exe",
+                "${env:windir}\\System32\\cmd.exe"
+            ],
+            "args": [],
+            "icon": "terminal-cmd"
+        },
+        "Git Bash": {
+            "source": "Git Bash"
+        }
+    }
 }
