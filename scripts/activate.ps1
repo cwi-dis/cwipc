@@ -22,6 +22,11 @@ if (Test-Path -Path $candidate1BinDir) {
     $binDir = $buildDir + "\bin"
 }
 Write-Output "binDir = " + $binDir
+$binDirExists = Test-Path $binDir
+if (-Not $binDirExists) {
+    Write-Output "binDir does not exist. Not enabling venv"
+    exit
+}
 $Env:CWIPC_LIBRARY_DIR = $binDir
 $Env:PATH = $binDir + ";" + $Env:PATH
 Write-Output $Env:PATH

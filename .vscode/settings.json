@@ -101,7 +101,56 @@
         "valarray": "cpp",
         "__hash_table": "cpp",
         "queue": "cpp",
-        "future": "cpp"
+        "future": "cpp",
+        "print": "cpp",
+        "stack": "cpp",
+        "text_encoding": "cpp",
+        "execution": "cpp",
+        "cfenv": "cpp",
+        "coroutine": "cpp",
+        "csignal": "cpp",
+        "filesystem": "cpp",
+        "scoped_allocator": "cpp",
+        "stdfloat": "cpp",
+        "unordered_set": "cpp",
+        "xfacet": "cpp",
+        "xhash": "cpp",
+        "xiosbase": "cpp",
+        "xlocale": "cpp",
+        "xlocbuf": "cpp",
+        "xlocinfo": "cpp",
+        "xlocmes": "cpp",
+        "xlocmon": "cpp",
+        "xlocnum": "cpp",
+        "xloctime": "cpp",
+        "xmemory": "cpp",
+        "xstring": "cpp",
+        "xtr1common": "cpp",
+        "xtree": "cpp",
+        "xutility": "cpp"
     },
-    "cmake.ctest.allowParallelJobs": true
+    "cmake.ctest.allowParallelJobs": true,
+    "terminal.integrated.profiles.windows": {
+
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell",
+            "args": [
+                "-noexit",
+                "-file",
+                "${workspaceFolder}\\scripts\\activate.ps1"
+            ]
+        },
+        "Command Prompt": {
+            "path": [
+                "${env:windir}\\Sysnative\\cmd.exe",
+                "${env:windir}\\System32\\cmd.exe"
+            ],
+            "args": [],
+            "icon": "terminal-cmd"
+        },
+        "Git Bash": {
+            "source": "Git Bash"
+        }
+    }
 }

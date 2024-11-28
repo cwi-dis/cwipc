@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implemented recording while capturing for both Realsense and Kinect (#139)
 - Glfw is now used via normal dependencies, no longer slurped (#123)
 - `cwipc_forward` can now serve streams to multiple connections at the same time (#151)
+- Major improvements to realsense_playback (#158)
 
 ## [7.5.3] - 2024-04-30
 
