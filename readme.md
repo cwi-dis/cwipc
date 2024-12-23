@@ -86,7 +86,9 @@ And actually Realsense also requires a specific mention: if you already have it 
 
 ### Linux
 
-The installer is currently only available for Ubuntu 22.04.
+The installer is currently available for Ubuntu 24.04 and 22.04.
+
+> Note that some packages are missing for 24.04. Specifically, the Kinect capturer cannot be used because the needed SDK from Microsoft is not available.
 
 Download the debian package for the most recent cwipc release from <https://github.com/cwi-dis/cwipc/releases/latest>.
 
@@ -229,6 +231,21 @@ Building and installing should work for both Apple Silicon (M1 machines) and Int
 
 ### Windows
 
+Building on Windows is best done with _Visual Studio Code_ because it will help you install most of the other requirements for development (cmake, git, etc).
+
+Install the following:
+
+- Python, from <https://www.python.org/downloads>. 3.11 is preferred, as of this writing (March 2024).
+	- Note: you should install Python *"For All Users"*. 
+	- Note: You should install into a writeable directory, such as `C:/Python39` otherwise you will have to use _Run as Administrator_ for various build steps.
+- Visual Studio Code, from <https://code.visualstudio.com>
+- In VSCode, install:
+	- C/C++ Tools and Extension Pack
+	- CMake and CMake Tools
+	- Python, Pylance and Python Debugger
+	
+#### Windows without vscode
+
 There are a few things you need to install before building from source on Windows:
 
 - Visual Studio. Community Edition 2022 is known to work, but probably anything after 2019 will work.
@@ -248,7 +265,7 @@ For the rest of the build instructions it is probably best to use `bash`, not `C
 
 ## Advanced usage: Building from source
 
-You can either download a source archive (zip or gzipped tar) or clone the git repository.
+You can either download a source archive (zip or gzipped tar) or clone the git repository. Note that the latter is preferred.
 
 ### Download source archive
 
@@ -269,6 +286,15 @@ or
 ```
 git clone --recurse-submodules https://github.com/cwi-dis/cwipc.git
 ```
+
+### Build using vscode
+
+When you have the project open in vscode select the correct CMake preset you want to build (_Command Palette..._ -> _CMake: Select configure preset_).
+
+Then _CMake: Build_.
+
+When building for Windows or Android this will first install all the required dependencies using `vcpkg`. This can take quite some time the first time you build on a machine (think: an hour or so) but the vcpkg builds are cached so the next time it will go a lot quicker.
+
 
 ### Build using build script
 
