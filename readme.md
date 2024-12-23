@@ -88,7 +88,9 @@ And actually Realsense also requires a specific mention: if you already have it 
 
 The installer is currently available for Ubuntu 24.04 and 22.04.
 
-> Note that some packages are missing for 24.04. Specifically, the Kinect capturer cannot be used because the needed SDK from Microsoft is not available.
+> Note that some packages are missing for 24.04. Specifically, the Kinect capturer cannot be used because the needed SDK from Microsoft is not available, and probably will never be made available because the Kinect is no longer supported by Microsoft.
+> 
+> Also, the Realsense SDK is not yet available for 24.04. So essentially you will have no access to any cameras when using 24.04.
 
 Download the debian package for the most recent cwipc release from <https://github.com/cwi-dis/cwipc/releases/latest>.
 
