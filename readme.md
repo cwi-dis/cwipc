@@ -361,9 +361,9 @@ On Windows powershell, use
 
 Both of these will modify `PATH` or `DYLD_LIBRARY_PATH` or whatever to ensure the dynamic libraries built here take precedence over other versions. Also, they will activate the Python venv built here, and `pip install -e` the cwipc Python modules.
 
-Debugging the Python code is now very easy: just run with the Python debugger from within VSCode.
+Debugging the Python code is now very easy: just run with the Python debugger from within VSCode. You may have to tell vscode about the interpreter to use, from your `./build/venv` environment.
 
-Debugging the native code in a native app is also easy: again use the normal lldb debugger from within VSCode.
+Debugging the native code in a native app is also easy: again use the normal lldb or Windows debugger from within VSCode.
 
 Debugging the native code when running within a Python app is slightly more convoluted:
 
@@ -371,8 +371,6 @@ Debugging the native code when running within a Python app is slightly more conv
 - Run the `lldb` debugger in "Attach Process" mode, and specify that PID.
 - Set any breakpoints you need.
 - Type `Y` in the Python app to make it continue.
-
-On Windows I have not been able to use the native debugger in this way, but using Visual Studio approach works, as explained in the previous subsection.
 
 ## Creating a release
 
