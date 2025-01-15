@@ -389,6 +389,7 @@ When creating a new release, ensure the following have been done
 	- Update `scripts/install-3rdparty-full-win1034.ps1` with the best Python version.
 	- Update `scripts/install-3rdparty-osx1015.sh` with the best Python version.
 	- Check the Ubuntu install-3rdparty scripts for which Python they install.
+	- Check `.github/workflows/build.yml` for the Python versions used.
 
 - Dependencies for the `.deb` installer for apt/Ubuntu need to be updated. There may be better ways to do this, but this works:
   - On the targeted Ubuntu, check out and edit `CMakeFiles/CwipcInstallers.cmake`
