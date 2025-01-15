@@ -390,7 +390,8 @@ When creating a new release, ensure the following have been done
 	- Update `scripts/install-3rdparty-osx1015.sh` with the best Python version.
 	- Check the Ubuntu install-3rdparty scripts for which Python they install.
 	- Check `.github/workflows/build.yml` for the Python versions used.
-
+- Check whether `nlohman_json` can be updated (`CMakeLists.txt`)
+- Check whether `nsis` can be updated (`.github/workflows/build.yml`)
 - Dependencies for the `.deb` installer for apt/Ubuntu need to be updated. There may be better ways to do this, but this works:
   - On the targeted Ubuntu, check out and edit `CMakeFiles/CwipcInstallers.cmake`
   - Comment out the definitions for `CPACK_DEBIAN_PACKAGE_DEPENDS` and `CPACK_DEBIAN_PACKAGE_RECOMMENDS`.
@@ -415,7 +416,6 @@ When creating a new release, ensure the following have been done
   ```
 
 - `setup.py` may still have a version string somewhere.
-
 - `CWIPC_API_VERSION` incremented if there are any API changes (additions only).
 - `CWIPC_API_VERSION_OLD` incremented if there are API changes that are not backward compatible.
 	- Both these need to be changed in `api.h` and `cwipc/util.py`.
@@ -423,11 +423,11 @@ When creating a new release, ensure the following have been done
 
 Version numbers for the release no longer need to be updated manually, they are generated from the git tag name.
 
-After making all these changes push to github. Ensure the CI/CD build passes. This build will take a looooong time, most likely, because the `vcpkg` dependencies have been updated and the Windows runner will have to rebuild the world.
-
-Now do a nightly build, using `scripts/nightly.sh`.
+After making all these changes push to github. Ensure the CI/CD build passes (easiest is by running `./scripts/nightly.sh` which does a nightly build). This build will take a looooong time, most likely, because the `vcpkg` dependencies have been updated and the Windows runner will have to rebuild the world.
 
 After that tag all submodules and the main module with *v_X_._Y_._Z_*.
+
+If one of the next steps fails just fix the issue and do another micro-release. Has happened to me every single release, I think:-)
 
 Push the tag to github, this will build the release.
 
