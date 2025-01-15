@@ -380,6 +380,16 @@ These instructions are primarily for our own benefit. Lest we forget.
 
 When creating a new release, ensure the following have been done
 
+- Python dependencies and Python maximum version need to be updated:
+	- in `cwipc_util/python/pyproject.toml` remove the dependency specifiers,
+	- build on all platforms, ensure everything works, possibly lowering the versions of some dependencies, and possibly lowering the maximum Python version
+		- Especially watch out for `opencv` and `open3d` which can some times lag 2 Python versions
+	- Add the Python package dependency specifiers again for the currently selected versions.
+	- Update the Python version range in the toplevel `CMakeLists.txt`.
+	- Update `scripts/install-3rdparty-full-win1034.ps1` with the best Python version.
+	- Update `scripts/install-3rdparty-osx1015.sh` with the best Python version.
+	- Check the Ubuntu install-3rdparty scripts for which Python they install.
+
 - Dependencies for the `.deb` installer for apt/Ubuntu need to be updated. There may be better ways to do this, but this works:
   - On the targeted Ubuntu, check out and edit `CMakeFiles/CwipcInstallers.cmake`
   - Comment out the definitions for `CPACK_DEBIAN_PACKAGE_DEPENDS` and `CPACK_DEBIAN_PACKAGE_RECOMMENDS`.
@@ -391,6 +401,7 @@ When creating a new release, ensure the following have been done
   - Fix the dependencies and recommendations based on what cpack found.
 
 - `scripts/install-3rdparty-full-win1064.ps1` should be updated to download the most recent compatible packages. Go through each of the packages, determine the current version. Uninstall old versions from your build machine. Run the powershell script to test it installs the new packages. Do the build, to ensure it works with the new packages. Test the build to ensure it runs with the new packages.
+  > Note: the only package that is important here nowadays is Python, because the other other two left here, `k4a` and `k4abt`, are no longer maintained.
 - For Windows, the `vcpkg` dependent packages should all be updated to the most recent version.
 
   ```
