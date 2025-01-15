@@ -120,8 +120,9 @@ if(CWIPC_WITH_PYTHON)
 	# The upper limit on the Python version is caused by opencv and open3d,
 	# which can lag behind some times. As soon as those packages are available
 	# for a new release of Python we can update this version.
+	# See cwipc_util/python/pyproject.toml for the current versions of those packages.
 	#
-	find_package(Python3 3.9...<3.12 REQUIRED COMPONENTS Interpreter)
+	find_package(Python3 3.11...<3.12 REQUIRED COMPONENTS Interpreter)
 
 	#
 	# Now we can setup the venv.

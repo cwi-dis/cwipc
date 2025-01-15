@@ -10,10 +10,9 @@ sudo tee /etc/apt/sources.list.d/librealsense.list
 #
 sudo apt-get -y update
 sudo apt-get -y upgrade
-# We need Python 3.11, for now
-sudo apt-add-repository -y ppa:deadsnakes/ppa
-sudo apt-get install -y python3.11 python3.11-dev python3.11-venv
 # Install packages we need
+sudo apt-get install -y git python3-pip
+sudo apt-get install -y git python3-venv
 sudo apt-get install -y tzdata
 sudo apt-get install -y software-properties-common
 sudo apt-get install -y git cmake
