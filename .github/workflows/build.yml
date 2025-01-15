@@ -97,7 +97,7 @@ jobs:
                 ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: windows-ctest-output
                 path: build/Testing/Temporary/LastTest.log
@@ -107,7 +107,7 @@ jobs:
           run: tar cfz build.tgz build
         - name: Upload build folder
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: windows-build-folder
                 path: build.tgz
@@ -118,12 +118,12 @@ jobs:
                 7z a cwipc_win1064_${{ github.ref_name }}.zip ../installed/
         - name: Upload installed folder
           if: false
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: cwipc_win1064_${{ github.ref_name }}.zip
                 path: cwipc_win1064_${{ github.ref_name }}.zip
         - name: Upload nsis installer
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: windows-installer.exe
                 path: build/package/*.exe
@@ -180,7 +180,7 @@ jobs:
                 ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: macos-ctest-output
                 path: build/Testing/Temporary/LastTest.log
@@ -190,7 +190,7 @@ jobs:
           run: tar cfz build.tgz build
         - name: Upload build folder
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: macos-build-folder
                 path: build.tgz
@@ -200,7 +200,7 @@ jobs:
                 tar -c -v -f cwipc_osx1015_${{ github.ref_name }}.tgz -z -C installed .
                 ls -l
         - name: Upload installed folder
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: cwipc_osx1015_${{ github.ref_name }}.tgz
                 path: cwipc_osx1015_${{ github.ref_name }}.tgz
@@ -246,7 +246,7 @@ jobs:
                 ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: linux-ctest-output
                 path: build/Testing/Temporary/LastTest.log
@@ -256,7 +256,7 @@ jobs:
           run: tar cfz build.tgz build
         - name: Upload build folder
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: linux-build-folder
                 path: build.tgz
@@ -266,17 +266,17 @@ jobs:
                 tar -c -v -f cwipc_ubuntu2204_${{ github.ref_name }}.tgz -z -C installed .
                 ls -la
         - name: Upload installed folder
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: cwipc_ubuntu2204_${{ github.ref_name }}.tgz
                 path: cwipc_ubuntu2204_${{ github.ref_name }}.tgz
         - name: Upload debian package
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: debian-package-2204.deb
                 path: build/package/*.deb
         - name: Upload cached git version
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: cached-git-version
                 path: .cachedgitversion.txt
@@ -349,13 +349,13 @@ jobs:
           run: tar cfz build.tgz build
         - name: Upload build folder
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: android-build-folder
                 path: build.tgz
         
         - name: Upload installer package
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
             name: android-arm64-package
             path: build/package/*.tar.gz
@@ -401,7 +401,7 @@ jobs:
                 ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: linux-ctest-output
                 path: build/Testing/Temporary/LastTest.log
@@ -411,7 +411,7 @@ jobs:
           run: tar cfz build.tgz build
         - name: Upload build folder
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: linux-build-folder
                 path: build.tgz
@@ -421,17 +421,17 @@ jobs:
                 tar -c -v -f cwipc_ubuntu2404_${{ github.ref_name }}.tgz -z -C installed .
                 ls -la
         - name: Upload installed folder
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: cwipc_ubuntu2404_${{ github.ref_name }}.tgz
                 path: cwipc_ubuntu2404_${{ github.ref_name }}.tgz
         - name: Upload debian package
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: debian-package-2404.deb
                 path: build/package/*.deb
         - name: Upload cached git version
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
                 name: cached-git-version
                 path: .cachedgitversion.txt
@@ -461,7 +461,7 @@ jobs:
                 git log -40
                 git describe
         - name: Download cached git version
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           with:
                 name: cached-git-version
                 path: .
@@ -474,42 +474,42 @@ jobs:
                 awk '/^## /{if(flag){exit}; flag=1} flag' CHANGELOG.md > ../Assets/changes.md
         - name: Download Windows installed folder
           if: false
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           with:
                 name: cwipc_win1064_${{ github.ref_name }}.zip
                 path: ../Assets/
         - name: Download MacOS installed folder
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           with:
                 name: cwipc_osx1015_${{ github.ref_name }}.tgz
                 path: ../Assets/
         - name: Download Ubuntu 22.04 installed folder
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           with:
                 name: cwipc_ubuntu2204_${{ github.ref_name }}.tgz
                 path: ../Assets/
         - name: Download debian package for 22.04
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           with:
                 name: debian-package-2204.deb
                 path: ../Assets/
         - name: Download Ubuntu 24.04 installed folder
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           with:
                 name: cwipc_ubuntu2404_${{ github.ref_name }}.tgz
                 path: ../Assets/
         - name: Download debian package for 24.04
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           with:
                 name: debian-package-2404.deb
                 path: ../Assets/
         - name: Download Windows installer
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           with:
                 name: windows-installer.exe
                 path: ../Assets/
         - name: Download Android installer
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           with:
                 name: android-arm64-package
                 path: ../Assets/
