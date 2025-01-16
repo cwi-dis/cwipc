@@ -392,6 +392,7 @@ jobs:
           if: always()
           shell: bash
           run: |
+                python3 --version
                 ./build/venv/bin/python --version
                 ./build/venv/bin/python -m pip freeze
         - name: Create installer
