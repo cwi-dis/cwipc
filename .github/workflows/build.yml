@@ -258,7 +258,7 @@ jobs:
           if: ${{ failure() }}
           uses: actions/upload-artifact@v4
           with:
-                name: linux-build-folder
+                name: ubuntu2204-build-folder
                 path: build.tgz
         - name: Capture installed folder as artifact
           shell: bash
@@ -413,7 +413,7 @@ jobs:
           if: ${{ failure() }}
           uses: actions/upload-artifact@v4
           with:
-                name: linux-build-folder
+                name: ubuntu2404-build-folder
                 path: build.tgz
         - name: Capture installed folder as artifact
           shell: bash
