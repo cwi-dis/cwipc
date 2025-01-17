@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Minor documentation fixes
 - More resilience against incomplete installations (#108)
-- Don't use numpy 2.0 until issues with open3d are fixed (#109)
+- Python 3.12 and NumPy 2 support (#101, #109, #114)
 - Fixed colors for `cwipc_view --rgb` with RealSense camera (#115)
 - Fixed `cwipc_register` for multiple RealSense cameras (#106)
 - Fixed `cwipc_synthetic` reader to not wait on available(False) (#117)
