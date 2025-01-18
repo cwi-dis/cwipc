@@ -56,7 +56,7 @@ It will _also install all required third party packages_, unless a usable versio
 
 ### Windows - check installation
 
-Windows installers often fail because each Windows computer is different. Moreover, cwipc depends on a number of third party packages (such as the Realsense and Kinect support) that we cannot include in our installer because of licensing issues, so we have to rely on official installers for those packages.
+Windows installers often fail because each Windows computer is different. Moreover, cwipc depends on some third party packages (such as for Kinect support) that we cannot include in our installer because of licensing issues, so we have to rely on official installers for those packages.
 
 After installing, run _Start menu_ -> _cwipc_ -> _Check cwipc installation_. This will open a CMD command window and try to find out if everything has been installed correctly. If there are any errors it may show a dialog which mentions which library has not been installed correctly. And there may be error messages in the output window.
 
@@ -68,18 +68,16 @@ If this shows any errors, try _Attempt to fix cwipc installation_.
 > 
 > This needs to be done because unfortunately Microsoft has made an incompatible change to their C++ Runtime, so any program built after about May 2024 will crash if it uses an older version of the runtime.
 
-If after that the check command still fails, the problem is probably that one of the third party packages _is_ installed on your computer, but it is an incorrect version, or it is installed in a different way than what _cwipc_ expects.
+If after that the check command still fails, the problem is probably that one of the third party packages _is_ installed on your computer, but it is an incorrect version, or it is installed in a different way than what _cwipc_ expects. This will most likely be Python.
 
 Try to determine which package is responsible for the failure, and uninstall it. Then reboot and re-try the _fix cwipc installation_. This _should_ install the correct version of every package, and install it with the expected options. Packages that could have problems:
 
 - Python 
-- LibPCL
-- librealsense2
 - Kinect for Azure and k4abt (body tracking)
 
 Python requires a specific mention: if you have already installed a version of Python **and** that Python is on your **PATH** environment variable the cwipc Python interface modules will be installed into that Python installation. But again: if there is some incompatibility in the way your Python has been installed your only recourse is to uninstall it and let the cwipc installer re-install it.
 
-And actually Realsense also requires a specific mention: if you already have it installed but have have a different version than what cwipc expects your only recourse is to uninstall it and then re-run the cwipc installer so it will install the correct version.
+And actually Realsense also requires a specific mention: if you already have it installed but have have a different version than what cwipc expects you will get an error message from _check installation_ but you should be able to ignore it.
 
 > As is probably clear from this section, writing Windows installers is not our strong point. Please contact us if you can provide help.
 
@@ -90,7 +88,7 @@ The installer is currently available for Ubuntu 24.04 and 22.04.
 
 > Note that some packages are missing for 24.04. Specifically, the Kinect capturer cannot be used because the needed SDK from Microsoft is not available, and probably will never be made available because the Kinect is no longer supported by Microsoft.
 > 
-> Also, the Realsense SDK is not yet available for 24.04. So essentially you will have no access to any cameras when using 24.04.
+> Also, the Realsense SDK is not yet available for 24.04, but this is expected to be fixed in the next month or so. So essentially you will have no access to any cameras when using 24.04.
 
 Download the debian package for the most recent cwipc release from <https://github.com/cwi-dis/cwipc/releases/latest>.
 
@@ -125,7 +123,7 @@ The github location of the brew recipe is at <https://github.com/cwi-dis/homebre
 
 ### Android
 
-The Android build of `cwipc` is API-only, and has only been tested with Unity applications running on Oculus Quest headsets. Pre-built releases are available via <https://github.com/cwi-dis/cwipc_android>.
+The Android build of `cwipc` is API-only, and has only been tested with Unity applications running on Oculus Quest headsets.
 
 ## Using cwipc
 
@@ -155,6 +153,26 @@ Now run your application as usual.
 
 Clear the `record_to_directory` field again. Copy `cameraconfig.json` into the `recording` directory. Change camera and capturer `type` to `kinect_offline` or `realsense_playback`. Add the `filename` field to each `camera` entry. For a single Kinect you may have to set `ignore_sync` to `true`.
 
+#### Streaming
+
+You can stream compressed point clouds from your camera(s) by running
+
+```
+cwipc_forward --port 4303
+```
+
+which will create a server on port `4303`. You can then view this stream of point clouds with
+
+```
+cwipc_view --netclient localhost:4303
+```
+
+It is also possible to view from another machine (by providing the hostname of the server machine, in stead of the `localhost` above). 
+
+It is also possible to stream to a Unity project using the `cwipc_unity`, see the `cwipc_playback_stream` prefab and the `StreamedPointCloudReader` in there. It has a `Url` attribute where you could put `tcp://localhost:4303` to get the same effects as with `cwipc_view` above, but inside a Unity scene.
+
+And of course you can use another source of point clouds for `cwipc_forward`, by using the `--playback` or `--synthetic` option. Also see `cwipc_forward --help` to see options on modifying the compression parameters, or sending uncompressed point clouds.
+
 ### C or C++
 
 Include files and libraries are installed in the standard places, and `pkgconfig` files are included. For example code: get a source distribution and look at `cwipc_util/apps`, `cwipc_codec/apps`, `cwipc_realsense2/apps`, etc.
@@ -175,69 +193,37 @@ Install it by opening the Package Manager in the Unity Editor, _Add Package from
 
 More complete instructions can be found at <https://github.com/cwi-dis/cwipc_unity/blob/master/nl.cwi.dis.cwipc/README.md> .
 
+## Building from source
 
-
-## Advanced installation: Installing a binary zip/tar distribution
-
-If the installers do not fit your need you can install prebuilt binaries to a place of your liking.
-
-Prebuilt binary releases are available at <https://github.com/cwi-dis/cwipc/releases> as zip or gzipped tar files. Download the correct one for you platform. On MacOS and Linux you can extract straight into `/usr/local` or any other location of your liking. On Windows you create an empty folder such as `C:/cwipc` and extract there.
-
-- On Windows, add `c:/cwipc/bin` to your `%PATH%` environment variable (and restart your command prompt).
-
-- On MacOS you need to clear the quarantine bits (which are Apple's way to ensure you cannot accidentally run malware downloaded from the internet):
-
-  ```
-  cd /usr/local # or wherever you extracted to
-  xattr -d com.apple.quarantine bin/cwipc_*
-  xattr -d com.apple.quarantine lib/libcwipc_*
-
-  ```
-
-- On Linux and Mac, if you did not install to `/usr/local`, add the `bin` directory to your `PATH` environment variable. You may also need to modify `LD_LIBRARY_PATH` or `DYLD_LIBRARY_PATH`.
-- Optionally, if you want to use a python virtual environment so the cwipc modules and dependencies are not installed into your normal Python environment, create a Python venv:
-
-  ```
-  python3 -m venv venv
-  . venv/bin/activate # Note the space after the dot...
-  ```
-  
-- Run `cwipc_pymodules_install.sh` to install the Python components. (On windows you can use this script when you are using bash, or you can run `cwipc_pymodules_install.bat` if you are using CMD). Also, for Windows, it may be best to run this as `Administrator`.
-
-- Check that everything is installed correctly by running
-
-  ```
-  cwipc_check
-  cwipc_view --version
-  cwipc_view --synthetic
-  ```
-
-  The last command should bring up a viewer window with a synthetic point cloud. Use left-mouse-drag, right-mouse-drag and scroll wheel to change your view position.
-
-
-## Advanced usage: Installing third party requirements
+### Installing third party requirements
 
 Building from source requires `cmake`, `python3`, `libpcl`, `glfw3`, `jpeg-turbo` and optionally (for Intel Realsense support) `librealsense` and/or (for Azure Kinect support)  `Azure Kinect SDK`, `Azure Kinect Body Tracking SDK` and `OpenCV`.
 
-Running binaries need most of those requirements are well, but the installers should take care of all of these.
+When building for Windows or Android most of these will be installed automatically using `vcpkg`, but for Mac and Linux you need to do it yourself.
 
-### Linux
+> Running binaries need most of those requirements are well, but the installers should take care of all of these.
 
-There is a script `scripts/install-thirdparty-ubuntu2004.sh` that installs all requirements on Ubuntu 20.04. For other Linux variants please inspect this script and ensure the correct packages are installed.
+#### Linux
 
-### MacOS
+There is a script `scripts/install-thirdparty-ubuntu2204.sh` that installs all requirements on Ubuntu 22.04. Similar for 24.04. For other Linux variants please inspect this script and ensure the correct packages are installed.
+
+#### MacOS
 
 There is a script `scripts/install-thirdparty-osx1015.sh` that installs all requirements on MacOS 10.15 or later. This script requires [HomeBrew](https://brew.sh) and the XCode Command Line Tools. Installing HomeBrew will help you install the command line tools.
 
+### Getting your cwipc source ode
+
+### Building
+
 Building and installing should work for both Apple Silicon (M1 machines) and Intel machines.
 
-### Windows
+#### All platforms
 
-Building on Windows is best done with _Visual Studio Code_ because it will help you install most of the other requirements for development (cmake, git, etc).
+Building on all platforms is best done with _Visual Studio Code_ because it will help you install most of the other requirements for development (cmake, git, etc).
 
 Install the following:
 
-- Python, from <https://www.python.org/downloads>. 3.11 is preferred, as of this writing (March 2024).
+- Python, from <https://www.python.org/downloads>. 3.12 is preferred, as of this writing (January 2025).
 	- Note: you should install Python *"For All Users"*. 
 	- Note: You should install into a writeable directory, such as `C:/Python39` otherwise you will have to use _Run as Administrator_ for various build steps.
 - Visual Studio Code, from <https://code.visualstudio.com>
@@ -246,23 +232,11 @@ Install the following:
 	- CMake and CMake Tools
 	- Python, Pylance and Python Debugger
 	
-#### Windows without vscode
+You want to use the correct _CMake Preset_, building without presets is not advised.
 
-There are a few things you need to install before building from source on Windows:
+If you really want to build without vscode (for example for automation): use the normal `cmake`, then `cmake --build`, etc. set of commands. Again, always use the `--preset` option.
 
-- Visual Studio. Community Edition 2022 is known to work, but probably anything after 2019 will work.
-- CMake, from <https://cmake.org/install/>.
-- Python, from <https://www.python.org/downloads>. 3.11 is preferred, as of this writing (March 2024).
-	- Note: you should install Python *"For All Users"*. 
-	- Note: You should install into a writeable directory, such as `C:/Python39` otherwise you will have to use _Run as Administrator_ for various build steps.
-- `git` and `bash`, from <https://git-scm.com/downloads>. We are not quite sure whether these are actually required...
-- Visual Studio Code is not really needed, but debugging or developing the Python code is much easier with VSCode than with VS.
-
-Next, you need to install the third-party libraries and tools mentioned above.
-
-- Run the script `scripts/install-3rdparty-full-win1064.ps1` in a PowerShell **with Administrator rights**. Note the bold font.
-
-For the rest of the build instructions it is probably best to use `bash`, not `CMD` or powershell.
+You may have to run the script `scripts/install-3rdparty-full-win1064.ps1` in a PowerShell **with Administrator rights** (Note the bold font) if cmake cannot find a correct Python or the Kinect Azure SDK.
 
 
 ## Advanced usage: Building from source
