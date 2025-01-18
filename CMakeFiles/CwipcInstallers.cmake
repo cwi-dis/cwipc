@@ -32,7 +32,8 @@ elseif(WIN32)
     string(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '\\\"$INSTDIR\\\\bin\\\\cwipc_check\\\" install'\\n")
     #string(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait 'powershell -ExecutionPolicy Bypass ${_hide} -File \\\"$INSTDIR\\\\bin\\\\cwipc_pymodules_install.ps1\\\"'\\n")
     set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "")
-    string(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "ExecWait 'python3 -m pip uninstall -y cwipc_util cwipc_codec cwipw_realsense2 cwipc_kinect'\\n")
+    string(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "Delete $INSTDIR\\bin\\cwipc_*.exe\\n")
+    string(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "RMDir /r $INSTDIR\\libexec\\cwipc\\venv\\n")
 	set(CPACK_NSIS_MENU_LINKS
         "libexec/cwipc/scripts/run-cwipc-view-synthetic.bat" "View a sample dynamic pointcloud"
         "libexec/cwipc/scripts/run-cwipc-check-fix.bat" "Attempt to fix cwipc installation"
