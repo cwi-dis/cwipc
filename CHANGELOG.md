@@ -5,17 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
+## [7.6.0] - 2015-01-19
 
 ## Added
 
 - Realsense capturer can now record during live capture, using `system.record_to_directory` config setting. (#119)
 - Debian packages for Ubuntu 24.04 (#143), for the time being without Kinect and Realsense support.
-- Android-arm64 build added (#91), untested for now.
+- Android-arm64 build added (#91). Only liibraries, really only for use with cwipc_unity.
 - New tool `cwipc_timing` helps with determining whether cameras are correctly synchronized. (#144)
 
 ### Changed
 
+- We will try to create micro-releases much more often from now on, so people do not have to use nightly builds
 - Minor documentation fixes
 - More resilience against incomplete installations (#108)
 - Python 3.12 and NumPy 2 support (#101, #109, #114)
