@@ -195,57 +195,7 @@ More complete instructions can be found at <https://github.com/cwi-dis/cwipc_uni
 
 ## Building from source
 
-### Installing third party requirements
-
-Building from source requires `cmake`, `python3`, `libpcl`, `glfw3`, `jpeg-turbo` and optionally (for Intel Realsense support) `librealsense` and/or (for Azure Kinect support)  `Azure Kinect SDK`, `Azure Kinect Body Tracking SDK` and `OpenCV`.
-
-When building for Windows or Android most of these will be installed automatically using `vcpkg`, but for Mac and Linux you need to do it yourself.
-
-> Running binaries need most of those requirements are well, but the installers should take care of all of these.
-
-#### Linux
-
-There is a script `scripts/install-thirdparty-ubuntu2204.sh` that installs all requirements on Ubuntu 22.04. Similar for 24.04. For other Linux variants please inspect this script and ensure the correct packages are installed.
-
-#### MacOS
-
-There is a script `scripts/install-thirdparty-osx1015.sh` that installs all requirements on MacOS 10.15 or later. This script requires [HomeBrew](https://brew.sh) and the XCode Command Line Tools. Installing HomeBrew will help you install the command line tools.
-
-### Getting your cwipc source ode
-
-### Building
-
-Building and installing should work for both Apple Silicon (M1 machines) and Intel machines.
-
-#### All platforms
-
-Building on all platforms is best done with _Visual Studio Code_ because it will help you install most of the other requirements for development (cmake, git, etc).
-
-Install the following:
-
-- Python, from <https://www.python.org/downloads>. 3.12 is preferred, as of this writing (January 2025).
-	- Note: you should install Python *"For All Users"*. 
-	- Note: You should install into a writeable directory, such as `C:/Python39` otherwise you will have to use _Run as Administrator_ for various build steps.
-- Visual Studio Code, from <https://code.visualstudio.com>
-- In VSCode, install:
-	- C/C++ Tools and Extension Pack
-	- CMake and CMake Tools
-	- Python, Pylance and Python Debugger
-	
-You want to use the correct _CMake Preset_, building without presets is not advised.
-
-If you really want to build without vscode (for example for automation): use the normal `cmake`, then `cmake --build`, etc. set of commands. Again, always use the `--preset` option.
-
-You may have to run the script `scripts/install-3rdparty-full-win1064.ps1` in a PowerShell **with Administrator rights** (Note the bold font) if cmake cannot find a correct Python or the Kinect Azure SDK.
-
-
-## Advanced usage: Building from source
-
-You can either download a source archive (zip or gzipped tar) or clone the git repository. Note that the latter is preferred.
-
-### Download source archive
-
-Full source releases (including submodules) are available at  <https://github.com/cwi-dis/cwipc/releases>, as assets with names like `cwipc-`_version_`-source-including-submodules`. Available as gzipped tar or zip, the contents are identical. Download and extract.
+You can either clone the git repository or download a source archive (zip or gzipped tar). Note that the former is preferred.
 
 ### Clone git repository
 
@@ -263,7 +213,66 @@ or
 git clone --recurse-submodules https://github.com/cwi-dis/cwipc.git
 ```
 
+After that make sure you have the lfs files with
+
+```
+git lfs init
+git lfs pull
+```
+
+### Download source archive
+
+Full source releases (including submodules) are available at  <https://github.com/cwi-dis/cwipc/releases>, as assets with names like `cwipc-`_version_`-source-including-submodules`. Available as gzipped tar or zip, the contents are identical. Download and extract.
+
+Note that you do _not_ want to download the standard source archives: they do not contain the submodules.
+
+### Installing build toolset
+
+Easiest is to do all development from _Visual Studio Code_, _vscode_ for short. Get that. You also want to get your standard C/C++ compilers and such, _cmake_ and _Python_ (3.12 preferred).
+
+On Windows use the _Visual Studio Community Installer_ to get the compilers and cmake. Download Python and vscode yourself. Note:
+
+- you should install Python *"For All Users"*. 
+- You should install into a writeable directory, such as `C:/Python39` otherwise you will have to use _Run as Administrator_ for various build steps.
+
+
+On Linux use the system package manager for everything, except you may have to install vscode differently, use google to check.
+
+On Mac use the _XCode_ installer for the compilers, _brew_ for cmake, and google for vscode.
+
+For Android you will have to install the correct Android crosscompilers and all that.
+
+When you have vscode working you want to install the following extensions for it:
+
+- C/C++ Tools and Extension Pack
+- CMake and CMake Tools
+- Python, Pylance and Python Debugger
+
+
+### Installing third party requirements
+
+Building from source requires `libpcl`, `glfw3`, `jpeg-turbo` and optionally (for Intel Realsense support) `librealsense` and/or (for Azure Kinect support)  `Azure Kinect SDK`, `Azure Kinect Body Tracking SDK` and `OpenCV`.
+
+### Windows
+
+When building for Windows most of these will be installed automatically using `vcpkg`.
+But you may have to run the script `scripts/install-3rdparty-full-win1064.ps1` in a PowerShell **with Administrator rights** (Note the bold font) if cmake cannot find a correct Python or the Kinect Azure SDK.
+
+#### Linux
+
+There is a script `scripts/install-thirdparty-ubuntu2204.sh` that installs all requirements on Ubuntu 22.04. Similar for 24.04. For other Linux variants please inspect this script and ensure the correct packages are installed.
+
+#### MacOS
+
+There is a script `scripts/install-thirdparty-osx1015.sh` that installs all requirements on MacOS 10.15 or later. This script requires [HomeBrew](https://brew.sh) and the XCode Command Line Tools. Installing HomeBrew will help you install the command line tools.
+
+### Android
+
+All required packages will be automatically built with `vcpkg`.
+
 ### Build using vscode
+
+Building using vscode is by far the easiest.
 
 When you have the project open in vscode select the correct CMake preset you want to build (_Command Palette..._ -> _CMake: Select configure preset_).
 
@@ -272,81 +281,45 @@ Then _CMake: Build_.
 When building for Windows or Android this will first install all the required dependencies using `vcpkg`. This can take quite some time the first time you build on a machine (think: an hour or so) but the vcpkg builds are cached so the next time it will go a lot quicker.
 
 
-### Build using build script
+### Build without vscode
 
+For some cases, such as scripted building, vscode won't work.
 You can use the usual `cmake`, `cmake --build`, `ctest`, `cmake --install` commands. There are _cmake presets_ for the various platforms and use cases (development or release). Use `cmake --list-presets` to see the ones which are valid for your platform.
 
 On Linux and Macos this will install into `/usr/local` on Windows it will install into `../installed` by default.
 
-You can also build right from Visual Studio Code using the cmake plugin.
 
+### Debugging
 
-## Debugging
+A note here on how to debug the cwipc code, because it needs to go somewhere. The cmake presets have a `develop` option for each platform. When you build these the `vscode` debuggers will work (both the native C/C++ debuggers and of course also the Python debugger).
 
-Nowadays (2024) debugging with Python and VSCode may be the easiest way. See below.
-
-### Debugging with Visual Studio or XCode
-
-A note here on how to debug the cwipc code, because it needs to go somewhere. When debugging it is easiest to build the whole package not with the command line tools but with Visual Studio (Windows) or Xcode (Mac). To debug with XCode create a toplevel folder `build-xcode` and in that folder run
+After you have built cwipc, you should run (Mac, Linux):
 
 ```
-cmake .. -G Xcode
-open cwipc.xcodeproj
+source scripts/activate
 ```
+
+or (Windows PowerShell):
+
+```
+& scripts\activate.ps1
+```
+
+This will ensure you have the right `build/bin` directory on your `PATH`, and the right dynamic library search path, and the right Python `venv` activated with all the _cwipc_ commands and modules available. 
+
+> Your first debug session may fail, with "dynamic library not found". If that happens, run the activate script in the vscode terminal where it started the debugger and try again.
 
 Some issues can then be debugged with the C or C++ command line utilities (by putting breakpoints at the right location and running them with the correct command line arguments).
 
-Some issues are easier to debug with the Python scripts. There are some hooks in place to help with this:
+Many issues are easier to debug with the Python scripts. There are some hooks in place to help with this.
 
-- all Python scripts accept a `--pausefordebug` command line option. This will pause the script at begin of run (and end of run), waiting for you to press `Y`. While the script is paused you can obtain the process ID and attach the XCode or Visual Studio debugger to the process.
-- all Python scripts accept a `--debuglibrary NAME=PATH` argument, for example `--debuglibrary cwipc_util=/tmp/libcwipc_util.dylib` to load the given cwipc library from the given path. This allows you to load the library that you have just built in Xcode or Visual Studio so you can set breakpoints in the library code.
-- The python modules and scripts can be run from the `build` folder, using the venv-python there. As follows:
+All Python scripts accept a `--pausefordebug` command line option. This will pause the script at begin of run (and end of run), waiting for you to press `Y`. While the script is paused you can obtain the process ID and attach the vscode Python or C/C++ debugger to the process.
 
-  ```
-  cd build
-  . venv/bin/activate
-  python -m cwipc.scripts.cwipc_view --synthetic
-  ```
-  
-  Such a run will pick up the dynamic libraries from the build folder, but you can also specify the debug options outlined above.
-- The Python unittests can also be run individually from the build folder, for example with
+> For some cases, such as debugging an installed cwipc, the Python scripts also accept a `--debuglibrary NAME=PATH` argument, for example `--debuglibrary cwipc_util=/tmp/libcwipc_util.dylib` to load the given cwipc library from the given path. This allows you to load the library that you have just built so you can set breakpoints in the library code.
 
-  ```
-  cd build
-  . venv/bin/activate
-  python ../cwipc_codec/python/test_cwipc_codec.py --verbose TestApi.test_cwipc_parallel_encoder
-  ```
+The Python unittests can also be run individually after running the `activate` script above.
 
-Additionally, you can send `SIGQUIT` to all the Python scripts (installed or when running from the build folder) to cause them to dump the Python stacktraces of all threads.
-
-### Debugging with vscode
-
-If you open the project with VSCode debugging the Python scripts is fairly easy. The main issue is that you need to ensure that the correct dynamic libraries are used (i.e. the ones that are built within this directory).
-
-On Mac or Linux, in the VSCode terminal window (or the VSCode Python debugger terminal window), run
-
-```
-. scripts/activate.sh
-```
-
-On Windows powershell, use
-
-```
-&scripts\activate.ps1
-```
-
-Both of these will modify `PATH` or `DYLD_LIBRARY_PATH` or whatever to ensure the dynamic libraries built here take precedence over other versions. Also, they will activate the Python venv built here, and `pip install -e` the cwipc Python modules.
-
-Debugging the Python code is now very easy: just run with the Python debugger from within VSCode. You may have to tell vscode about the interpreter to use, from your `./build/venv` environment.
-
-Debugging the native code in a native app is also easy: again use the normal lldb or Windows debugger from within VSCode.
-
-Debugging the native code when running within a Python app is slightly more convoluted:
-
-- In the VSCode terminal window run the Python app with `--pausefordebug`. Take note of the PID.
-- Run the `lldb` debugger in "Attach Process" mode, and specify that PID.
-- Set any breakpoints you need.
-- Type `Y` in the Python app to make it continue.
+Additionally, you can send `SIGQUIT` to all the Python scripts to cause them to dump the Python stacktraces of all threads.
 
 ## Creating a release
 
