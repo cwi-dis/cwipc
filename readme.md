@@ -351,13 +351,14 @@ When creating a new release, ensure the following have been done
 
 - `scripts/install-3rdparty-full-win1064.ps1` should be updated to download the most recent compatible packages. Go through each of the packages, determine the current version. Uninstall old versions from your build machine. Run the powershell script to test it installs the new packages. Do the build, to ensure it works with the new packages. Test the build to ensure it runs with the new packages.
   > Note: the only package that is important here nowadays is Python, because the other other two left here, `k4a` and `k4abt`, are no longer maintained.
-- For Windows, the `vcpkg` dependent packages should all be updated to the most recent version.
+- For Windows and Android, the `vcpkg` dependent packages should all be updated to the most recent version.
 
   ```
   cd .\vcpkg
   git pull
   .\bootstrap-vcpkg.bat
   cd ..
+  .\vcpkg\vcpkg x-update-baseline
   .\vcpkg\vcpkg.exe install
   git commit -a -m "Vcpkg packages updated to most recent version"
   ```
