@@ -5,9 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [7.6.0] - 2015-01-19
+## [7.6.3] - 2025-02-21
 
-## Added
+### Changed
+
+- Changed dates in Changelog, they were off by 10 years:-)
+- Android build fixed (#179, #172)
+
+## [7.6.0] - 2025-01-19
+
+### Added
 
 - Realsense capturer can now record during live capture, using `system.record_to_directory` config setting. (#119)
 - Debian packages for Ubuntu 24.04 (#143), for the time being without Kinect and Realsense support.
