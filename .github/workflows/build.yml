@@ -596,7 +596,6 @@ jobs:
             asset_name: cwipc-${{ github.ref_name }}-source-including-submodules.zip
             asset_content_type: application/zip
         - name: Upload Windows installed folder
-          if: false
           uses: actions/upload-release-asset@v1
           env:
             GITHUB_TOKEN: ${{ github.token }}
