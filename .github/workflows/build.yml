@@ -112,12 +112,10 @@ jobs:
                 name: windows-build-folder
                 path: build.tgz
         - name: Capture installed folder as artifact
-          if: false
           shell: bash
           run: |
                 7z a cwipc_win1064_${{ github.ref_name }}.zip ../installed/
         - name: Upload installed folder
-          if: false
           uses: actions/upload-artifact@v4
           with:
                 name: cwipc_win1064_${{ github.ref_name }}.zip
@@ -474,7 +472,6 @@ jobs:
                 zip -x '*.git*' -r ../Assets/${{ github.ref_name }}-complete.zip .
                 awk '/^## /{if(flag){exit}; flag=1} flag' CHANGELOG.md > ../Assets/changes.md
         - name: Download Windows installed folder
-          if: false
           uses: actions/download-artifact@v4
           with:
                 name: cwipc_win1064_${{ github.ref_name }}.zip
