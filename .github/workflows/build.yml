@@ -52,7 +52,7 @@ jobs:
 
         - name: Install vcpkg packages
           shell: pwsh
-          run: vcpkg\vcpkg.exe install
+          run: vcpkg\vcpkg.exe install --x-feature=capturers --x-feature=gui --x-feature=python
           env: 
             VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
 
