@@ -83,6 +83,7 @@ jobs:
                 build-type: Release
                 run-test: true
                 install-build: true
+                install-options: --prefix ${{ github.workspace }}/installed
                 ctest-options: -E cwipc_(codec|kinect)_python_tests
         - name: Show Python and Python module versions used
           if: always()
@@ -114,7 +115,8 @@ jobs:
         - name: Capture installed folder as artifact
           shell: bash
           run: |
-                7z a cwipc_win1064_${{ github.ref_name }}.zip ../installed/
+                ls -lR installed
+                7z a cwipc_win1064_${{ github.ref_name }}.zip installed
         - name: Upload installed folder
           uses: actions/upload-artifact@v4
           with:
