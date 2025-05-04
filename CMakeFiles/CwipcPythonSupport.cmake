@@ -84,7 +84,8 @@ macro(cwipc_build_wheel)
 		)
 endmacro()
 #
-# Install a wheel from the built wheels directory, and copy it to the installed wheel directory too.
+# Copy a wheel from the build directory to the install directory.
+# If CWIPC_INSTALL_PYTHON_PACKAGES is set, install the wheel into the system Python too.
 #
 macro(cwipc_install_wheel)
 	set(options)
@@ -93,9 +94,7 @@ macro(cwipc_install_wheel)
 	cmake_parse_arguments(MYARGS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 	# The /.. in the DESTINATION is a trick to forestall double /python/python
 	install(DIRECTORY ${MYARGS_WHEELDIR} DESTINATION ${CMAKE_PYWHEELS_INSTALL_DIRECTORY}/.. FILES_MATCHING PATTERN "${MYARGS_NAME}*.whl" )
-	if(CWIPC_SKIP_PYTHON_INSTALL)
-		message(STATUS "Will skip install of Python wheel ${MYARGS_NAME}")
-	else()
+	if(CWIPC_INSTALL_PYTHON_PACKAGES)
 		install(CODE "message(STATUS \"Installing Python wheel ${MYARGS_NAME} into ${Python3_SYSTEM_EXECUTABLE}\")")
 		install(CODE "execute_process(COMMAND \"${Python3_SYSTEM_EXECUTABLE}\" -m pip -qq uninstall --yes ${MYARGS_NAME} WORKING_DIRECTORY \"${MYARGS_WHEELDIR}\" )")
 		install(CODE "execute_process(COMMAND \"${Python3_SYSTEM_EXECUTABLE}\" -m pip --quiet install --find-links=. ${MYARGS_NAME} WORKING_DIRECTORY \"${MYARGS_WHEELDIR}\" )")
