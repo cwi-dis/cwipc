@@ -11,6 +11,8 @@ sudo tee /etc/apt/sources.list.d/librealsense.list
 sudo apt-get -y update
 sudo apt-get -y upgrade
 # Install packages we need
+# We install some -dev packages because this will install the correct
+# version of the underlying dynamic library for the current distribution.
 sudo apt-get install -y git python3-pip
 sudo apt-get install -y git python3-venv
 sudo apt-get install -y tzdata
