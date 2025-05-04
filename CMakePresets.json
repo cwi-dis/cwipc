@@ -37,9 +37,6 @@
   		"description" : "Build for production on Windows",
   		"generator" : "Visual Studio 17 2022",
   		"inherits" : "vcpkg",
-		"cacheVariables": {
-        	"VCPKG_TARGET_TRIPLET": "x64-windows"
-  		},
   		"installDir": "${sourceDir}/../installed",
 		"condition": {
 			"type": "equals",
@@ -51,11 +48,17 @@
 	{
 		"name" : "windows-production",
 		"description" : "Build for production on Windows",
+		"cacheVariables": {
+        	"VCPKG_TARGET_TRIPLET": "x64-windows-release"
+  		},
 		"inherits" : "windows"
 	},
 	{
 		"name" : "windows-develop",
 		"description" : "Build for development on Windows",
+		"cacheVariables": {
+        	"VCPKG_TARGET_TRIPLET": "x64-windows"
+  		},
 		"inherits" : "windows"
 	},
   	{
