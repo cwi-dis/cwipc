@@ -6,6 +6,9 @@ jobs:
     build-windows:
         name: build-windows
         runs-on: windows-latest
+        env: 
+          VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
+          VCPKG_DEFAULT_TRIPLET: x64-windows-release
         steps:
         - name: Checkout code
           uses: actions/checkout@v3
@@ -27,12 +30,14 @@ jobs:
           run: |
                 $thirdpartydir="$((Get-Item ..).FullName)\3rdparty"
                 mkdir $thirdpartydir
-        - name: Export GitHub Actions cache environment variables for vcpkg
-          uses: actions/github-script@v6
+
+        - name: Restore vcpkg cache
+          uses: actions/cache/restore@v4
           with:
-                script: |
-                      core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-                      core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+            path: ${{ github.workspace }}/vcpkg_cache
+            key: vcpkg-windows-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
+            restore-keys: vcpkg-windows-
+
         - name: Install NSIS 8192-character limit override
           shell: pwsh
           run: |
@@ -53,8 +58,6 @@ jobs:
         - name: Install vcpkg packages
           shell: pwsh
           run: vcpkg\vcpkg.exe install --x-feature=capturers --x-feature=gui --x-feature=python
-          env: 
-            VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
 
         - name: Install Python packages (Windows)
           shell: bash
@@ -74,8 +77,6 @@ jobs:
           
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
-          env: 
-                VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
           with:
                 build-dir: ${{ github.workspace }}/build
                 configure-options: --preset windows-production -Wno-dev
@@ -85,6 +86,13 @@ jobs:
                 install-build: true
                 install-options: --prefix ${{ github.workspace }}/installed
                 ctest-options: -E cwipc_(codec|kinect)_python_tests
+
+        - name: Save vcpkg cache
+          uses: actions/cache/save@v4
+          with:
+            path: ${{ github.workspace }}/vcpkg_cache
+            key: vcpkg-windows-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
+
         - name: Show Python and Python module versions used
           if: always()
           shell: bash
@@ -286,6 +294,8 @@ jobs:
     build-android:
         name: build-android
         runs-on: ubuntu-latest
+        env: 
+          VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
         steps:
         - name: Checkout code
           uses: actions/checkout@v3
@@ -325,6 +335,13 @@ jobs:
             ndk-version: r27b
             add-to-path: true
           
+        - name: Restore vcpkg cache
+          uses: actions/cache/restore@v4
+          with:
+            path: ${{ github.workspace }}/vcpkg_cache
+            key: vcpkg-android-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
+            restore-keys: vcpkg-android-
+
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           with:
@@ -336,7 +353,13 @@ jobs:
                 install-options: --prefix ${{ github.workspace }}/installed
           env:
                 ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
-                VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"        
+
+        - name: Save vcpkg cache
+          uses: actions/cache/save@v4
+          with:
+            path: ${{ github.workspace }}/vcpkg_cache
+            key: vcpkg-android-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
+        
         - name: Create installer
           shell: bash
           run: |
