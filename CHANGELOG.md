@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+- Use different vcpkg caching strategy for Github Actions (#197)
 - Windows "built" has been added to the release assets again. (#187)
 
 ## [7.6.5] - 2025-03-20
