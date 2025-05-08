@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Use different vcpkg caching strategy for Github Actions (#197)
 - Windows "built" has been added to the release assets again. (#187)
+- Realsense depth erosion fixed. (#201)
 
 ## [7.6.5] - 2025-03-20
 
