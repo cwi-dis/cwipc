@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Windows "built" has been added to the release assets again. (#187)
 - Realsense depth erosion fixed. (#201)
 - Somewhat fixed cwipc_register --guided instructions. (#194, #199)
+- Implemented --inpoint for realsense playback (#174) but it has issues with cwipc_grab.
 
 ## [7.6.5] - 2025-03-20
 
