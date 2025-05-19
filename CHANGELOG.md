@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Realsense depth erosion fixed. (#201)
 - Somewhat fixed cwipc_register --guided instructions. (#194, #199)
 - Implemented --inpoint for realsense playback (#174) but it has issues with cwipc_grab.
+- Various fixes to help with lldash integration (#198, more)
 
 ## [7.6.5] - 2025-03-20
 
