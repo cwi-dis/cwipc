@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.6.7] - 2025-05-21
+
+- Added utility `cwipc_find_transform` to find best transform between 2 point clouds (#203)
+- Added `--filter transform` to apply 4x4 transform to point cloud stream (#202)
+
 ## [7.6.6] - 2025-05-19
 
 - Use different vcpkg caching strategy for Github Actions (#197)
