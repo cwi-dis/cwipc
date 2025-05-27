@@ -42,7 +42,7 @@ def main():
     # Get the result
     transformations = aligner.get_result_transformations()
     for i in range(len(transformations)):
-        camnum = aligner.tilenum_for_camera_index(i)
+        camnum = aligner.tilemask_for_camera_index(i)
         is_identity = (transformations[i] == cwipc.registration.util.transformation_identity()).all()
         print(f"cam-index {i}: camnum {camnum}: registered={not is_identity}, matrix {transformations[i]}")
     start_time = time.time()
