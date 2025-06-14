@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.6.8] - 2025-06-15
+
+- Added utility cwipc_netserver that can forward point cloud streams, and
+  cwipc_forward --forward option that uses this. (#209)
+  
 ## [7.6.7] - 2025-05-21
 
 - Added utility `cwipc_find_transform` to find best transform between 2 point clouds (#203)
