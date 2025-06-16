@@ -173,6 +173,31 @@ It is also possible to stream to a Unity project using the `cwipc_unity`, see th
 
 And of course you can use another source of point clouds for `cwipc_forward`, by using the `--playback` or `--synthetic` option. Also see `cwipc_forward --help` to see options on modifying the compression parameters, or sending uncompressed point clouds.
 
+#### Streaming through firewalls
+
+The streaming solution above only works if the receiving machine can make a connection to the sending machine. If this is not the case, because both receiver and sender is behind a NAT or firewall, you may be able to get things working _if you have access to a machine that is reachable by both sender and receiver_.
+
+Let's call the machines `sender`, `receiver` and `relay`. On `relay`, run:
+
+```
+cwipc_netserver --port 4303 --ingestport 4304
+```
+
+On `sender`, run:
+
+```
+cwipc_forward --forward relay:4304
+```
+
+On `receiver`, run:
+
+```
+cwipc_view --netclient relay:4303
+```
+
+Multiple receivers can be started at the same time and they wil receive the same streams.
+Note that this is not an industry-strength solution, and you may have to stop and restart the various components if things don't work.
+
 ### C or C++
 
 Include files and libraries are installed in the standard places, and `pkgconfig` files are included. For example code: get a source distribution and look at `cwipc_util/apps`, `cwipc_codec/apps`, `cwipc_realsense2/apps`, etc.
