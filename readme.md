@@ -81,6 +81,10 @@ And actually Realsense also requires a specific mention: if you already have it 
 
 > As is probably clear from this section, writing Windows installers is not our strong point. Please contact us if you can provide help.
 
+#### Debugging Windows installation issues
+
+If all the tips above do not help you should try installing `ProcessMonitor` from `SysInternals` (Google will help you find it).
+This tool is not for the faint of heart, but it allows you to trace each and every system call on your computer. So it _will_ allow you to trace why weird things like "the cwipc utilities work but I cannot use the realsense capturer from within Unity" happen.
 
 ### Linux
 
