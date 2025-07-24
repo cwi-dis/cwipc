@@ -4,10 +4,15 @@ on:
   push:
     branches:
       - master
+      - 213-vcpkg-caching
     tags:
       - nightly
       - 'v*'
       - 'exp*'
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
 
 jobs:
     build-windows:
