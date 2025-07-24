@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [unreleased]
+
+- Improve build caching for vcpkg using nupget package cache (#213)
+
+## [7.6.14] - 2025-07-22
+
+- More changes for lldash v1.0 (lldash issues #81 and #82)
+
+## [7.6.13] - 2025-07-10
+
+- Updated for lldash v1.0 (#214)
+ 
+## [7.6.12] - 2025-07-02
+
+- Changed what tile descriptors are returned from `get_tileinfo()`. (#215).
+  Note that this is theoretically a backward-incompatible change, but we think
+  it is unlikely to cause any issues.
+  
 ## [7.6.11] - 2025-06-26
 
 - Fix to potential hang when closing lldash playout connection
