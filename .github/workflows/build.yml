@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - 213-vcpkg-caching
     tags:
       - nightly
       - 'v*'
