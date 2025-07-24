@@ -14,7 +14,10 @@ jobs:
         name: build-windows
         runs-on: windows-latest
         env: 
-          VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
+          USERNAME: cwi-dis
+          VCPKG_EXE: ${{ github.workspace }}/vcpkg/vcpkg
+          FEED_URL: https://nuget.pkg.github.com/cwi-dis/index.json
+          VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/cwi-dis/index.json,readwrite"
           VCPKG_DEFAULT_TRIPLET: x64-windows-release
         steps:
         - name: Checkout code
@@ -37,13 +40,24 @@ jobs:
           run: |
                 $thirdpartydir="$((Get-Item ..).FullName)\3rdparty"
                 mkdir $thirdpartydir
+        
+        - name: Bootstrap vcpkg
+          shell: pwsh
+          run: ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.bat
 
-        - name: Restore vcpkg cache
-          uses: actions/cache/restore@v4
-          with:
-            path: ${{ github.workspace }}/vcpkg_cache
-            key: vcpkg-windows-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
-            restore-keys: vcpkg-windows-
+        - name: Add NuGet sources
+          shell: pwsh
+          run: |
+            .$(${{ env.VCPKG_EXE }} fetch nuget) `
+              sources add `
+              -Source "${{ env.FEED_URL }}" `
+              -StorePasswordInClearText `
+              -Name GitHubPackages `
+              -UserName "${{ env.USERNAME }}" `
+              -Password "${{ secrets.GH_PACKAGES_TOKEN }}"
+            .$(${{ env.VCPKG_EXE }} fetch nuget) `
+              setapikey "${{ secrets.GH_PACKAGES_TOKEN }}" `
+              -Source "${{ env.FEED_URL }}"
 
         - name: Install NSIS 8192-character limit override
           shell: pwsh
@@ -54,13 +68,10 @@ jobs:
                 "https://downloads.sourceforge.net/project/nsis/NSIS%203/3.09/nsis-3.09-strlen_8192.zip",$zipfile);
                 Write-Output "NSIS-8192-override: installing..."
                 Expand-Archive -Path $zipfile -DestinationPath "C:\Program Files (x86)\NSIS\" -Force
+        
         - name: Install thirdparty packages
           shell: pwsh
           run: scripts\install-3rdparty-full-win1064.ps1
-
-        - name: Bootstrap vcpkg
-          shell: pwsh
-          run: vcpkg\bootstrap-vcpkg.bat
 
         - name: Install vcpkg packages
           shell: pwsh
