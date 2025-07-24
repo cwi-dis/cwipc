@@ -78,9 +78,10 @@ jobs:
           shell: pwsh
           run: scripts\install-3rdparty-full-win1064.ps1
 
-        - name: Install vcpkg packages
-          shell: pwsh
-          run: vcpkg\vcpkg.exe install --x-feature=capturers --x-feature=gui --x-feature=python
+# Let cmake handle the vcpkg install
+#        - name: Install vcpkg packages
+#          shell: pwsh
+#          run: vcpkg\vcpkg.exe install --x-feature=capturers --x-feature=gui --x-feature=python
 
         - name: Install Python packages (Windows)
           shell: bash
