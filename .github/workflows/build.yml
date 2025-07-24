@@ -110,12 +110,6 @@ jobs:
                 install-options: --prefix ${{ github.workspace }}/installed
                 ctest-options: -E cwipc_(codec|kinect)_python_tests
 
-        - name: Save vcpkg cache
-          uses: actions/cache/save@v4
-          with:
-            path: ${{ github.workspace }}/vcpkg_cache
-            key: vcpkg-windows-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
-
         - name: Show Python and Python module versions used
           if: always()
           shell: bash
