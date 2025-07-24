@@ -312,7 +312,10 @@ jobs:
         name: build-android
         runs-on: ubuntu-latest
         env: 
-          VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg_cache,readwrite
+          USERNAME: cwi-dis
+          VCPKG_EXE: ${{ github.workspace }}/vcpkg/vcpkg
+          FEED_URL: https://nuget.pkg.github.com/cwi-dis/index.json
+          VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/cwi-dis/index.json,readwrite"
         steps:
         - name: Checkout code
           uses: actions/checkout@v3
@@ -351,13 +354,32 @@ jobs:
           with:
             ndk-version: r27b
             add-to-path: true
-          
-        - name: Restore vcpkg cache
-          uses: actions/cache/restore@v4
-          with:
-            path: ${{ github.workspace }}/vcpkg_cache
-            key: vcpkg-android-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
-            restore-keys: vcpkg-android-
+
+        - name: Bootstrap vcpkg
+          shell: bash
+          run: ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.sh
+
+        - name: Install mono for nuget for vcpkg
+          shell: bash
+          run: apt install mono-complete
+
+        - name: Add NuGet sources
+          shell: bash
+          env: 
+            VCPKG_EXE: ${{ github.workspace }}/vcpkg/vcpkg
+            USERNAME: cwi-dis
+            FEED_URL: https://nuget.pkg.github.com/cwi-dis/index.json
+          run: |
+            mono `${{ env.VCPKG_EXE }} fetch nuget | tail -n 1` \
+              sources add \
+              -Source "${{ env.FEED_URL }}" \
+              -StorePasswordInClearText \
+              -Name GitHubPackages \
+              -UserName "${{ env.USERNAME }}" \
+              -Password "${{ secrets.GH_PACKAGES_TOKEN }}"
+            mono `${{ env.VCPKG_EXE }} fetch nuget | tail -n 1` \
+              setapikey "${{ secrets.GH_PACKAGES_TOKEN }}" \
+              -Source "${{ env.FEED_URL }}"
 
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
@@ -370,12 +392,6 @@ jobs:
                 install-options: --prefix ${{ github.workspace }}/installed
           env:
                 ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
-
-        - name: Save vcpkg cache
-          uses: actions/cache/save@v4
-          with:
-            path: ${{ github.workspace }}/vcpkg_cache
-            key: vcpkg-android-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
         
         - name: Create installer
           shell: bash
