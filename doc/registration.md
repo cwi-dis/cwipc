@@ -89,15 +89,36 @@ After this step you have a complete registration. You can run `cwipc_view` to se
 
 ![Captured point cloud from all cameras after coarse registration](coarse-pointcloud.jpg)
 
+## Limiting your point clouds
+
+> This section is important, even when using `cwipc_register --guided` 
+
+At this point, if you view your point cloud with `cwipc_view` you will see that it contains all the walls, floor, ceiling, furniture, etc. All cameras should be somewhat aligned by the course calibration.
+
+> Currently you have to fix this by manually editing `cameraconfig.json`. It should be possible to edit `cameraconfig.json` while `cwipc_view` is running, and then typing `c` to reload `cameraconfig.json`. But this does not always work, you may have to stop and restart `cwipc_view` to see the result of your edits.
+
+### Near and far points
+
+The first thing to edit is `threshold_near` and `threshold_far`. These are the near and far point for all depth cameras (in meters). Adjust these to get rid of most of the walls, while keeping the whole target area visible. Looking at the floor is a good way to determine how you are doing.
+
+### Radius
+
+There is another parameter you can play with: `radius_filter` applies a cylindrical filter around the origin.
+
+### Remove ceiling
+
+Next adjust `height_min` and `height_max` to get rid of the ceiling, **but keep the floor for now**. Both have to be non-zero otherwise the filter will not be applied (but `height_min` can be less than zero if you want to keep the floor visible).
+
+
 ## Fine registration
 
 > Usually `cwipc_register --guided` will take you through this process just as easily. This section left here for reference.
 
 If you have only a single RGBD camera there is no point in doing fine calibration, but if you have multiple cameras it will slightly adjust the registration of the cameras to try and get maximum overlap of the point clouds.
 
-> We are undecided whether it may be better to do this step after _Limiting your point clouds_. Experiment. See below.
-
 Have a person stand at the origin.
+
+> **Note:** at the moment, the pose of you subject is important. Best results are obtained by having the person look in the direction between the first camera and one of the adjacent cameras. Arms should be slightly spread, or maybe angled forward at the elbows.
 
 Run `cwipc_register`. If there is already a complete coarse calibration for all cameras this will automatically do a fine calibration. If you are using `cwipc_register --interactive` type a `w` to capture a point cloud and start the registration.
 
@@ -109,40 +130,17 @@ Check the results with `cwipc_view`.
 > 
 > The workaround is to try fine alignment again, with the subject standing in a different pose.
 
-## Limiting your point clouds
-
-> This section is important, even when using `cwipc_register --guided` 
-
-At this point, if you view your point cloud with `cwipc_view` you will see that it contains all the walls, floor, ceiling, furniture, etc.
-
-> Currently you have to fix this by manually editing `cameraconfig.json`. It should be possible to edit `cameraconfig.json` while `cwipc_view` is running, and then typing `c` to reload `cameraconfig.json`. But this does not always work, you may have to stop and restart `cwipc_view` to see the result of your edits.
-
-### Near and far points
-
-The first thing to edit is `threshold_near` and `threshold_far`. These are the near and far point for all depth cameras (in meters). Adjust these to get rid of most of the walls, while keeping the whole target area visible. Looking at the floor is a good way to determine how you are doing.
-
-### Radius
-
-Only for Kinect there is another parameter you can play with: `radius_filter` applies a cylindrical filter around the origin.
-
-### Repeat fine calibration
-
-You now have a clean capture of the subject without walls and furniture, but with the floor still visible. This may be the best time to do the fine calibration.
-
-> **xxxjack here we need a screenshot, or maybe two**
-
-
 ### Remove floor and ceiling
 
-Next adjust `height_min` and `height_max` to get rid of floor and ceiling. Both have to be non-zero otherwise the filter will not be applied (but `height_min` can be less than zero if you want to keep the floor visible.
-
-> **xxxjack here we need a screenshot**
+Next adjust `height_min` and `height_max` to get rid of both floor and ceiling. Both have to be non-zero otherwise the filter will not be applied.
 
 ### Color matching
 
 You probably want to play with the various exposure parameters such as `color_whitebalance` and `color_exposure_time` to get the best color fidelity, but you really have to experiment here.
 
 We are working on partially automating this process, but that is not done yet.
+
+Depth exposure can be left on auto (if the camera supports it) but color should be manual, so that it is the same for all cameras.
 
 ### Final results
 
