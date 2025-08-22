@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 - Added cwipc_play which plays a point cloud recording or single point cloud.
+- Refactored visualizer, so cwipc_view and cwipc_play allow filtering and such while paused (#208)
 
 ## [7.7.0] - 2025-08-01
 
