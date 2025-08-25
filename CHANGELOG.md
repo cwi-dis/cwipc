@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [7.7.0] - 2025-08-01
 
 - Improve build caching for vcpkg using nupget package cache (#213)
-- Multi-camera registrationcan now produce optimal registrations, if you are precise in the procedure to follow. (#18)
+- Multi-camera registration can now produce optimal registrations, if you are precise in the procedure to follow. (#18)
 
 ## [7.6.14] - 2025-07-22
 
