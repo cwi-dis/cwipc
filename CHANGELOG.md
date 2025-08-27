@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added cwipc_play which plays a point cloud recording or single point cloud.
 - Refactored visualizer, so cwipc_view and cwipc_play allow filtering and such while paused (#208)
 - Filters optionally keep the source point cloud (#236)
+- Added direction filter, which keeps only points oriented in a certain direction (#235)
 
 ## [7.7.0] - 2025-08-01
 
