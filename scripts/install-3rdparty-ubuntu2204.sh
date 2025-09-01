@@ -5,6 +5,8 @@ curl -sSf https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc
 # Add the librealsense repo server
 echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo `lsb_release -cs` main" | \
 sudo tee /etc/apt/sources.list.d/librealsense.list
+# Add deadsnakes repo (for different Python versions)
+sudo add-apt-repository ppa:deadsnakes/ppa
 #
 # Update package list and upgrade packages
 sudo apt-get -y update
@@ -13,8 +15,9 @@ sudo apt-get -y upgrade
 sudo apt-get install -y tzdata
 sudo apt-get install -y software-properties-common
 sudo apt-get install -y git cmake
-sudo apt-get install -y git python3-pip
-sudo apt-get install -y git python3-venv
+sudo apt-get install -y python3.12
+# sudo apt-get install -y python3.12-pip
+sudo apt-get install -y python3.12-venv
 sudo apt-get install -y libpcl-dev
 sudo apt-get install -y libturbojpeg0-dev
 sudo apt-get install -y libusb-1.0 libusb-dev
