@@ -247,6 +247,10 @@ jobs:
                 git log -40
                 git describe --debug
                 git describe --tags --debug
+        - name: Install correct Python version
+          uses: actions/setup-python@v5
+          with:
+            python-version: '3.12'
         - name: Install dependencies
           shell: bash
           run: ./scripts/install-3rdparty-ubuntu2204.sh
