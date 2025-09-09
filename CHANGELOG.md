@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - cwipc script added that can run all the other commands, for example `cwipc view` (#36)
 - cwipc_downsample is now a lot faster and can handle any cellsize (#1)
 - New `cwipc copy` command copies and converts point clouds and streams (#241)
+- More progress with registration (#223 and sub-issues)
 
 ## [7.7.1] - 2025-09-02
 
