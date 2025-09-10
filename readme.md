@@ -392,13 +392,14 @@ When creating a new release, ensure the following have been done
   git commit -a -m "Vcpkg packages updated to most recent version"
   ```
 
-- `setup.py` may still have a version string somewhere.
+- The toplevel `vcpkg.json` has a version string.
+- `setup.py` in `cwipc_util/python` and every other package has a default version string that is only used when installing with `pip install -e` (because usually it is dynamically determined at build time. For good measure update these default version strings when doing a major release.
 - `CWIPC_API_VERSION` incremented if there are any API changes (additions only).
 - `CWIPC_API_VERSION_OLD` incremented if there are API changes that are not backward compatible.
 	- Both these need to be changed in `api.h` and `cwipc/util.py`.
 - `CHANGELOG.md` updated.
 
-Version numbers for the release no longer need to be updated manually, they are generated from the git tag name.
+Version numbers for the release no longer need to be updated manually, but note the exceptions above.
 
 After making all these changes push to github. Ensure the CI/CD build passes (easiest is by running `./scripts/nightly.sh` which does a nightly build). This build will take a looooong time, most likely, because the `vcpkg` dependencies have been updated and the Windows runner will have to rebuild the world.
 
