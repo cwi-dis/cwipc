@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.7.3] - 2025-09-13
+
+- lldash-srd-packager API version has been updated (#243)
+
 ## [7.7.2] - 2025-09-10
 
 - cwipc script added that can run all the other commands, for example `cwipc view` (#36)
