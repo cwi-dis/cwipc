@@ -23,7 +23,7 @@ jobs:
           FEED_URL: https://nuget.pkg.github.com/cwi-dis/index.json
           VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/cwi-dis/index.json,readwrite"
           VCPKG_DEFAULT_TRIPLET: x64-windows-release
-#          VCPKG_INSTALL_OPTIONS: --debug
+          VCPKG_INSTALL_OPTIONS: --x-abi-tools-use-exact-versions --debug
         steps:
         - name: Checkout code
           uses: actions/checkout@v3
