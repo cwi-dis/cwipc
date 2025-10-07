@@ -64,15 +64,15 @@ jobs:
               setapikey "${{ secrets.GH_PACKAGES_TOKEN }}" `
               -Source "${{ env.FEED_URL }}"
 
-        - name: Install NSIS 8192-character limit override
-          shell: pwsh
+        - name: Install NSIS
+          env:
+            NSIS_VERSION: '3.11'
           run: |
-                $thirdpartydir="$((Get-Item ..\3rdparty).FullName)"
-                $zipfile="$thirdpartydir\nsis-8192-overrides.zip"
-                (New-Object System.Net.WebClient).DownloadFile(
-                "https://downloads.sourceforge.net/project/nsis/NSIS%203/3.09/nsis-3.09-strlen_8192.zip",$zipfile);
-                Write-Output "NSIS-8192-override: installing..."
-                Expand-Archive -Path $zipfile -DestinationPath "C:\Program Files (x86)\NSIS\" -Force
+            Invoke-WebRequest "https://sourceforge.net/projects/nsis/files/NSIS%203/${env:NSIS_VERSION}/nsis-${env:NSIS_VERSION}.zip/download" -UserAgent "PowerShell" -Outfile "./nsis.zip"
+            Expand-Archive -LiteralPath ./nsis.zip -DestinationPath "${env:ProgramFiles(x86)}\"
+            Invoke-WebRequest "https://sourceforge.net/projects/nsis/files/NSIS%203/${env:NSIS_VERSION}/nsis-${env:NSIS_VERSION}-strlen_8192.zip/download" -UserAgent "PowerShell" -Outfile "./nsis-8192.zip"
+            Expand-Archive -Force -LiteralPath ./nsis-8192.zip -DestinationPath "${env:ProgramFiles(x86)}\nsis-${env:NSIS_VERSION}\"
+            echo "${env:ProgramFiles(x86)}\nsis-${env:NSIS_VERSION}" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         
         - name: Install thirdparty packages
           shell: pwsh
