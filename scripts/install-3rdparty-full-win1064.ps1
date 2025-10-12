@@ -162,7 +162,7 @@ if ($global:ghActionRunner) {
 	$binDir = "$PSScriptRoot\..\..\..\bin"
 	& $binDir\cwipc_pymodules_install.ps1
 	Write-Output "cwipc_check install: Copy python scripts to bin directory..."
-	Copy-Item -Path "$venvDir\Scripts\cwipc_*.exe" -Destination "$binDir" -Force
+	Copy-Item -Path "$venvDir\Scripts\cwipc*.exe" -Destination "$binDir" -Force
 	Write-Output "cwipc_check install: python: cwipc packages: All done."
 }
 Write-Output "cwipc_check install: All done: You can close this Powershell window."
