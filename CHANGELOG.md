@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 - Minor steps towards better registration (#223)
+- Multi-tile and multi-quality implemented for lldash and netserver protocols (#248)
 
 ## [7.7.3] - 2025-09-13
 
