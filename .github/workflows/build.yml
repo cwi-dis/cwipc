@@ -65,15 +65,10 @@ jobs:
               -Source "${{ env.FEED_URL }}"
 
         - name: Install NSIS
-          env:
-            NSIS_VERSION: '3.11'
-          run: |
-            Invoke-WebRequest "https://sourceforge.net/projects/nsis/files/NSIS%203/${env:NSIS_VERSION}/nsis-${env:NSIS_VERSION}.zip/download" -UserAgent "PowerShell" -Outfile "./nsis.zip"
-            Expand-Archive -LiteralPath ./nsis.zip -DestinationPath "${env:ProgramFiles(x86)}\"
-            Invoke-WebRequest "https://sourceforge.net/projects/nsis/files/NSIS%203/${env:NSIS_VERSION}/nsis-${env:NSIS_VERSION}-strlen_8192.zip/download" -UserAgent "PowerShell" -Outfile "./nsis-8192.zip"
-            Expand-Archive -Force -LiteralPath ./nsis-8192.zip -DestinationPath "${env:ProgramFiles(x86)}\nsis-${env:NSIS_VERSION}\"
-            echo "${env:ProgramFiles(x86)}\nsis-${env:NSIS_VERSION}" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-        
+          uses: repolevedavaj/install-nsis@v1.0.3
+          with:
+            nsis-version: '3.11'
+
         - name: Install thirdparty packages
           shell: pwsh
           run: scripts\install-3rdparty-full-win1064.ps1
