@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Minor steps towards better registration (#223)
 - Multi-tile and multi-quality implemented for lldash and netserver protocols (#248)
+- Include py.typed in the Python packages so type checkers know we have the annotations (#251)
 
 ## [7.7.3] - 2025-09-13
 
