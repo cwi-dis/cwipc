@@ -379,9 +379,9 @@ jobs:
               -StorePasswordInClearText \
               -Name GitHubPackages \
               -UserName "${{ env.USERNAME }}" \
-              -Password "${{ secrets.GH_PACKAGES_TOKEN }}"
+              -Password "${{ github.token }}"
             mono `${{ env.VCPKG_EXE }} fetch nuget | tail -n 1` \
-              setapikey "${{ secrets.GH_PACKAGES_TOKEN }}" \
+              setapikey "${{ github.token }}" \
               -Source "${{ env.FEED_URL }}"
 
         - name: Build & Test
