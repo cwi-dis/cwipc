@@ -25,9 +25,11 @@ set(CWIPC_WITH_CAPTURERS YES CACHE BOOL "Include camera capturers")
 if(CWIPC_WITH_CAPTURERS)
 	set(CWIPC_WITH_KINECT YES CACHE BOOL "Include Azure Kinect capturer")
 	set(CWIPC_WITH_REALSENSE YES CACHE BOOL "Include Intel Realsense capturer")
+	set(CWIPC_WITH_ORBBEC YES CACHE BOOL "Include Orbbec Femto capturer")
 else()
 	set(CWIPC_WITH_KINECT NO CACHE BOOL "Include Azure Kinect support (if available)")
 	set(CWIPC_WITH_REALSENSE NO CACHE BOOL "Include Realsense2 support (if available)")
+	set(CWIPC_WITH_ORBBEC YES CACHE BOOL "Include Orbbec Femto capturer (if available)")
 endif()
 set(CWIPC_WITH_INSTALLER YES)
 #
@@ -59,6 +61,12 @@ endif()
 if(CWIPC_WITH_KINECT)
 	set(CMAKE_MODULE_PATH
 		${CMAKE_CURRENT_LIST_DIR}/cwipc_kinect/CMakeFiles
+		${CMAKE_MODULE_PATH}
+		)
+endif()
+if(CWIPC_WITH_ORBBEC)
+	set(CMAKE_MODULE_PATH
+		${CMAKE_CURRENT_LIST_DIR}/cwipc_orbbec/CMakeFiles
 		${CMAKE_MODULE_PATH}
 		)
 endif()
@@ -179,7 +187,11 @@ endif()
 if(CWIPC_WITH_REALSENSE)
 	find_package(REALSENSE2)
 endif()
-
+# xxxjack quick hack
+# list(APPEND CMAKE_PREFIX_PATH "/Users/jack/packages/OrbbecSDK_v2.5.5_202510101840_1a38b95_macOS")
+if(CWIPC_WITH_ORBBEC)
+	find_package(OrbbecSDK::OrbbecSDK)
+endif()
 add_subdirectory("cwipc_util")
 add_subdirectory("cwipc_codec")
 if(REALSENSE2_FOUND)
@@ -187,6 +199,9 @@ if(REALSENSE2_FOUND)
 endif()
 if(k4a_FOUND)
 	add_subdirectory("cwipc_kinect")
+endif()
+if(OrbbecSDK_FOUND)
+	add_subdirectory("cwipc_orbbec")
 endif()
 if(CWIPC_WITH_APPS)
 # Install scripts to help installing prerequisites
