@@ -190,7 +190,7 @@ endif()
 # xxxjack quick hack
 # list(APPEND CMAKE_PREFIX_PATH "/Users/jack/packages/OrbbecSDK_v2.5.5_202510101840_1a38b95_macOS")
 if(CWIPC_WITH_ORBBEC)
-	find_package(OrbbecSDK::OrbbecSDK)
+	find_package(OrbbecSDK)
 endif()
 add_subdirectory("cwipc_util")
 add_subdirectory("cwipc_codec")
