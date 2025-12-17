@@ -2,7 +2,7 @@
 
 It is possible to record the raw camera streams (RGB and Depth) **while capturing point clouds**. This recording is implemented in the low-level native `cwipc` capturing code, so it will work with _any_ application that uses `cwipc`.
 
-The recording is implemented in both the `realsense` and `kinect` capturers, and the recording can subsequently be played back "as-live" using the `realsense_playback` or `kinect_offline` "capturers".
+The recording is implemented in both the `realsense` and `kinect` capturers, and the recording can subsequently be played back "as-live" using the `realsense_playback` or `kinect_playback` "capturers".
 
 Recording also works for multi-camera setup, and synchronization between cameras should be maintained.
 
@@ -25,7 +25,7 @@ It is assumed you have a `cameraconfig.json` that has the correct camera registr
 - Copy your `cameraconfig.json` to `recording-20250505-1201/cameraconfig.json`.
 - Edit `recording-20250505-1201/cameraconfig.json` and make the following changes:
 	- Set both the toplevel `"type"` and the `"type"` in each `"camera"` entry to `"realsense_playback"`.
-	- Or, `"kinect_offline"` for Kinect cameras.
+	- Or, `"kinect_playback"` for Kinect cameras.
 	- Double-check that you have cleared `record_to_directory`.
 - Your recording is now complete. It consists of the complete directory `recording-20250505-1201`, so the `.bag` files plus the modified `cameraconfig.json`.
 
