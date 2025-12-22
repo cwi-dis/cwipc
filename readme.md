@@ -155,7 +155,7 @@ You can record your camera capture streams (both Realsense and Kinect) while you
 
 Now run your application as usual. 
 
-Clear the `record_to_directory` field again. Copy `cameraconfig.json` into the `recording` directory. Change camera and capturer `type` to `kinect_offline` or `realsense_playback`. Add the `filename` field to each `camera` entry. For a single Kinect you may have to set `ignore_sync` to `true`.
+Clear the `record_to_directory` field again. Copy `cameraconfig.json` into the `recording` directory. Change camera and capturer `type` to `kinect_playback` or `realsense_playback`. Add the `filename` field to each `camera` entry. For a single Kinect you may have to set `ignore_sync` to `true`.
 
 #### Streaming
 
