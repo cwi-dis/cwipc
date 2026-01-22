@@ -1,5 +1,5 @@
 cmake_policy(SET CMP0074 NEW)
-cmake_policy(SET CMP0177 NEW)
+#cmake_policy(SET CMP0177 NEW)
 #
 # Create venv if not done already
 #
