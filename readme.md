@@ -295,6 +295,8 @@ There is a script `scripts/install-thirdparty-ubuntu2204.sh` that installs all r
 
 There is a script `scripts/install-thirdparty-osx1015.sh` that installs all requirements on MacOS 10.15 or later. This script requires [HomeBrew](https://brew.sh) and the XCode Command Line Tools. Installing HomeBrew will help you install the command line tools.
 
+Also run `scripts/install-orbbecsdk-osx.sh` if you want to use Orbbec cameras.
+
 ### Android
 
 All required packages will be automatically built with `vcpkg`.

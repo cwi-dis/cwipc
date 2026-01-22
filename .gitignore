@@ -1,5 +1,6 @@
 installed
 build*/
+3rdparty_installed/
 vcpkg_installed/
 .vscode/
 .cachedgitversion.txt
