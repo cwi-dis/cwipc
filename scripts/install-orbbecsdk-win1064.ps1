@@ -6,9 +6,10 @@ $URL = "https://github.com/orbbec/OrbbecSDK_v2/releases/download/v2.6.3/" + $ZIP
 $scriptdir = $PSScriptRoot
 $CWIPCPATH = Split-Path -Parent $scriptdir
 $THIRDPARTY = Join-Path $CWIPCPATH 3rdparty_installed
+$ZIPPATH = Join-Path $THIRDPARTY $ZIPFILE
 New-Item -ItemType Directory -Force -Path $THIRDPARTY
-Set-Location $THIRDPARTY
-(New-Object System.Net.WebClient).DownloadFile($URL, $ZIPFILE)
-Remove-Item $ORBBECSDK -Force
-Remove-Item orbbecsdk -Force
-Expand-Archive -LiteralPath $zipfile -DestinationPath orbecsdk
+Push-Location $THIRDPARTY
+Remove-Item orbbecsdk -Recurse -Force
+(New-Object System.Net.WebClient).DownloadFile($URL, $ZIPPATH)
+Expand-Archive -LiteralPath $ZIPPATH -DestinationPath orbbecsdk
+Pop-Location
