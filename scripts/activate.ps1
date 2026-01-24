@@ -41,5 +41,7 @@ cd $topDir/cwipc_realsense2/python
 & python -m pip install -e .
 cd $topDir/cwipc_kinect/python
 & python -m pip install -e .
+cd $topDir/cwipc_orbbec/python
+& python -m pip install -e .
 cd $topDir
 Pop-Location
