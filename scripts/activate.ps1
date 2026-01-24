@@ -1,6 +1,7 @@
 # Set PATH to include built executables and dynamic libraries and enable Python venv.
 # For use in Powershell, for example from within VSCode.
 # Set-PSDebug -Trace 2
+Push-Location
 $mypath = $MyInvocation.MyCommand.Path
 Write-Output $myPath
 $myDir = Split-Path $mypath -Parent
@@ -41,3 +42,4 @@ cd $topDir/cwipc_realsense2/python
 cd $topDir/cwipc_kinect/python
 & python -m pip install -e .
 cd $topDir
+Pop-Location
