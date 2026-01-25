@@ -8,3 +8,4 @@ rm -rf ${ORBBECSDK}
 unzip ${ORBBECSDK}.zip
 rm -f orbbecsdk
 ln -s ${ORBBECSDK} orbbecsdk
+bash orbbecsdk/setup.sh
