@@ -27,7 +27,13 @@ jobs:
           VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/cwi-dis/index.json,readwrite"
           VCPKG_DEFAULT_TRIPLET: x64-windows-release
           VCPKG_INSTALL_OPTIONS: --x-abi-tools-use-exact-versions --debug
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_REF_NAME_SAFE: unknown
         steps:
+        - name: Santize ref name
+          shell: bash
+          run: |
+                echo "GITHUB_REF_NAME_SAFE=${GITHUB_REF_NAME/\//-}" >> $GITHUB_ENV
         - name: Checkout code
           uses: actions/checkout@v3
           with:
@@ -140,12 +146,12 @@ jobs:
           shell: bash
           run: |
                 ls -lR installed
-                7z a cwipc_win1064_${{ github.ref_name }}.zip installed
+                7z a cwipc_win1064_${{ env.GITHUB_REF_NAME_SAFE }}.zip installed
         - name: Upload installed folder
           uses: actions/upload-artifact@v4
           with:
-                name: cwipc_win1064_${{ github.ref_name }}.zip
-                path: cwipc_win1064_${{ github.ref_name }}.zip
+                name: cwipc_win1064_${{ env.GITHUB_REF_NAME_SAFE }}.zip
+                path: cwipc_win1064_${{ env.GITHUB_REF_NAME_SAFE }}.zip
         - name: Upload nsis installer
           uses: actions/upload-artifact@v4
           with:
@@ -165,7 +171,14 @@ jobs:
     build-macos:
         name: build-macos
         runs-on: macos-latest
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_REF_NAME_SAFE: ${{ github.ref_name }}
         steps:
+        - name: Santize ref name
+          shell: bash
+          run: |
+                echo "GITHUB_REF_NAME_SAFE=${GITHUB_REF_NAME/\//-}" >> $GITHUB_ENV
         - name: Checkout code
           uses: actions/checkout@v3
           with:
@@ -221,18 +234,25 @@ jobs:
         - name: Capture installed folder as artifact
           shell: bash
           run: |
-                tar -c -v -f cwipc_osx1015_${{ github.ref_name }}.tar.gz -z -C installed .
+                tar -c -v -f cwipc_osx1015_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz -z -C installed .
                 ls -l
         - name: Upload installed folder
           uses: actions/upload-artifact@v4
           with:
-                name: cwipc_osx1015_${{ github.ref_name }}.tar.gz
-                path: cwipc_osx1015_${{ github.ref_name }}.tar.gz
+                name: cwipc_osx1015_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+                path: cwipc_osx1015_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
                 
     build-ubuntu2204:
         name: build-ubuntu2204
         runs-on: ubuntu-22.04
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_REF_NAME_SAFE: ${{ github.ref_name }}
         steps:
+        - name: Santize ref name
+          shell: bash
+          run: |
+                echo "GITHUB_REF_NAME_SAFE=${GITHUB_REF_NAME/\//-}" >> $GITHUB_ENV
         - name: Checkout code
           uses: actions/checkout@v3
           with:
@@ -270,7 +290,7 @@ jobs:
         - name: Create installer
           shell: bash
           run: |
-                cpack --config build/CPackConfig.cmake -D CPACK_DEBIAN_FILE_NAME="cwipc_${{ github.ref_name }}_ubuntu2204_amd64.deb"
+                cpack --config build/CPackConfig.cmake -D CPACK_DEBIAN_FILE_NAME="cwipc_${{ env.GITHUB_REF_NAME_SAFE }}_ubuntu2204_amd64.deb"
                 ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
@@ -291,13 +311,13 @@ jobs:
         - name: Capture installed folder as artifact
           shell: bash
           run: |
-                tar -c -v -f cwipc_ubuntu2204_${{ github.ref_name }}.tar.gz -z -C installed .
+                tar -c -v -f cwipc_ubuntu2204_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz -z -C installed .
                 ls -la
         - name: Upload installed folder
           uses: actions/upload-artifact@v4
           with:
-                name: cwipc_ubuntu2204_${{ github.ref_name }}.tar.gz
-                path: cwipc_ubuntu2204_${{ github.ref_name }}.tar.gz
+                name: cwipc_ubuntu2204_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+                path: cwipc_ubuntu2204_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
         - name: Upload debian package
           uses: actions/upload-artifact@v4
           with:
@@ -319,7 +339,13 @@ jobs:
           VCPKG_EXE: ${{ github.workspace }}/vcpkg/vcpkg
           FEED_URL: https://nuget.pkg.github.com/cwi-dis/index.json
           VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/cwi-dis/index.json,readwrite"
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_REF_NAME_SAFE: ${{ github.ref_name }}
         steps:
+        - name: Santize ref name
+          shell: bash
+          run: |
+                echo "GITHUB_REF_NAME_SAFE=${GITHUB_REF_NAME/\//-}" >> $GITHUB_ENV
         - name: Checkout code
           uses: actions/checkout@v3
           with:
@@ -399,7 +425,7 @@ jobs:
         - name: Create installer
           shell: bash
           run: |
-                cpack --config build/CPackConfig.cmake -D CPACK_PACKAGE_FILE_NAME="cwipc_${{ github.ref_name }}_android_arm64"
+                cpack --config build/CPackConfig.cmake -D CPACK_PACKAGE_FILE_NAME="cwipc_${{ env.GITHUB_REF_NAME_SAFE }}_android_arm64"
                 ls -l build/package
         
         - name: Capture build folder as artifact
@@ -422,7 +448,14 @@ jobs:
     build-ubuntu2404:
         name: build-ubuntu2404
         runs-on: ubuntu-24.04
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_REF_NAME_SAFE: ${{ github.ref_name }}
         steps:
+        - name: Santize ref name
+          shell: bash
+          run: |
+                echo "GITHUB_REF_NAME_SAFE=${GITHUB_REF_NAME/\//-}" >> $GITHUB_ENV
         - name: Checkout code
           uses: actions/checkout@v3
           with:
@@ -457,7 +490,7 @@ jobs:
         - name: Create installer
           shell: bash
           run: |
-                cpack --config build/CPackConfig.cmake -D CPACK_DEBIAN_FILE_NAME="cwipc_${{ github.ref_name }}_ubuntu2404_amd64.deb"
+                cpack --config build/CPackConfig.cmake -D CPACK_DEBIAN_FILE_NAME="cwipc_${{ env.GITHUB_REF_NAME_SAFE }}_ubuntu2404_amd64.deb"
                 ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
@@ -478,13 +511,13 @@ jobs:
         - name: Capture installed folder as artifact
           shell: bash
           run: |
-                tar -c -v -f cwipc_ubuntu2404_${{ github.ref_name }}.tar.gz -z -C installed .
+                tar -c -v -f cwipc_ubuntu2404_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz -z -C installed .
                 ls -la
         - name: Upload installed folder
           uses: actions/upload-artifact@v4
           with:
-                name: cwipc_ubuntu2404_${{ github.ref_name }}.tar.gz
-                path: cwipc_ubuntu2404_${{ github.ref_name }}.tar.gz
+                name: cwipc_ubuntu2404_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+                path: cwipc_ubuntu2404_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
         - name: Upload debian package
           uses: actions/upload-artifact@v4
           with:
@@ -508,7 +541,14 @@ jobs:
             - build-ubuntu2204
             - build-ubuntu2404
             - build-android
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_REF_NAME_SAFE: ${{ github.ref_name }}
         steps:
+        - name: Santize ref name
+          shell: bash
+          run: |
+                echo "GITHUB_REF_NAME_SAFE=${GITHUB_REF_NAME/\//-}" >> $GITHUB_ENV
         - name: Checkout code
           uses: actions/checkout@v2
           with:
@@ -529,23 +569,23 @@ jobs:
           shell: bash
           run: |
                 mkdir ../Assets
-                tar -c -f ../Assets/${{ github.ref_name }}-complete.tar.gz --exclude-vcs .
-                zip -x '*.git*' -r ../Assets/${{ github.ref_name }}-complete.zip .
+                tar -c -f ../Assets/${{ env.GITHUB_REF_NAME_SAFE }}-complete.tar.gz --exclude-vcs .
+                zip -x '*.git*' -r ../Assets/${{ env.GITHUB_REF_NAME_SAFE }}-complete.zip .
                 awk '/^## /{if(flag){exit}; flag=1} flag' CHANGELOG.md > ../Assets/changes.md
         - name: Download Windows installed folder
           uses: actions/download-artifact@v4
           with:
-                name: cwipc_win1064_${{ github.ref_name }}.zip
+                name: cwipc_win1064_${{ env.GITHUB_REF_NAME_SAFE }}.zip
                 path: ../Assets/
         - name: Download MacOS installed folder
           uses: actions/download-artifact@v4
           with:
-                name: cwipc_osx1015_${{ github.ref_name }}.tar.gz
+                name: cwipc_osx1015_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
                 path: ../Assets/
         - name: Download Ubuntu 22.04 installed folder
           uses: actions/download-artifact@v4
           with:
-                name: cwipc_ubuntu2204_${{ github.ref_name }}.tar.gz
+                name: cwipc_ubuntu2204_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
                 path: ../Assets/
         - name: Download debian package for 22.04
           uses: actions/download-artifact@v4
@@ -555,7 +595,7 @@ jobs:
         - name: Download Ubuntu 24.04 installed folder
           uses: actions/download-artifact@v4
           with:
-                name: cwipc_ubuntu2404_${{ github.ref_name }}.tar.gz
+                name: cwipc_ubuntu2404_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
                 path: ../Assets/
         - name: Download debian package for 24.04
           uses: actions/download-artifact@v4
@@ -602,7 +642,7 @@ jobs:
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
             asset_path: ${{ env.windows_exe_path }}
-            asset_name: cwipc-win1064-${{ github.ref_name }}.exe
+            asset_name: cwipc-win1064-${{ env.GITHUB_REF_NAME_SAFE }}.exe
             asset_content_type: application/gzip
 
         - name: Upload Ubuntu 22.04 debian package
@@ -612,7 +652,7 @@ jobs:
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
             asset_path: ${{ env.ubuntu2204_deb_path }}
-            asset_name: cwipc-ubuntu2204-${{ github.ref_name }}.deb
+            asset_name: cwipc-ubuntu2204-${{ env.GITHUB_REF_NAME_SAFE }}.deb
             asset_content_type: application/gzip
 
         - name: Upload Ubuntu 24.04 debian package
@@ -622,7 +662,7 @@ jobs:
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
             asset_path: ${{ env.ubuntu2404_deb_path }}
-            asset_name: cwipc-ubuntu2404-${{ github.ref_name }}.deb
+            asset_name: cwipc-ubuntu2404-${{ env.GITHUB_REF_NAME_SAFE }}.deb
             asset_content_type: application/gzip
 
         - name: Upload complete source (gzipped tar)
@@ -631,8 +671,8 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/${{ github.ref_name }}-complete.tar.gz
-            asset_name: cwipc-${{ github.ref_name }}-source-including-submodules.tar.gz
+            asset_path: ../Assets/${{ env.GITHUB_REF_NAME_SAFE }}-complete.tar.gz
+            asset_name: cwipc-${{ env.GITHUB_REF_NAME_SAFE }}-source-including-submodules.tar.gz
             asset_content_type: application/zip
 
         - name: Upload Android package
@@ -641,8 +681,8 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/cwipc_${{ github.ref_name }}_android_arm64.tar.gz
-            asset_name: cwipc_${{ github.ref_name }}_android_arm64.tar.gz
+            asset_path: ../Assets/cwipc_${{ env.GITHUB_REF_NAME_SAFE }}_android_arm64.tar.gz
+            asset_name: cwipc_${{ env.GITHUB_REF_NAME_SAFE }}_android_arm64.tar.gz
             asset_content_type: application/zip
         - name: Upload complete source (zip)
           uses: actions/upload-release-asset@v1
@@ -650,8 +690,8 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/${{ github.ref_name }}-complete.zip
-            asset_name: cwipc-${{ github.ref_name }}-source-including-submodules.zip
+            asset_path: ../Assets/${{ env.GITHUB_REF_NAME_SAFE }}-complete.zip
+            asset_name: cwipc-${{ env.GITHUB_REF_NAME_SAFE }}-source-including-submodules.zip
             asset_content_type: application/zip
         - name: Upload Windows installed folder
           uses: actions/upload-release-asset@v1
@@ -659,8 +699,8 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/cwipc_win1064_${{ github.ref_name }}.zip
-            asset_name: cwipc-win10-${{ github.ref_name }}-built.zip
+            asset_path: ../Assets/cwipc_win1064_${{ env.GITHUB_REF_NAME_SAFE }}.zip
+            asset_name: cwipc-win10-${{ env.GITHUB_REF_NAME_SAFE }}-built.zip
             asset_content_type: application/zip
         - name: Upload MacOS installed folder
           uses: actions/upload-release-asset@v1
@@ -668,8 +708,8 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/cwipc_osx1015_${{ github.ref_name }}.tar.gz
-            asset_name: cwipc-macos1014-intel-${{ github.ref_name }}-built.tar.gz
+            asset_path: ../Assets/cwipc_osx1015_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+            asset_name: cwipc-macos1014-intel-${{ env.GITHUB_REF_NAME_SAFE }}-built.tar.gz
             asset_content_type: application/gzip
         - name: Upload Ubuntu 22.04 installed folder
           uses: actions/upload-release-asset@v1
@@ -677,8 +717,8 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/cwipc_ubuntu2204_${{ github.ref_name }}.tar.gz
-            asset_name: cwipc-ubuntu2204-${{ github.ref_name }}-built.tar.gz
+            asset_path: ../Assets/cwipc_ubuntu2204_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+            asset_name: cwipc-ubuntu2204-${{ env.GITHUB_REF_NAME_SAFE }}-built.tar.gz
             asset_content_type: application/gzip
         - name: Upload Ubuntu 24.04 installed folder
           uses: actions/upload-release-asset@v1
@@ -686,6 +726,6 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/cwipc_ubuntu2404_${{ github.ref_name }}.tar.gz
-            asset_name: cwipc-ubuntu2404-${{ github.ref_name }}-built.tar.gz
+            asset_path: ../Assets/cwipc_ubuntu2404_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+            asset_name: cwipc-ubuntu2404-${{ env.GITHUB_REF_NAME_SAFE }}-built.tar.gz
             asset_content_type: application/gzip
