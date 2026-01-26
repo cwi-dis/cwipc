@@ -51,8 +51,7 @@ jobs:
             python-version: '3.12'
         - name: Install OrbbecSDK
           shell: pwsh
-          run: |
-                &scripts\install-orbbec-sdk-win1064.ps1
+          run: ./scripts/install-orbbecsdk-win1064.ps1
         - name: Bootstrap vcpkg
           shell: pwsh
           run: ${{ github.workspace }}/vcpkg/bootstrap-vcpkg.bat
@@ -190,8 +189,7 @@ jobs:
             HOMEBREW_NO_VERIFY_ATTESTATIONS: "1"
         - name: Install OrbbecSDK
           shell: bash
-          run: |
-                scripts/install-orbbec-sdk-osx.sh
+          run: ./scripts/install-orbbecsdk-osx.sh
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           with:
@@ -470,8 +468,7 @@ jobs:
           run: ./scripts/install-3rdparty-ubuntu2404.sh
         - name: Install OrbbecSDK
           shell: bash
-          run: |
-                scripts/install-orbbec-sdk-osx.sh
+          run: ./scripts/install-orbbecsdk-ubuntu2404.sh
         - name: Build & Test
           uses: ashutoshvarma/action-cmake-build@master
           with:
