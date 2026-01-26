@@ -1,5 +1,9 @@
 cmake_policy(SET CMP0074 NEW)
-#cmake_policy(SET CMP0177 NEW)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.31.0")
+	# Unfortunately Ubuntu 24.04 LTS ships with CMake 3.22, so we cannot require 3.31 yet.
+	# We just hope this policy isn't too important.
+	cmake_policy(SET CMP0177 NEW)
+endif()
 #
 # Create venv if not done already
 #
