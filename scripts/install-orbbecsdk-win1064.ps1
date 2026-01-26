@@ -9,7 +9,9 @@ $THIRDPARTY = Join-Path $CWIPCPATH 3rdparty_installed
 $ZIPPATH = Join-Path $THIRDPARTY $ZIPFILE
 New-Item -ItemType Directory -Force -Path $THIRDPARTY
 Push-Location $THIRDPARTY
-Remove-Item orbbecsdk -Recurse -Force
+if (Test-Path orbbecsdk) {
+    Remove-Item orbbecsdk -Recurse -Force
+}
 (New-Object System.Net.WebClient).DownloadFile($URL, $ZIPPATH)
 Expand-Archive -LiteralPath $ZIPPATH -DestinationPath orbbecsdk
 Pop-Location
