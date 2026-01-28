@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [unreleased]
+
+We are preparing for an 8.0 release. The API is in flux.
+
+### Added
+
+- Experimental capturer for Orbbec Femto Mega cameras has been added (#113)
+
+### Changed
+
+- Internal structure of capturer implementations has been streamlined (#258)
+
+### Removed
+
+- Support for `cameraconfig.xml` files has been removed.
+
 ## [7.7.5] - 2025-11-21
 
 - Fixed issue where Windows installer could not add cwipc to PATH environment variable.
