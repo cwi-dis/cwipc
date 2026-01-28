@@ -194,6 +194,18 @@ if(CWIPC_WITH_ORBBEC)
 	find_package(OrbbecSDK)
 endif()
 
+add_test(NAME cwipc_setup_venv_with_cwipc
+	COMMAND ${Python3_EXECUTABLE} -m pip install --editable
+	${CMAKE_CURRENT_SOURCE_DIR}/cwipc_util/python
+	${CMAKE_CURRENT_SOURCE_DIR}/cwipc_codec/python
+	$<$<BOOL:${CWIPC_WITH_REALSENSE}>:${CMAKE_CURRENT_SOURCE_DIR}/cwipc_realsense2/python>
+	$<$<BOOL:${CWIPC_WITH_KINECT}>:${CMAKE_CURRENT_SOURCE_DIR}/cwipc_kinect/python>
+	$<$<BOOL:${CWIPC_WITH_ORBBEC}>:${CMAKE_CURRENT_SOURCE_DIR}/cwipc_orbbec/python>
+	WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+
+)
+set_tests_properties(cwipc_setup_venv_with_cwipc PROPERTIES FIXTURES_SETUP venv_with_cwipc)
+
 add_subdirectory("cwipc_util")
 add_subdirectory("cwipc_codec")
 if(REALSENSE2_FOUND)
