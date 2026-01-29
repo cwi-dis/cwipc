@@ -344,9 +344,9 @@ Some issues can then be debugged with the C or C++ command line utilities (by pu
 
 Many issues are easier to debug with the Python scripts. There are some hooks in place to help with this.
 
-All Python scripts accept a `--pausefordebug` command line option. This will pause the script at begin of run (and end of run), waiting for you to press `Y`. While the script is paused you can obtain the process ID and attach the vscode Python or C/C++ debugger to the process.
+All Python scripts accept a `--debugpy` command line option. This will pause the script at begin of run and you can attach the vscode Python debugger to the process.
 
-> For some cases, such as debugging an installed cwipc, the Python scripts also accept a `--debuglibrary NAME=PATH` argument, for example `--debuglibrary cwipc_util=/tmp/libcwipc_util.dylib` to load the given cwipc library from the given path. This allows you to load the library that you have just built so you can set breakpoints in the library code.
+All Python scripts also accept a `--pausefordebug` command line option. This will pause the script at begin of run (and end of run), waiting for you to press `Y`. While the script is paused you can obtain the process ID and attach the vscode C/C++ debugger to the process.
 
 The Python unittests can also be run individually after running the `activate` script above.
 
