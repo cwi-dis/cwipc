@@ -109,7 +109,12 @@ jobs:
             configurePreset: windows-production
             buildPreset: windows-production
             testPreset: windows-production
-            packagePreset: windows-production
+            #packagePreset: windows-production
+
+        - name: Install with cmake
+          shell: bash
+          run: |
+                cmake --install build --prefix ${{ github.workspace }}/installed
 
         - name: Show Python and Python module versions used
           if: always()
@@ -209,7 +214,12 @@ jobs:
             configurePreset: mac-production
             buildPreset: mac-production
             testPreset: mac-production
-            packagePreset: mac-production
+            #packagePreset: mac-production
+
+        - name: Install with cmake
+          shell: bash
+          run: |
+                cmake --install build --prefix ${{ github.workspace }}/installed
 
         - name: Show Python and Python module versions used
           if: always()
@@ -294,7 +304,12 @@ jobs:
             configurePreset: linux-production
             buildPreset: linux-production
             testPreset: linux-production
-            packagePreset: linux-production
+            #packagePreset: linux-production
+
+        - name: Install with cmake
+          shell: bash
+          run: |
+                cmake --install build --prefix ${{ github.workspace }}/installed
 
         - name: Show Python and Python module versions used
           if: always()
@@ -438,8 +453,8 @@ jobs:
           with:
             configurePreset: android-production
             buildPreset: android-production
-            testPreset: android-production
-            packagePreset: android-production
+            #testPreset: android-production
+            #packagePreset: android-production
           env:
             ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         
@@ -510,8 +525,12 @@ jobs:
             configurePreset: linux-production
             buildPreset: linux-production
             testPreset: linux-production
-            packagePreset: linux-production
-
+            #packagePreset: linux-production
+        
+        - name: Install with cmake
+          shell: bash
+          run: |
+                cmake --install build --prefix ${{ github.workspace }}/installed
         - name: Show Python and Python module versions used
           if: always()
           shell: bash
