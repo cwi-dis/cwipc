@@ -94,18 +94,22 @@ jobs:
           run: |
                $env:path -split ";"
 
-          
-        - name: Build & Test
-          uses: ashutoshvarma/action-cmake-build@master
+
+        - name: Install CMake
+          uses: lukka/get-cmake@latest
           with:
-                build-dir: ${{ github.workspace }}/build
-                configure-options: --preset windows-production -Wno-dev
-                build-options: --preset windows-production
-                build-type: Release
-                run-test: true
-                install-build: true
-                install-options: --prefix ${{ github.workspace }}/installed
-                ctest-options: -E cwipc_(codec|kinect)_python_tests
+            cmakeVersion: "~3.31.1"
+        
+        - name: Setup vcpkg
+          uses: lukka/run-vcpkg@v11
+            
+        - name: CMake configure, build vcpkg packages, build & test
+          uses: lukka/run-cmake@v10
+          with:
+            configurePreset: windows-production
+            buildPreset: windows-production
+            testPreset: windows-production
+            packagePreset: windows-production
 
         - name: Show Python and Python module versions used
           if: always()
@@ -190,15 +194,23 @@ jobs:
         - name: Install OrbbecSDK
           shell: bash
           run: ./scripts/install-orbbecsdk-osx.sh
-        - name: Build & Test
-          uses: ashutoshvarma/action-cmake-build@master
+        - name: Install CMake
+          uses: lukka/get-cmake@latest
           with:
-                build-dir: ${{ github.workspace }}/build
-                configure-options: --preset mac-production -Wno-dev 
-                build-options: --preset mac-production
-                run-test: true
-                install-build: true
-                install-options: --prefix ${{ github.workspace }}/installed
+            cmakeVersion: "~3.31.1"
+        
+        - name: Setup vcpkg
+          uses: lukka/run-vcpkg@v11
+          if: false
+            
+        - name: CMake configure, build vcpkg packages, build & test
+          uses: lukka/run-cmake@v10
+          with:
+            configurePreset: mac-production
+            buildPreset: mac-production
+            testPreset: mac-production
+            packagePreset: mac-production
+
         - name: Show Python and Python module versions used
           if: always()
           shell: bash
@@ -267,15 +279,23 @@ jobs:
         - name: Install dependencies
           shell: bash
           run: ./scripts/install-3rdparty-ubuntu2204.sh
-        - name: Build & Test
-          uses: ashutoshvarma/action-cmake-build@master
+        - name: Install CMake
+          uses: lukka/get-cmake@latest
           with:
-                build-dir: ${{ github.workspace }}/build
-                configure-options: --preset linux-production -Wno-dev 
-                build-options: --preset linux-production
-                run-test: true
-                install-build: true
-                install-options: --prefix ${{ github.workspace }}/installed
+            cmakeVersion: "~3.31.1"
+        
+        - name: Setup vcpkg
+          uses: lukka/run-vcpkg@v11
+          if: false
+            
+        - name: CMake configure, build vcpkg packages, build & test
+          uses: lukka/run-cmake@v10
+          with:
+            configurePreset: linux-production
+            buildPreset: linux-production
+            testPreset: linux-production
+            packagePreset: linux-production
+
         - name: Show Python and Python module versions used
           if: always()
           shell: bash
@@ -405,17 +425,23 @@ jobs:
               setapikey "${{ github.token }}" \
               -Source "${{ env.FEED_URL }}"
 
-        - name: Build & Test
-          uses: ashutoshvarma/action-cmake-build@master
+        - name: Install CMake
+          uses: lukka/get-cmake@latest
           with:
-                build-dir: ${{ github.workspace }}/build
-                configure-options: --preset android-production -Wno-dev 
-                build-options: --preset android-production
-                run-test: false
-                install-build: false
-                install-options: --prefix ${{ github.workspace }}/installed
+            cmakeVersion: "~3.31.1"
+        
+        - name: Setup vcpkg
+          uses: lukka/run-vcpkg@v11
+            
+        - name: CMake configure, build vcpkg packages, build & test
+          uses: lukka/run-cmake@v10
+          with:
+            configurePreset: android-production
+            buildPreset: android-production
+            testPreset: android-production
+            packagePreset: android-production
           env:
-                ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+            ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         
         - name: Create installer
           shell: bash
@@ -469,15 +495,23 @@ jobs:
         - name: Install OrbbecSDK
           shell: bash
           run: ./scripts/install-orbbecsdk-ubuntu2404.sh
-        - name: Build & Test
-          uses: ashutoshvarma/action-cmake-build@master
+        - name: Install CMake
+          uses: lukka/get-cmake@latest
           with:
-                build-dir: ${{ github.workspace }}/build
-                configure-options: --preset linux-production -Wno-dev 
-                build-options: --preset linux-production
-                run-test: true
-                install-build: true
-                install-options: --prefix ${{ github.workspace }}/installed
+            cmakeVersion: "~3.31.1"
+        
+        - name: Setup vcpkg
+          uses: lukka/run-vcpkg@v11
+          if: false
+            
+        - name: CMake configure, build vcpkg packages, build & test
+          uses: lukka/run-cmake@v10
+          with:
+            configurePreset: linux-production
+            buildPreset: linux-production
+            testPreset: linux-production
+            packagePreset: linux-production
+
         - name: Show Python and Python module versions used
           if: always()
           shell: bash
