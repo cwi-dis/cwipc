@@ -12,14 +12,17 @@ We are preparing for an 8.0 release. The API is in flux.
 ### Added
 
 - Experimental capturer for Orbbec Femto Mega cameras has been added (#113)
+- Recordings through `cameraconfig.json` now automatically get a correct `cameraconfig.json` themselves. (#263)
 
 ### Changed
 
 - Internal structure of capturer implementations has been streamlined (#258)
+- New cwipc_activesource (replacing cwipc_tiledsource) for capturers and such. You must can start() before reading from these. (#279, #262)
 
 ### Removed
 
 - Support for `cameraconfig.xml` files has been removed.
+- Support for Certh capturer has been removed.
 
 ## [7.7.5] - 2025-11-21
 
