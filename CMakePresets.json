@@ -200,7 +200,7 @@
   "testPresets" : [
   	{
   		"name" : "windows-production",
-  		"configurePreset" : "windows",
+  		"configurePreset" : "windows-production",
   		"configuration" : "Release",
 		"condition": {
 			"type": "equals",
@@ -210,7 +210,7 @@
   	},
 	{
   		"name" : "windows-develop",
-  		"configurePreset" : "windows",
+  		"configurePreset" : "windows-develop",
   		"configuration" : "RelWithDebInfo",
 		"condition": {
 			"type": "equals",
