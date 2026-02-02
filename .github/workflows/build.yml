@@ -114,7 +114,7 @@ jobs:
         - name: Install with cmake
           shell: bash
           run: |
-                cmake --install build --prefix ${{ github.workspace }}/installed
+                cmake --install build --prefix '${{ github.workspace }}/installed'
 
         - name: Show Python and Python module versions used
           if: always()
