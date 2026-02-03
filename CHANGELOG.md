@@ -17,7 +17,8 @@ We are preparing for an 8.0 release. The API is in flux.
 
 ### Changed
 
-- New cwipc_activesource (replacing cwipc_tiledsource) for capturers and such. You must can start() before reading from these. (#279, #262)
+- Pointcloud objects are now named `cwipc_pointcloud`. External C function names adapted too. (#276)
+- New cwipc_activesource (replacing cwipc_tiledsource) for capturers and such. You must call start() before reading from these. (#279, #262)
 - New name "metadata" used for "auxdata" and "auxiliary_data". (#281)
 - Internal structure of capturer implementations has been streamlined (#258, #278)
 
