@@ -88,19 +88,15 @@ This tool is not for the faint of heart, but it allows you to trace each and eve
 
 ### Linux
 
-The installer is currently available for Ubuntu 24.04 and 22.04.
-
-> Note that some packages are missing for 24.04. Specifically, the Kinect capturer cannot be used because the needed SDK from Microsoft is not available, and probably will never be made available because the Kinect is no longer supported by Microsoft.
-> 
-> Also, the Realsense SDK is not yet available for 24.04, but this is expected to be fixed in the next month or so. So essentially you will have no access to any cameras when using 24.04.
+The installer is currently available for Ubuntu 24.04.
 
 Download the debian package for the most recent cwipc release from <https://github.com/cwi-dis/cwipc/releases/latest>.
 
 Install from the command line with `sudo apt install ./yourpackagename.deb`.
 
-The Kinect and Realsense SDKs will not be automatically installed, because they come from different repositories and not from the standard Ubuntu/Debian repositories. 
+The Realsense SDK will not be automatically installed, because they come from different repositories and not from the standard Ubuntu/Debian repositories. 
 
-Inspect `/usr/share/cwipc/scripts/install-3rdparty-ubuntu2204.sh` to see how to install them.
+Inspect `/usr/share/cwipc/scripts/install-3rdparty-ubuntu2404.sh` to see how to install it.
 
 ### Mac
 
@@ -289,7 +285,7 @@ But you may have to run the script `scripts/install-3rdparty-full-win1064.ps1` i
 
 #### Linux
 
-There is a script `scripts/install-thirdparty-ubuntu2204.sh` that installs all requirements on Ubuntu 22.04. Similar for 24.04. For other Linux variants please inspect this script and ensure the correct packages are installed.
+There is a script `scripts/install-thirdparty-ubuntu2404.sh` that installs all requirements on Ubuntu 24.04. For other Linux variants please inspect this script and ensure the correct packages are installed.
 
 #### MacOS
 
