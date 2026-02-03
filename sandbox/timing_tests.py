@@ -10,7 +10,7 @@ GENERATE_POINTCOUNT=1000000
 class TimingTest:
 
     def __init__(self, testfile : Optional[str] = None):
-        self.pc : Optional[cwipc.cwipc_wrapper] = None
+        self.pc : Optional[cwipc.cwipc_pointcloud_wrapper] = None
         if testfile:
             self.time_test_readfile(testfile)
         else:
