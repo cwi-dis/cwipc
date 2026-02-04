@@ -17,9 +17,7 @@ class TimingTest:
             self.time_test_generate()
 
     def __del__(self):
-        if self.pc:
-            self.pc.free()
-            self.pc = None
+        self.pc = None
 
     def _time(self) -> float:
         return time.perf_counter()
@@ -28,9 +26,6 @@ class TimingTest:
         start_time = self._time()
         count = 0
         while True:
-            if self.pc != None:
-                self.pc.free()
-                self.pc = None
             self.pc = cwipc.cwipc_read(filename, 0)
             count += 1
             assert self.pc
@@ -48,9 +43,7 @@ class TimingTest:
         count = 0
         gen = cwipc.cwipc_synthetic(0, GENERATE_POINTCOUNT)
         while True:
-            if self.pc != None:
-                self.pc.free()
-                self.pc = None
+            self.pc = None
             available = gen.available(True)
             assert available
             self.pc = gen.get()
@@ -234,7 +227,6 @@ class TimingTest:
             points = self.pc.get_points()
             new_pc = cwipc.cwipc_from_points(points, 0)
             assert new_pc.count() == self.pc.count()
-            self.pc.free()
             self.pc = new_pc
             count += 1
             duration = self._time() - start_time
@@ -254,7 +246,6 @@ class TimingTest:
             packet = self.pc.get_packet()
             new_pc = cwipc.cwipc_from_packet(packet)
             assert new_pc.count() == self.pc.count()
-            self.pc.free()
             self.pc = new_pc
             count += 1
             duration = self._time() - start_time
@@ -278,7 +269,6 @@ class TimingTest:
             numpy_array = self.pc.get_numpy_array()
             new_pc = cwipc.cwipc_from_numpy_array(numpy_array, 0)
             assert new_pc.count() == self.pc.count()
-            self.pc.free()
             self.pc = new_pc
             count += 1
             duration = self._time() - start_time
@@ -302,7 +292,6 @@ class TimingTest:
             numpy_matrix = self.pc.get_numpy_matrix()
             new_pc = cwipc.cwipc_from_numpy_matrix(numpy_matrix, 0)
             assert new_pc.count() == self.pc.count()
-            self.pc.free()
             self.pc = new_pc
             count += 1
             duration = self._time() - start_time
@@ -326,7 +315,6 @@ class TimingTest:
             o3d_pointcloud = self.pc.get_o3d_pointcloud()
             new_pc = cwipc.cwipc_from_o3d_pointcloud(o3d_pointcloud, 0)
             assert new_pc.count() == self.pc.count()
-            self.pc.free()
             self.pc = new_pc
             count += 1
             duration = self._time() - start_time

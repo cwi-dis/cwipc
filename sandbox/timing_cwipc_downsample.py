@@ -12,7 +12,6 @@ pccount = 0
 for i in range(count):
     pc2 = cwipc.cwipc_downsample(pc, cellsize)
     pccount = pc2.count()
-    pc2.free()
 t1 = time.time()
 dt = t1 - t0
 print(f"Downsampled {count} times to {cellsize} in {dt:.3f} seconds, {dt/count:.3f} s each, {pccount} points")
