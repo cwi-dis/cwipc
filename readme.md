@@ -133,7 +133,28 @@ After installation you have a set of command line utilities that you can use fro
 
 Initial documentation on setting up your cameras can be found in [Setting up your cameras](doc/registration.md).
 
+### Environment variables
+
+There are various environment variables that influence `cwipc`:
+
+- `CWIPC_LOGGING` can override the default logging (warning and error only, to stderr, unless captured by the application). Can be specified as `CWIPC_LOGGING=TRACE` to change only the level, or `CWIPC_LOGGING=DEBUG:path/to/output/file.txt`.
+- (Windows-only) `CWIPC_LIBRARY_DIR` can be set to the directory that contains the `cwipc` runtime DLLs and their dependencies to help the Python packages find it.
+  - On Mac and Linux this is only partially implemented but probably not needed: the dynamic loader `rpath` feature should take care of it.
+- `_CWIPC_DEBUG_DLL_SEARCH_PATH` can be set to print some debug output if the Python packages fail to find the correct `cwipc` installation.
+- `EDITOR` is used by some tools if they allow the user to edit something (such as a config file)
+- `SIGNALS_SMD_PATH` can be used with the low-latency DASH support to indicate where the `lldash` runtime DLLs are.
+- `LLDASH_LOGGING` can be set to get more verbose logging from `lldash`.
+
+Only for building `cwipc`:
+
+- `CWIPC_VERSION` can set the version string.
+- `CWIPC_TEST_HAVE_KINECT_HARDWARE` can be set to run the tests that require Azure Kinect hardware.
+- `CWIPC_TEST_HAVE_ORBBEC_HARDWARE` can be set to run the tests that require Orbbec hardware.
+- `CWIPC_TEST_HAVE_REALSENSE2_HARDWARE` can be set to run the tests that require Realsense2 hardware.
+
 ### Command line
+
+> This section is outdated. The new main command line tool is `cwipc` which has all the others as sub-commands (think similar to `git`).
 
 Better documentation will be forthcoming. For now: run the program with `--help` argument. The main programs are:
 
