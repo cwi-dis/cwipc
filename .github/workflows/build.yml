@@ -511,7 +511,7 @@ jobs:
           shell: bash
           run: |
                 mkdir ../Assets
-                tar -c -f ../Assets/${{ env.GITHUB_REF_NAME_SAFE }}-complete.tar.gz --exclude-vcs .
+                tar -czf ../Assets/${{ env.GITHUB_REF_NAME_SAFE }}-complete.tar.gz --exclude-vcs .
                 zip -x '*.git*' -r ../Assets/${{ env.GITHUB_REF_NAME_SAFE }}-complete.zip .
                 awk '/^## /{if(flag){exit}; flag=1} flag' CHANGELOG.md > ../Assets/changes.md
         - name: Download Windows installed folder
