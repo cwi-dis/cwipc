@@ -251,7 +251,7 @@ jobs:
         - name: Capture installed folder as artifact
           shell: bash
           run: |
-                tar -c -v -f cwipc_osx1015_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz -z -C installed .
+                tar cvfz cwipc_osx1015_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz -C installed .
                 ls -l
         - name: Upload installed folder
           uses: actions/upload-artifact@v4
@@ -461,7 +461,7 @@ jobs:
         - name: Capture installed folder as artifact
           shell: bash
           run: |
-                tar -c -v -f cwipc_ubuntu2404_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz -z -C installed .
+                tar cvfz cwipc_ubuntu2404_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz -C installed .
                 ls -la
         - name: Upload installed folder
           uses: actions/upload-artifact@v4
@@ -511,7 +511,7 @@ jobs:
           shell: bash
           run: |
                 mkdir ../Assets
-                tar -czf ../Assets/${{ env.GITHUB_REF_NAME_SAFE }}-complete.tar.gz --exclude-vcs .
+                tar cfz ../Assets/${{ env.GITHUB_REF_NAME_SAFE }}-complete.tar.gz --exclude-vcs .
                 zip -x '*.git*' -r ../Assets/${{ env.GITHUB_REF_NAME_SAFE }}-complete.zip .
                 awk '/^## /{if(flag){exit}; flag=1} flag' CHANGELOG.md > ../Assets/changes.md
         - name: Download Windows installed folder
