@@ -1,0 +1,172 @@
+{
+  "camera": [
+    {
+      "disabled": false,
+      "serial": "000174202712",
+      "trafo": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "type": "kinect_playback"
+    },
+    {
+      "disabled": false,
+      "serial": "000403700112",
+      "trafo": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "type": "kinect_playback"
+    },
+    {
+      "disabled": false,
+      "serial": "000074302712",
+      "trafo": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "type": "kinect_playback"
+    },
+    {
+      "disabled": false,
+      "serial": "000106702712",
+      "trafo": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "type": "kinect_playback"
+    }
+  ],
+  "filtering": {
+    "do_threshold": true,
+    "map_color_to_depth": false,
+    "threshold_far": 6.0,
+    "threshold_near": 0.15
+  },
+  "hardware": {
+    "color_brightness": 128,
+    "color_contrast": 5,
+    "color_exposure_time": 33330,
+    "color_gain": 128,
+    "color_height": 720,
+    "color_mjpeg": true,
+    "color_powerline_frequency": 2,
+    "color_saturation": 32,
+    "color_whitebalance": 3100,
+    "depth_height": 576,
+    "fps": 5
+  },
+  "processing": {
+    "depth_x_erosion": 0,
+    "depth_y_erosion": 0,
+    "greenscreenremoval": false,
+    "height_max": 0.0,
+    "height_min": 0.0,
+    "radius_filter": 0.0
+  },
+  "skeleton": {
+    "model_path": "",
+    "processing_mode": -1,
+    "sensor_orientation": -1
+  },
+  "sync": {
+    "ignore_sync": false,
+    "sync_master_serial": "000074302712"
+  },
+  "system": {
+    "debug": true,
+    "new_timestamps": false,
+    "record_to_directory": "",
+    "single_tile": -1
+  },
+  "type": "kinect_playback",
+  "version": 5
+}
