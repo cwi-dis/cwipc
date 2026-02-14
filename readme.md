@@ -268,7 +268,7 @@ git lfs pull
 
 ### Download source archive
 
-Full source releases (including submodules) are available at  <https://github.com/cwi-dis/cwipc/releases>, as assets with names like `cwipc-`_version_`-source-including-submodules`. Available as gzipped tar or zip, the contents are identical. Download and extract.
+Full source releases (including submodules) are available at  <https://github.com/cwi-dis/cwipc/releases>, as assets with names like `cwipc-fullsource-`_version_``. Available as gzipped tar or zip, the contents are identical. Download and extract.
 
 Note that you do _not_ want to download the standard source archives: they do not contain the submodules.
 
