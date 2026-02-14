@@ -542,7 +542,7 @@ jobs:
         - name: Download Ubuntu 24.04 installed folder
           uses: actions/download-artifact@v4
           with:
-                name: cwipc-ubuntu2404-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz.tar.gz
+                name: cwipc-ubuntu2404-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
                 path: ../Assets/
         - name: Download debian package for 24.04
           uses: actions/download-artifact@v4
