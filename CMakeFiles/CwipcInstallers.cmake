@@ -11,9 +11,11 @@ elseif(UNIX)
     set(CPACK_SOURCE_GENERATOR TGZ)
     set(_debdir "${CMAKE_CURRENT_LIST_DIR}/CwipcInstallers-debian")
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Jack Jansen")
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "python3-pip, libc6 (>= 2.34), libgcc-s1 (>= 3.0), libglfw3 (>= 3.0), libglu1-mesa | libglu1, libjpeg8 (>= 8c), liblz4-1 (>= 0.0~r130), libopencv-core4.5d (>= 4.5.4+dfsg), libopencv-imgproc4.5d (>= 4.5.4+dfsg), libopengl0, libpcl-common1.12 (>= 1.12.1+dfsg), libpcl-io1.12 (>= 1.12.1+dfsg), libstdc++6 (>= 12), libturbojpeg")
-    set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "libk4a1.3 (= 1.3.0), libk4abt1.0 (= 1.0.0), librealsense2 (>= 2.50.0)")
+    # Enable this line to auto-detect dependencies (see toplevel readme):
     #set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS YES)
+    # Enable these two lines after you have found the dependencies:
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "python3-pip, libc6 (>= 2.38), libegl1, libgcc-s1 (>= 3.0), libglfw3 (>= 3.0), libglu1-mesa | libglu1, libgomp1 (>= 4.9), libjpeg8 (>= 8c), libk4a1.3 (= 1.3.0), libk4abt1.0 (= 1.0.0), liblz4-1 (>= 0.0~r130), libopencv-core406t64 (>= 4.6.0+dfsg), libopencv-imgproc406t64 (>= 4.6.0+dfsg), libopengl0, libpcl-common1.14 (>= 1.14.0+dfsg), libpcl-io1.14 (>= 1.14.0+dfsg), libstdc++6 (>= 13.1), libturbojpeg (>= 1.2.90)")
+    set(CPACK_DEBIAN_PACKAGE_RECOMMENDS " librealsense2 (>= 2.56.5-0~realsense.17055)")
     set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${_debdir}/postinst;${_debdir}/postrm")
     set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
 elseif(WIN32)
