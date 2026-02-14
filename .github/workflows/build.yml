@@ -78,7 +78,7 @@ jobs:
 
         - name: Install thirdparty packages
           shell: pwsh
-          run: scripts\install-3rdparty-full-windows.ps1
+          run: scripts\install-3rdparty-windows.ps1
 
         - name: Install Python packages (Windows)
           shell: bash

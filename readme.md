@@ -302,7 +302,7 @@ Building from source requires `libpcl`, `glfw3`, `jpeg-turbo` and optionally (fo
 ### Windows
 
 When building for Windows most of these will be installed automatically using `vcpkg`.
-But you may have to run the script `scripts/install-3rdparty-full-windows.ps1` in a PowerShell **with Administrator rights** (Note the bold font) if cmake cannot find a correct Python or the Kinect Azure SDK.
+But you may have to run the script `scripts/install-3rdparty-windows.ps1` in a PowerShell **with Administrator rights** (Note the bold font) if cmake cannot find a correct Python or the Kinect Azure SDK.
 
 #### Linux
 
@@ -387,7 +387,7 @@ When creating a new release, ensure the following have been done
 		- Especially watch out for `opencv` and `open3d` which can some times lag 2 Python versions
 	- Add the Python package dependency specifiers again for the currently selected versions.
 	- Update the Python version range in the toplevel `CMakeLists.txt`.
-	- Update `scripts/install-3rdparty-full-windows.ps1` with the best Python version.
+	- Update `scripts/install-3rdparty-windows.ps1` with the best Python version.
 	- Update `scripts/install-3rdparty-macos.sh` with the best Python version.
 	- Check the Ubuntu install-3rdparty scripts for which Python they install.
 	- Check `.github/workflows/build.yml` for the Python versions used.
@@ -406,7 +406,7 @@ When creating a new release, ensure the following have been done
   - Inspect the dependencies that cpack auto-generated.
   - Fix the dependencies and recommendations based on what cpack found.
 
-- `scripts/install-3rdparty-full-windows.ps1` should be updated to download the most recent compatible packages. Go through each of the packages, determine the current version. Uninstall old versions from your build machine. Run the powershell script to test it installs the new packages. Do the build, to ensure it works with the new packages. Test the build to ensure it runs with the new packages.
+- `scripts/install-3rdparty-windows.ps1` should be updated to download the most recent compatible packages. Go through each of the packages, determine the current version. Uninstall old versions from your build machine. Run the powershell script to test it installs the new packages. Do the build, to ensure it works with the new packages. Test the build to ensure it runs with the new packages.
   > Note: the only package that is important here nowadays is Python, because the other other two left here, `k4a` and `k4abt`, are no longer maintained.
 - For Windows and Android, the `vcpkg` dependent packages should all be updated to the most recent version.
 
