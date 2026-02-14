@@ -23,4 +23,5 @@ sudo apt-get install -y libusb-1.0 libusb-dev
 sudo apt-get install -y libglfw3 libglfw3-dev
 sudo apt-get install -y libopencv-dev
 sudo apt-get install -y curl
-sudo apt-get install -y librealsense2-dkms librealsense2-utils librealsense2-dev
+sudo apt-get install -y linux-headers-$(uname -r)
+sudo apt-get install -y llibrealsense2-dkms ibrealsense2-utils librealsense2-dev
