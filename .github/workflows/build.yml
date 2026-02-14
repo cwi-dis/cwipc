@@ -542,7 +542,7 @@ jobs:
         - name: Download Ubuntu 24.04 installed folder
           uses: actions/download-artifact@v4
           with:
-                name: cwipc-ubuntu2404-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+                name: cwipc-ubuntu2404-amd64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
                 path: ../Assets/
         - name: Download debian package for 24.04
           uses: actions/download-artifact@v4
@@ -611,8 +611,8 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/cwipc-ubuntu2404-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
-            asset_name: cwipc-ubuntu2404-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+            asset_path: ../Assets/cwipc-ubuntu2404-amd64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+            asset_name: cwipc-ubuntu2404-amd64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
             asset_content_type: application/gzip
 
         - name: Upload Ubuntu 24.04 debian package
