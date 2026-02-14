@@ -476,7 +476,7 @@ jobs:
           uses: actions/upload-artifact@v4
           with:
                 name: cwipc-ubuntu2404-amd64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
-                path: ccwipc-ubuntu2404-amd64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+                path: cwipc-ubuntu2404-amd64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
         - name: Upload debian package
           uses: actions/upload-artifact@v4
           with:
