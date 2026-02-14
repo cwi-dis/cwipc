@@ -360,7 +360,7 @@ jobs:
         - name: Create installer
           shell: bash
           run: |
-                cpack --config build/CPackConfig.cmake -D CPACK_PACKAGE_FILE_NAME="cwipc_${{ env.GITHUB_REF_NAME_SAFE }}_android_arm64"
+                cpack --config build/CPackConfig.cmake -D CPACK_PACKAGE_FILE_NAME="cwipc-android-arm64-package-${{ env.GITHUB_REF_NAME_SAFE }}"
                 ls -l build/package
         
         - name: Capture build folder as artifact
@@ -377,7 +377,7 @@ jobs:
         - name: Upload installer package
           uses: actions/upload-artifact@v4
           with:
-            name: android-arm64-package
+            name: cwipc-android-arm64-package-${{ env.GITHUB_REF_NAME_SAFE }}
             path: build/package/*.tar.gz
     
     build-ubuntu2404:
@@ -552,7 +552,7 @@ jobs:
         - name: Download Android installer
           uses: actions/download-artifact@v4
           with:
-                name: android-arm64-package
+                name: cwipc-android-arm64-package-${{ env.GITHUB_REF_NAME_SAFE }}
                 path: ../Assets/
         - name: Find Artefact names
           run: |
@@ -611,8 +611,8 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/cwipc_${{ env.GITHUB_REF_NAME_SAFE }}_android_arm64.tar.gz
-            asset_name: cwipc_${{ env.GITHUB_REF_NAME_SAFE }}_android_arm64.tar.gz
+            asset_path: ../Assets/cwipc-android-arm64-package-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+            asset_name: cwipc-android-arm64-package-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
             asset_content_type: application/zip
         - name: Upload complete source (zip)
           uses: actions/upload-release-asset@v1
