@@ -306,13 +306,19 @@ But you may have to run the script `scripts/install-3rdparty-full-windows.ps1` i
 
 #### Linux
 
-There is a script `scripts/install-thirdparty-ubuntu2404.sh` that installs all requirements on Ubuntu 24.04. For other Linux variants please inspect this script and ensure the correct packages are installed.
+There is a script `scripts/install-thirdparty-ubuntu2404.sh` that installs all requirements on Ubuntu 24.04. 
+
+Also run `scripts/install-orbbecsdk-ubuntu2404.sh` if you want to use Orbbec cameras.
+
+For other Linux variants please inspect this script and ensure the correct packages are installed.
 
 #### MacOS
 
-There is a script `scripts/install-thirdparty-osx1015.sh` that installs all requirements on MacOS 10.15 or later. This script requires [HomeBrew](https://brew.sh) and the XCode Command Line Tools. Installing HomeBrew will help you install the command line tools.
+There is a script `scripts/install-thirdparty-macos.sh` that installs all requirements on MacOS 14 or later. This script requires [HomeBrew](https://brew.sh) and the XCode Command Line Tools. Installing HomeBrew will help you install the command line tools.
 
-Also run `scripts/install-orbbecsdk-osx.sh` if you want to use Orbbec cameras.
+Also run `scripts/install-orbbecsdk-macos.sh` if you want to use Orbbec cameras.
+For older versions of MacOS it may be possible to get cwipc working, but it is going to be hard
+work, mainly because of lack of support from _HomeBrew_.
 
 ### Android
 
@@ -382,7 +388,7 @@ When creating a new release, ensure the following have been done
 	- Add the Python package dependency specifiers again for the currently selected versions.
 	- Update the Python version range in the toplevel `CMakeLists.txt`.
 	- Update `scripts/install-3rdparty-full-windows.ps1` with the best Python version.
-	- Update `scripts/install-3rdparty-osx1015.sh` with the best Python version.
+	- Update `scripts/install-3rdparty-macos.sh` with the best Python version.
 	- Check the Ubuntu install-3rdparty scripts for which Python they install.
 	- Check `.github/workflows/build.yml` for the Python versions used.
 - Check whether `nlohman_json` can be updated (`CMakeLists.txt`)

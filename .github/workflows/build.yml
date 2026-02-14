@@ -194,12 +194,12 @@ jobs:
                 git describe
         - name: Install dependencies
           shell: bash
-          run: ./scripts/install-3rdparty-osx1015.sh
+          run: ./scripts/install-3rdparty-macos.sh
           env:
             HOMEBREW_NO_VERIFY_ATTESTATIONS: "1"
         - name: Install OrbbecSDK
           shell: bash
-          run: ./scripts/install-orbbecsdk-osx.sh
+          run: ./scripts/install-orbbecsdk-macos.sh
         - name: Install CMake
           uses: lukka/get-cmake@latest
           with:
@@ -252,13 +252,13 @@ jobs:
         - name: Capture installed folder as artifact
           shell: bash
           run: |
-                tar cvfz cwipc_osx1015_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz -C installed .
+                tar cvfz cwipc-macos-arm64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz -C installed .
                 ls -l
         - name: Upload installed folder
           uses: actions/upload-artifact@v4
           with:
-                name: cwipc_osx1015_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
-                path: cwipc_osx1015_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+                name: cwipc-macos-arm64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+                path: cwipc-macos-arm64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
             
     build-android:
         name: build-android
@@ -536,7 +536,7 @@ jobs:
         - name: Download MacOS installed folder
           uses: actions/download-artifact@v4
           with:
-                name: cwipc_osx1015_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+                name: cwipc-macos-arm64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
                 path: ../Assets/
 
         - name: Download Ubuntu 24.04 installed folder
@@ -638,8 +638,8 @@ jobs:
             GITHUB_TOKEN: ${{ github.token }}
           with:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/cwipc_osx1015_${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
-            asset_name: cwipc-macos1014-intel-${{ env.GITHUB_REF_NAME_SAFE }}-built.tar.gz
+            asset_path: ../Assets/cwipc-macos-arm64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+            asset_name: cwipc-macos-arm64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
             asset_content_type: application/gzip
 
         - name: Upload Ubuntu 24.04 installed folder

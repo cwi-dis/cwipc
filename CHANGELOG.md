@@ -14,18 +14,28 @@ We are preparing for an 8.0 release. The API is in flux.
 - Experimental capturer for Orbbec Femto Mega cameras has been added (#113)
 - Recordings through `cameraconfig.json` now automatically get a correct `cameraconfig.json` themselves. (#263)
 - Logging has been added. Can be captured from Python or C#. Can be enabled with environment variable. (#43, #247, #273)
+- `cwipc play` can now also play raw recordings (#284)
+- initializing the different capturers has become easier
 
 ### Changed
 
+- Python API is now much more pythonic:
+  - no more need to do your own object management and call `free()` (#92, #286)
+  - checking for leaks has been implemented (#288)
+  - cwipc log message can be forwarded to your Python code (#273)
+  - enabling support for capturers if they exist has become much simpler (#292)
+  - Python type checkers and such should now pick up all APIs (#251)
 - Pointcloud objects are now named `cwipc_pointcloud`. External C function names adapted too. (#276)
 - New cwipc_activesource (replacing cwipc_tiledsource) for capturers and such. You must call start() before reading from these. (#279, #262)
 - New name "metadata" used for "auxdata" and "auxiliary_data". (#281)
 - Internal structure of capturer implementations has been streamlined (#258, #278)
+- Realsense playback has been fixed (#200)
 
 ### Removed
 
 - Support for `cameraconfig.xml` files has been removed.
 - Support for Certh capturer has been removed.
+- Support for Ubuntu 22.04 has been removed.
 
 ## [7.7.5] - 2025-11-21
 
