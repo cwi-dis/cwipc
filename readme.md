@@ -391,7 +391,10 @@ When creating a new release, ensure the following have been done
   - On the targeted Ubuntu, check out and edit `CMakeFiles/CwipcInstallers.cmake`
   - Comment out the definitions for `CPACK_DEBIAN_PACKAGE_DEPENDS` and `CPACK_DEBIAN_PACKAGE_RECOMMENDS`.
   - Un-comment-out `CPACK_DEBIAN_PACKAGE_SHLIBDEPS YES`.
-  - Build, cpack.
+  - Build, run cpack with
+    ```
+    cpack --config build/CPackConfig.cmake -D CPACK_DEBIAN_FILE_NAME="cwipc_test_ubuntu2404.deb"
+    ```
   - Extract the resulting debian package with `ar x`.
   - Unpack the `control.tar.gz` file.
   - Inspect the dependencies that cpack auto-generated.
