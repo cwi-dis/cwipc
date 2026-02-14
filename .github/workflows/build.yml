@@ -458,6 +458,15 @@ jobs:
           with:
                 name: ubuntu2404-build-folder
                 path: build.tar.gz
+
+        - name: Upload cached git version
+          uses: actions/upload-artifact@v4
+          with:
+                name: cached-git-version
+                path: .cachedgitversion.txt
+                if-no-files-found: error
+                include-hidden-files: true
+
         - name: Capture installed folder as artifact
           shell: bash
           run: |
