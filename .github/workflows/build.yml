@@ -564,7 +564,7 @@ jobs:
           shell: bash
           run: ls -l . ../Assets
         - name: Create Release
-          uses: comnoco/create-release@v2
+          uses: comnoco/create-release-action@v2.0.5
           id: create_release
           env:
             GITHUB_TOKEN: ${{ github.token }}
