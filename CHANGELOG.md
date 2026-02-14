@@ -19,6 +19,7 @@ We are preparing for an 8.0 release. The API is in flux.
 
 ### Changed
 
+- Release asset names are now much more structured, and formats have been fixed (#295, #296)
 - Python API is now much more pythonic:
   - no more need to do your own object management and call `free()` (#92, #286)
   - checking for leaks has been implemented (#288)
