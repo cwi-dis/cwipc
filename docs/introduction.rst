@@ -6,7 +6,7 @@ It provides:
 
 * A language‑neutral core representation (``cwipc`` objects) with bindings for
   C, C++, Python and C#.
-* Capturers for Azure Kinect and Intel RealSense devices, supporting
+* Capturers for Azure Kinect, Intel RealSense, and Orbbec Femto depth cameras, supporting
   multi‑camera setups with registration and synchronization.
 * Compression codecs (``cwipc_codec``) for real‑time transmission.
 * A collection of command‑line utilities (``cwipc view``, ``cwipc grab``,

@@ -1,12 +1,13 @@
 Setting up your cameras
 =======================
 
-Currently *cwipc* supports Microsoft Kinect Azure and Intel RealSense D400 series cameras. It also supports pre-recorded footage of those cameras, as ``.mkv`` or ``.bag`` files. See below.
+Currently *cwipc* supports Microsoft Kinect Azure, Intel RealSense D400 series, and Orbbec Femto series cameras.
+It also supports pre-recorded footage of those cameras, as ``.mkv`` or ``.bag`` files. See below.
 
 .. note::
    Both types are fully supported on Windows. On Linux both types should be supported, but this has
-   not been tested recently. On Mac only the Realsense cameras are supported, but there are major
-   issues at the moment (basically you have to run everything as ``root``). Realsense recordings
+   not been tested recently. On Mac only the Realsense and Orbbec cameras are supported, but there are major
+   issues at the moment for USB-conected cameras (basically you have to run everything as ``root``). Realsense and Orbbec recordings
    are supported on Mac.
 
 The preferred way to use your cameras is to put them on tripods, in *portrait mode*, with all cameras
@@ -21,6 +22,11 @@ Here is a picture of a four-camera setup:
 
 .. figure:: images/camera-setup.jpg
    :alt: Physical setup of four cameras
+
+.. note::
+   Hardware setup documentation with photos showing cable management, tripod configurations,
+   multi-camera synchronization setups, and other practical arrangements welcome. Please contribute
+   your setup photos and tips.
 
 You need to print the `origin Aruco marker <https://github.com/cwi-dis/cwipc_util/blob/master/data/target-a4-aruco-0.pdf>`_,
 which you see in the center of the picture above. If that link does not work: you can also find the origin marker in your
@@ -75,8 +81,8 @@ the whole procedure in one single step.
 Hardware setup
 --------------
 
-Ensure that all cameras are working (using *Realsense Viewer* or *Azure Kinect Viewer*). If you have
-multiple cameras you are going to need *sync cables* to ensure all the shutters fire simultaneously for
+Ensure that all cameras are working (using *Realsense Viewer*, *Azure Kinect Viewer*, or *Orbbec Viewer*).
+If you have multiple cameras you are going to need *sync cables* to ensure all the shutters fire simultaneously for
 best results. See the camera documentation. You probably want to disable *auto-exposure*, *auto-whitebalance*
 and all those. Set those to manual, and in such a way that the colors from all cameras are as close as possible.
 
@@ -114,7 +120,7 @@ simply contains the serial number of every camera. If there already is such a fi
 directory this step does nothing. Remove the ``cameraconfig.json`` file if you want to re-run.
 
 Usually it will find what type of camera you have attached automatically. If this fails you can supply
-the ``--kinect`` or ``--realsense`` option to help it.
+the ``--kinect``, ``--realsense``, or ``--orbbec`` option to help it.
 
 Coarse registration
 -------------------
@@ -265,8 +271,8 @@ This is useful for developer testing, but it may also be usable for virtual meet
 Registering pre-recorded footage
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you have pre-recorded footage (``.mkv`` files for Kinect, ``.bag`` files for realsense) and you have
-captured some sort of a marker (either the Aruco origin marker, or the older four-color-corner marker)
+If you have pre-recorded footage (``.mkv`` files for Kinect, ``.bag`` files for RealSense, or Orbbec native formats)
+and you have captured some sort of a marker (either the Aruco origin marker, or the older four-color-corner marker)
 you can create a ``cameraconfig.json`` for this recording:
 
 - Put all your files in a single directory, lets say ``new-recording``.

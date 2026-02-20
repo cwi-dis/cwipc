@@ -7,7 +7,7 @@ writing native applications.  Include the header::
     #include <cwipc_util.hpp>
 
 Link against ``cwipc_util`` (and the appropriate capturer modules such as
-``cwipc_kinect`` or ``cwipc_realsense2``).  Use ``cwipc::grabber`` classes for capture
+``cwipc_kinect``, ``cwipc_realsense2``, or ``cwipc_orbbec``).  Use ``cwipc::grabber`` classes for capture
 and ``cwipc::viewer`` for rendering.
 
 Example::
