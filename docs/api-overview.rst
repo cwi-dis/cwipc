@@ -24,6 +24,15 @@ It provides a common interface for waiting for the next available point cloud, a
 Most sources (such as cameras, or recordings) will provide an extended interface ``cwipc_activesource`` which has methods to start and stop the source and to get additional metadata such
 as the number of cameras used in the source and their positions and names.
 
+In general, the developer does not need to interact with the ``cwipc_realsense2`` or other camera
+specific APIs directly, but instead uses the ``cwipc_capturer()`` factory function to obtain a ``cwipc_activesource``.
+This method will look at the ``cameraconfig.json`` file in the current directory to determine which cameras are present and how they are configured, and return a source that captures from those cameras with the appropriate registration and synchronization.  See :doc:`hardware-setup` for more details on camera configuration.
+From some languages (such as Python and C#) you have to ensure that the capturer module for the specific camera has been loaded and has
+registered itself with the factory. The is done by importing the module and calling a method there, for example::
+
+    import cwipc_realsense2
+    _ = cwipc_realsense2.cwipc_get_version_realsense2()
+
 The ``cwipc_sink`` interface represents a destination for point clouds, such as a network stream encoder, or display window. It provides a common interface for sending point clouds to the sink, and for controlling the sink (for example starting and stopping it).
 
 All language bindings follow the same semantic model, with the C++ bindings being the most direct, so knowledge gained in one
