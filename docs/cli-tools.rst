@@ -80,8 +80,8 @@ README and in :doc:`raw-recording`.
 Common arguments
 ----------------
 
-All ``cwipc`` subcommands share a common set of arguments for controlling input sources,
-logging, and debugging.
+Most ``cwipc`` subcommands share a common set of arguments for controlling input sources,
+logging, and debugging. Use ``cwipc <subcommand> --help`` to see the full list of available options for each command.  Most common arguments are listed below.
 
 Global arguments
 ^^^^^^^^^^^^^^^^
@@ -127,3 +127,22 @@ These arguments control how the input source behaves:
 * ``--count N`` – stop after receiving ``N`` point clouds.
 * ``--inpoint N`` – start at frame with timestamp ``> N``.
 * ``--outpoint N`` – stop at frame with timestamp ``>= N``.
+
+Environment variables
+^^^^^^^^^^^^^^^^^^^^^
+
+Several environment variables control cwipc behavior at runtime. Most of these are handled by the low-level
+cwipc API, so they will also work when using the language bindings or developing your own applications.
+
+Common environment variables include:
+
+* ``CWIPC_LOGGING`` – controls logging output level and destination. Can be set to a log level
+  (e.g. ``TRACE``, ``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``) or combined with a file path
+  (e.g. ``CWIPC_LOGGING=DEBUG:path/to/output/file.txt``). Defaults to warnings and errors to stderr.
+* ``CWIPC_LIBRARY_DIR`` – (Windows only) set to the directory containing cwipc runtime DLLs and dependencies
+  to help Python packages locate the installation. On macOS and Linux this is typically handled by ``rpath``.
+* ``_CWIPC_DEBUG_DLL_SEARCH_PATH`` – set to ``1`` or ``true`` to print debug output when Python packages
+  attempt to locate the cwipc installation.
+* ``EDITOR`` – used by tools that allow editing configuration files (e.g. ``cwipc register``).
+* ``SIGNALS_SMD_PATH`` – (low-latency DASH only) path to the ``lldash`` runtime DLLs.
+* ``LLDASH_LOGGING`` – set to enable more verbose logging from the ``lldash`` component.
