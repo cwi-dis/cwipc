@@ -31,7 +31,7 @@ The use cases for `cwipc` that we foresee and try to support:
 
 For now, refer to <https://www.dis.cwi.nl/cwipc-sxr-dataset/>.
 
-Documentation on the API can be created using _Doxygen_ in `cwipc_util/doc`, and will be made available here at some point in the future.
+Documentation for the project (installation, command‑line usage, APIs, building, etc.) lives in the `doc/` directory of the repository and is published on ReadTheDocs in a ReadTheDocs style layout.  API reference pages are generated with _Doxygen_ under `cwipc_util/doc`.
 
 The change log can be found at [CHANGELOG.md](CHANGELOG.md).
 
