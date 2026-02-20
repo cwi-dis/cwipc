@@ -12,6 +12,7 @@ Run ``cwipc --help`` to get a list of available commands.  Typical tools include
 * ``cwipc register`` – assist with camera calibration and registration.
 * ``cwipc grab`` – capture point clouds, convert between formats, compress/decompress.
 * ``cwipc view`` – render a live or recorded point cloud stream.
+* ``cwipc copy`` – copy point clouds between various storage formats and types.
 * ``cwipc forward`` – stream point clouds over the network.
 
 Each subcommand also supports ``--help`` for detailed usage information.  The
@@ -75,3 +76,54 @@ precise in specifying what output format you want. See `--help` for the options.
 
 Additional examples (recording, playback, synthetic streams) appear in the
 README and in :doc:`raw-recording`.
+
+Common arguments
+----------------
+
+All ``cwipc`` subcommands share a common set of arguments for controlling input sources,
+logging, and debugging.
+
+Global arguments
+^^^^^^^^^^^^^^^^
+
+* ``--version`` – print version and exit.
+* ``-v``, ``--verbose`` – print information about each point cloud while it is processed.
+  Use ``-vv`` for even more verbosity.
+* ``--logging LEVEL`` – set cwipc logging level (``error``, ``warning``, ``info``, ``debug``)
+  and capture log messages.
+* ``--pausefordebug`` – pause at begin and end of run to allow attaching a debugger or profiler.
+* ``--debugpy`` – pause at begin of run to wait for debugpy to attach (Python debugging).
+
+Input source selection
+^^^^^^^^^^^^^^^^^^^^^^
+
+These arguments are mutually exclusive; you can only specify one input source. If none is specified,
+the tool will look for a ``cameraconfig.json`` in the current directory:
+
+* ``--cameraconfig PATH`` – specify camera configuration file (default: ``./cameraconfig.json``).
+  Use ``auto`` to detect any attached camera without configuration.
+* ``--kinect`` – use Azure Kinect capturer.
+* ``--realsense`` – use Intel RealSense capturer.
+* ``--orbbec`` – use Orbbec Femto capturer.
+* ``--synthetic`` – use synthetic point cloud source (e.g. a rotating virtual human).
+* ``--proxy PORT`` – use proxy server source that listens on ``PORT``.
+* ``--netclient HOST:PORT`` – receive (compressed) point clouds from network server on ``HOST:PORT``.
+* ``--lldplay URL`` – use DASH (compressed) point cloud stream from ``URL``.
+* ``--mt-netclient HOST:PORT:NT:NQ`` – multi-tile, multi-quality version of ``--netclient``.
+* ``--mt-lldplay URL`` – multi-tile, multi-quality version of ``--lldplay``.
+* ``--playback PATH`` – use point cloud(s) from PLY or cwipcdump file or directory (alphabetical order).
+
+Input arguments
+^^^^^^^^^^^^^^^
+
+These arguments control how the input source behaves:
+
+* ``--nodecode`` – receive uncompressed point clouds with ``--netclient`` and ``--lldplay``
+  (default: compressed with cwipc_codec).
+* ``--loop`` – with ``--playback``, loop the contents instead of terminating after the last file.
+* ``--npoints N`` – limit number of points (approximately) in synthetic point cloud.
+* ``--fps N`` – limit playback or capture rate to ``N`` frames per second (for some capturers).
+* ``--retimestamp`` – set timestamps to wall clock instead of recorded timestamps.
+* ``--count N`` – stop after receiving ``N`` point clouds.
+* ``--inpoint N`` – start at frame with timestamp ``> N``.
+* ``--outpoint N`` – stop at frame with timestamp ``>= N``.

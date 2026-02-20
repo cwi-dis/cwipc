@@ -9,7 +9,7 @@ It provides:
 * Capturers for Azure Kinect, Intel RealSense, and Orbbec Femto depth cameras, supporting
   multi‑camera setups with registration and synchronization.
 * Compression codecs (``cwipc_codec``) for real‑time transmission.
-* A collection of command‑line utilities (``cwipc view``, ``cwipc grab``,
+* A collection of command‑line utilities (``cwipc view``, ``cwipc grab``, ``cwipc copy``,
   ``cwipc forward``, etc.) for capture, playback, streaming and analysis.
 
 Use cases
