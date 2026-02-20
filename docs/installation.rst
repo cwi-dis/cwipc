@@ -6,7 +6,7 @@ installers.  Installers are provided for macOS, Windows and Ubuntu and bundle
 all of the runtime libraries, command‑line tools and language bindings.
 
 .. note::
-   After installing, run ``cwipc_view --synthetic`` to verify the installation. A
+   After installing, run ``cwipc view --synthetic`` to verify the installation. A
    rotating synthetic point cloud should appear.  You can also run
    ``cwipc_check`` which exercises the various parts of the installation.
 
@@ -18,7 +18,7 @@ Use Homebrew::
     brew tap cwi-dis/cwipc
     brew install cwipc
 
-Verify with ``cwipc_view --version`` and (if necessary) run
+Verify with ``cwipc view --version`` and (if necessary) run
 ``cwipc_pymodules_install.sh`` to repair the Python packages.
 
 Windows

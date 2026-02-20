@@ -45,21 +45,21 @@ Registering your cameras consists of a number of steps:
 Normally the following command will take you through each of these steps (except for setting up
 the hardware) and tell you what to do::
 
-    cwipc_register --guided
+    cwipc register --guided
 
 But sometimes it may be needed to have more control over the process, or repeat a step, or something else.
 For that it is possible to use arguments to do each of the steps separately.
 
-cwipc_register
+cwipc register
 --------------
 
-The ``cwipc_register`` command line utility is the swiss army knife to help you setup your cameras,
+The ``cwipc register`` command line utility is the swiss army knife to help you setup your cameras,
 but it is rather clunky at the moment. An interactive GUI-based tool will come at some point in the future.
 
-Use ``cwipc_register --help`` to see all the command line options it has. For now, we will explain
+Use ``cwipc register --help`` to see all the command line options it has. For now, we will explain
 the most important ones only:
 
-- ``cwipc_register`` without any arguments will try to do all of the needed steps (but it is unlikely to
+- ``cwipc register`` without any arguments will try to do all of the needed steps (but it is unlikely to
   succeed unless you know exactly what you are doing).
 - The ``--verbose`` option will show verbose output, and it will also bring up windows to show you the
   result of every step. Close the window (or press ``ESC`` with the window active) to proceed with
@@ -71,11 +71,11 @@ the most important ones only:
   shown the captured RGB data, in a separate window. The ``--rgb_cw`` and ``--rgb_ccw`` options can be given
   to rotate the RGB images.
 
-  - In ``--interactive`` mode the ``cwipc_register`` point cloud window works similar to the ``cwipc_view``
+  - In ``--interactive`` mode the ``cwipc register`` point cloud window works similar to the ``cwipc view``
     window. So you can use left-mouse-drag to pan around the point cloud, right-mouse-drag to move up and
     down, scrollwheel to zoom. ``?`` will print some limited help on ``stdout``.
 
-So, with all of these together, using ``cwipc_register --rgb --interactive`` may allow you to go through
+So, with all of these together, using ``cwipc register --rgb --interactive`` may allow you to go through
 the whole procedure in one single step.
 
 Hardware setup
@@ -115,7 +115,7 @@ Finding your cameras
    Usually ``cwipc_register --guided`` will take you through this process just as easily.
    This section left here for reference.
 
-The first step is to use ``cwipc_register --noregister`` to create a ``cameraconfig.json`` file that
+The first step is to use ``cwipc register --noregister`` to create a ``cameraconfig.json`` file that
 simply contains the serial number of every camera. If there already is such a file in the current
 directory this step does nothing. Remove the ``cameraconfig.json`` file if you want to re-run.
 
@@ -130,7 +130,7 @@ Coarse registration
    This section left here for reference.
 
 The easiest way to do coarse calibration is to put the origin marker on the floor (the picture above
-gives you an idea of where you should place your origin marker) and run ``cwipc_register --rgb --nofine``.
+gives you an idea of where you should place your origin marker) and run ``cwipc register --rgb --nofine``.
 
 This will run a coarse calibration step for each camera in turn, *but only if the camera has not been
 coarse-calibrated before*. In other words, you can run this multiple times if some cameras were missed
@@ -146,7 +146,7 @@ If the Aruco marker cannot be found automatically you can also use a manual proc
 the ``--rgb`` argument. You will then be provided with a point cloud viewer window where you have to manually
 select the corners of the marker (using shift-click with the mouse) **in the right order**.
 
-After this step you have a complete registration. You can run ``cwipc_view`` to see your point cloud.
+After this step you have a complete registration. You can run ``cwipc view`` to see your point cloud.
 It should be approximately correct, but in the areas that are seen by multiple cameras you will see the
 alignment is not perfect.
 
@@ -157,15 +157,15 @@ Limiting your point clouds
 ---------------------------
 
 .. important::
-   This section is important, even when using ``cwipc_register --guided``
+   This section is important, even when using ``cwipc register --guided``
 
-At this point, if you view your point cloud with ``cwipc_view`` you will see that it contains all the walls,
+At this point, if you view your point cloud with ``cwipc view`` you will see that it contains all the walls,
 floor, ceiling, furniture, etc. All cameras should be somewhat aligned by the coarse calibration.
 
 .. note::
    Currently you have to fix this by manually editing ``cameraconfig.json``. It should be possible to
-   edit ``cameraconfig.json`` while ``cwipc_view`` is running, and then typing ``c`` to reload
-   ``cameraconfig.json``. But this does not always work, you may have to stop and restart ``cwipc_view``
+   edit ``cameraconfig.json`` while ``cwipc view`` is running, and then typing ``c`` to reload
+   ``cameraconfig.json``. But this does not always work, you may have to stop and restart ``cwipc view``
    to see the result of your edits.
 
 Near and far points
@@ -204,14 +204,14 @@ Have a person stand at the origin.
    person look in the direction between the first camera and one of the adjacent cameras. Arms should be
    slightly spread, or maybe angled forward at the elbows.
 
-Run ``cwipc_register``. If there is already a complete coarse calibration for all cameras this will
-automatically do a fine calibration. If you are using ``cwipc_register --interactive`` type a ``w``
+Run ``cwipc register``. If there is already a complete coarse calibration for all cameras this will
+automatically do a fine calibration. If you are using ``cwipc register --interactive`` type a ``w``
 to capture a point cloud and start the registration.
 
 The algorithm will iterate over the cameras, making slight adjustments to the alignment. When it cannot
 improve the results any more it stops and saves ``cameraconfig.json``.
 
-Check the results with ``cwipc_view``.
+Check the results with ``cwipc view``.
 
 .. warning::
    The algorithm is not perfect, and it can sometimes get into a local minimum. You will see this as
@@ -242,7 +242,7 @@ Final results
 After all the steps have been done you should be able to get point clouds like the one below.
 
 .. figure:: images/calibrated.jpg
-   :alt: Calibrated point cloud captured with cwipc_view
+   :alt: Calibrated point cloud captured with cwipc view
 
 Special cases
 -------------
@@ -258,10 +258,10 @@ orientation, at approximately ``1.20m`` height, and approximately ``1m`` away fr
 Incidentally, this is exactly what happens if you put the camera on your desk, on a small tripod,
 next to your monitor.
 
-If you now run ``cwipc_register --tabletop`` you will get a ``cameraconfig.json`` that will capture
+If you now run ``cwipc register --tabletop`` you will get a ``cameraconfig.json`` that will capture
 a head and shoulders shot of you.
 
-Here is a picture of the setup and the resulting point cloud in ``cwipc_view``:
+Here is a picture of the setup and the resulting point cloud in ``cwipc view``:
 
 .. figure:: images/tabletop-setup.jpg
    :alt: Tabletop Setup
@@ -276,14 +276,14 @@ and you have captured some sort of a marker (either the Aruco origin marker, or 
 you can create a ``cameraconfig.json`` for this recording:
 
 - Put all your files in a single directory, lets say ``new-recording``.
-- In that directory, run ``cwipc_register --noregister new-recording``. This will create the initial
+- In that directory, run ``cwipc register --noregister new-recording``. This will create the initial
   ``cameraconfig.json`` inside that directory, with references to all the recording files.
 
   - **NOTE**: if you still have access to the original ``cameraconfig.json`` that was used to capture
     the recording it is better to manually copy that file here and edit it to become a config for
     a recording. Details will be added here at some point.
 
-- In that directory, run ``cwipc_register --guided``. But note that you cannot change any of the
+- In that directory, run ``cwipc register --guided``. But note that you cannot change any of the
   hardware parameters, such as ``fps`` or capture width and height.
 
 Registering large spaces
@@ -302,7 +302,7 @@ every marker back to the origin marker.
 
 You may want to print the markers at 140% (i.e. on A3 paper).
 
-``cwipc_register`` will first do the coarse alignment only of the cameras that can see the origin
+``cwipc register`` will first do the coarse alignment only of the cameras that can see the origin
 marker. But after that it will have recorded the position of some of the auxiliary markers. It will
 then do a second pass, in which it will align the cameras that could see that second marker but not
 the origin marker. This is then repeated until all cameras are registered.
@@ -318,7 +318,7 @@ registration if you have a piece of paper that is approximately A4-sized. And if
 that you can still follow this procedure but you will have to guess how big a piece of A4 paper would
 be, approximately, and simply select points on the floor where the A4 paper would have been.
 
-Place it on the ground in the origin position and run ``cwipc_register --no_aruco --nofine``.
+Place it on the ground in the origin position and run ``cwipc register --no_aruco --nofine``.
 
 You will be presented with a 3D view of the capture. You can use the mouse and scrollwheel to change
 your viewpoint.
@@ -330,5 +330,5 @@ You must now select 4 points (with shift-left-click) in a specific order:
 3. Far-right point,
 4. Far-left point.
 
-Inspect the result of this coarse calibration with ``cwipc_view``, and make double-sure that the
+Inspect the result of this coarse calibration with ``cwipc view``, and make double-sure that the
 blue, red and green axes are pointing in the right direction (see image above).

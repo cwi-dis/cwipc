@@ -24,7 +24,7 @@ and hardware parameters.
 
     "record_to_directory" : "recording-20250505-1201"
 
-- Run your cwipc application as you would normally do. This could be ``cwipc_view`` or ``cwipc_forward``,
+- Run your cwipc application as you would normally do. This could be ``cwipc view`` or ``cwipc forward``,
   but it could also be a Unity application for social XR, anything really.
 - After the application has terminated examine the ``recording-20250505-1201`` subdirectory. It should have
   a number of ``.bag`` files (for Realsense) or ``.mkv`` files (for Kinect).
@@ -43,12 +43,12 @@ and hardware parameters.
 Testing your recording
 ----------------------
 
-You can test the recording by simply running ``cwipc_view`` in the ``recording-20250505-1201`` directory.
+You can test the recording by simply running ``cwipc view`` in the ``recording-20250505-1201`` directory.
 You should see exactly the same point cloud sequence you recorded earlier.
 
 Alternatively, you can play it back from another directory by running::
 
-    cwipc_view --cameraconfig path/to/recording-20250505-1201/cameraconfig.json
+    cwipc view --cameraconfig path/to/recording-20250505-1201/cameraconfig.json
 
 Playing back your recording
 ----------------------------
