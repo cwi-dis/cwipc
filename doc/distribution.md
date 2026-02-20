@@ -53,4 +53,28 @@ The project uses GitHub Actions (`.github/workflows/build.yml`) to build and
 package on every push.  Tags matching `v*` trigger a release job which uploads
 artifacts to GitHub Releases and updates the Homebrew formula.
 
+## Building and publishing the documentation
+
+Documentation is generated from the `doc/` markdown files using Sphinx with
+the ReadTheDocs theme.  The repository includes a minimal Sphinx project
+under `docs/` and a `requirements.txt` listing the necessary packages
+(`sphinx`, `myst-parser`, `sphinx-rtd-theme`).
+
+To build locally:
+
+```sh
+cd docs
+python -m pip install -r requirements.txt
+sphinx-build -b html . _build/html
+```
+
+The HTML output appears in `docs/_build/html`.  Run the same commands in a CI
+job to verify formatting or catch broken links.
+
+On ReadTheDocs the project is configured to use this `docs/` folder as the
+source.  Pushing updates to `main` automatically triggers a rebuild on RTD
+and publishes the documentation at `https://cwipc.readthedocs.io` (or similar).
+For private/internal hosting the same build steps can be run on a server and
+the resulting static files deployed to a web host or CDN.
+
 [Back to Contents](index.md)

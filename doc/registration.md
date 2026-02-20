@@ -11,7 +11,7 @@ The preferred way to use your cameras is to put them on tripods, in _portait mod
 
 Here is a picture of a four-camera setup:
 
-![Pyisical setup of four cameras](camera-setup.jpg)
+![Pyisical setup of four cameras](../doc/camera-setup.jpg)
 
 
 
@@ -61,7 +61,7 @@ Put your origin marker on the floor and ensure all cameras can see it in RGB and
 
 Here is an example of what you should see in Kinect Viewer (or similar in Realsense Viewer):
 
-![Screenshot of RGB and D capture](rgbd-capture.jpg)
+![Screenshot of RGB and D capture](../doc/rgbd-capture.jpg)
 
 Have a person stand at the origin and ensure their head is not cut off. Adjust camera angles and such. Lock down the cameras, all of the adjustable screws and bolts and such on your tripods. And lock the tripods to the floor with gaffer tape.
 
@@ -87,7 +87,7 @@ If the Aruco marker cannot be found automatically you can also use a manual proc
 
 After this step you have a complete registration. You can run `cwipc_view` to see your point cloud. It should be approximately correct, but in the areas that are seen by multiple cameras you will see the the alignment is not perfect.
 
-![Captured point cloud from all cameras after coarse registration](coarse-pointcloud.jpg)
+![Captured point cloud from all cameras after coarse registration](../doc/coarse-pointcloud.jpg)
 
 ## Limiting your point clouds
 
@@ -146,7 +146,7 @@ Depth exposure can be left on auto (if the camera supports it) but color should 
 
 After all the steps have been done you should be able to get point clouds like the one below. 
 
-![Calibrated point cloud captured with cwipc_view](calibrated.jpg)
+![Calibrated point cloud captured with cwipc_view](../doc/calibrated.jpg)
 
 ## Special cases
 
@@ -163,7 +163,7 @@ If you now run `cwipc_register --tabletop` you will get a `cameraconfig.json` th
 
 Here is a picture of the setup and the resulting point cloud in `cwipc_view`:
 
-![Tabletop Setup](tabletop-setup.jpg)
+![Tabletop Setup](../doc/tabletop-setup.jpg)
 
 This is useful for developer testing, but it may also be usable for virtual meetings, etc.
 

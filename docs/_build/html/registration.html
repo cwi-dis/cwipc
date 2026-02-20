@@ -1,0 +1,442 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Setting up your cameras &mdash; cwipc  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Recording point cloud streams" href="raw-recording.html" />
+    <link rel="prev" title="Preparing a distribution" href="distribution.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            cwipc
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli-tools.html">Command‑line tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware-setup.html">Setting up capture hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api-overview.html">Programming interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api-cpp.html">C++ API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api-c.html">C API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api-python.html">Python API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api-csharp.html">C# / Unity API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build-from-source.html">Building from source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="distribution.html">Preparing a distribution</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Setting up your cameras</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#cwipc-register">cwipc_register</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hardware-setup">Hardware setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#checking-your-camera-position-and-orientation">Checking your camera position and orientation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#finding-your-cameras">Finding your cameras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#coarse-registration">Coarse registration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#limiting-your-point-clouds">Limiting your point clouds</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#near-and-far-points">Near and far points</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#radius">Radius</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#remove-ceiling">Remove ceiling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fine-registration">Fine registration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#remove-floor-and-ceiling">Remove floor and ceiling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color-matching">Color matching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#final-results">Final results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#special-cases">Special cases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#registering-head-and-shoulders-shots">Registering head-and-shoulders shots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#registering-pre-recorded-footage">Registering pre-recorded footage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#registering-large-spaces">Registering large spaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#registering-without-aruco-markers">Registering without Aruco markers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="raw-recording.html">Recording point cloud streams</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">cwipc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Setting up your cameras</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/registration.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="setting-up-your-cameras">
+<h1>Setting up your cameras<a class="headerlink" href="#setting-up-your-cameras" title="Link to this heading"></a></h1>
+<p>Currently <em>cwipc</em> supports Microsoft Kinect Azure and Intel RealSense D400 series cameras. It also supports pre-recorded footage of those cameras, as <code class="docutils literal notranslate"><span class="pre">.mkv</span></code> or <code class="docutils literal notranslate"><span class="pre">.bag</span></code> files. See below.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Both types are fully supported on Windows. On Linux both types should be supported, but this has
+not been tested recently. On Mac only the Realsense cameras are supported, but there are major
+issues at the moment (basically you have to run everything as <code class="docutils literal notranslate"><span class="pre">root</span></code>). Realsense recordings
+are supported on Mac.</p>
+</div>
+<p>The preferred way to use your cameras is to put them on tripods, in <em>portrait mode</em>, with all cameras
+having a clear view of the floor of your <em>origin</em>, the natural “central location” where your subject
+will be. But see below for situations where this is not possible.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For testing it may be possible that you don’t have to do any registration at all, see the
+<em>Head and Shoulders</em> section below.</p>
+</div>
+<p>Here is a picture of a four-camera setup:</p>
+<figure class="align-default">
+<img alt="Physical setup of four cameras" src="_images/camera-setup.jpg" />
+</figure>
+<p>You need to print the <a class="reference external" href="https://github.com/cwi-dis/cwipc_util/blob/master/data/target-a4-aruco-0.pdf">origin Aruco marker</a>,
+which you see in the center of the picture above. If that link does not work: you can also find the origin marker in your
+installation directory, in <code class="docutils literal notranslate"><span class="pre">share/cwipc/registration/target-a4-aruco-0.pdf</span></code>, or online at the GitHub link above.</p>
+<p>Registering your cameras consists of a number of steps:</p>
+<ul class="simple">
+<li><p>Setup your hardware.</p></li>
+<li><p>Find the cameras attached to your system.</p></li>
+<li><p>Setup correct camera views, exposure, etc.</p></li>
+<li><p>Do a coarse registration by finding the Aruco marker image. This creates a 4x4 transformation matrix
+for each camera which will ensure that all cameras use approximately the same coordinate system.</p></li>
+<li><p>Do a fine registration by capturing a human and slightly adjusting the transformation matrices
+so we get the best possible overlap between the captures.</p></li>
+</ul>
+<p>Normally the following command will take you through each of these steps (except for setting up
+the hardware) and tell you what to do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cwipc_register</span> <span class="o">--</span><span class="n">guided</span>
+</pre></div>
+</div>
+<p>But sometimes it may be needed to have more control over the process, or repeat a step, or something else.
+For that it is possible to use arguments to do each of the steps separately.</p>
+<section id="cwipc-register">
+<h2>cwipc_register<a class="headerlink" href="#cwipc-register" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">cwipc_register</span></code> command line utility is the swiss army knife to help you setup your cameras,
+but it is rather clunky at the moment. An interactive GUI-based tool will come at some point in the future.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">cwipc_register</span> <span class="pre">--help</span></code> to see all the command line options it has. For now, we will explain
+the most important ones only:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">cwipc_register</span></code> without any arguments will try to do all of the needed steps (but it is unlikely to
+succeed unless you know exactly what you are doing).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">--verbose</span></code> option will show verbose output, and it will also bring up windows to show you the
+result of every step. Close the window (or press <code class="docutils literal notranslate"><span class="pre">ESC</span></code> with the window active) to proceed with
+the next step.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">--rgb</span></code> will use the RGB and Depth images to do the coarse registration (instead of the point clouds),
+if possible. This will give much better results.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">--interactive</span></code> option will show you the point cloud currently captured. You can press <code class="docutils literal notranslate"><span class="pre">w</span></code> in the
+point cloud window to use this capture for your calibration step. If <code class="docutils literal notranslate"><span class="pre">--rgb</span></code> is also given you will be
+shown the captured RGB data, in a separate window. The <code class="docutils literal notranslate"><span class="pre">--rgb_cw</span></code> and <code class="docutils literal notranslate"><span class="pre">--rgb_ccw</span></code> options can be given
+to rotate the RGB images.</p>
+<ul>
+<li><p>In <code class="docutils literal notranslate"><span class="pre">--interactive</span></code> mode the <code class="docutils literal notranslate"><span class="pre">cwipc_register</span></code> point cloud window works similar to the <code class="docutils literal notranslate"><span class="pre">cwipc_view</span></code>
+window. So you can use left-mouse-drag to pan around the point cloud, right-mouse-drag to move up and
+down, scrollwheel to zoom. <code class="docutils literal notranslate"><span class="pre">?</span></code> will print some limited help on <code class="docutils literal notranslate"><span class="pre">stdout</span></code>.</p></li>
+</ul>
+</li>
+</ul>
+<p>So, with all of these together, using <code class="docutils literal notranslate"><span class="pre">cwipc_register</span> <span class="pre">--rgb</span> <span class="pre">--interactive</span></code> may allow you to go through
+the whole procedure in one single step.</p>
+</section>
+<section id="hardware-setup">
+<h2>Hardware setup<a class="headerlink" href="#hardware-setup" title="Link to this heading"></a></h2>
+<p>Ensure that all cameras are working (using <em>Realsense Viewer</em> or <em>Azure Kinect Viewer</em>). If you have
+multiple cameras you are going to need <em>sync cables</em> to ensure all the shutters fire simultaneously for
+best results. See the camera documentation. You probably want to disable <em>auto-exposure</em>, <em>auto-whitebalance</em>
+and all those. Set those to manual, and in such a way that the colors from all cameras are as close as possible.</p>
+<p>You may need USB3 range extenders (also known as active cables) to be able to get to all of your cameras.
+Ensure these work within the camera viewer.</p>
+<section id="checking-your-camera-position-and-orientation">
+<h3>Checking your camera position and orientation<a class="headerlink" href="#checking-your-camera-position-and-orientation" title="Link to this heading"></a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Usually <code class="docutils literal notranslate"><span class="pre">cwipc_register</span> <span class="pre">--guided</span></code> will take you through this process just as easily.
+This section left here for reference.</p>
+</div>
+<p>Put your origin marker on the floor and ensure all cameras can see it in RGB and Depth. The latter may be
+a bit difficult (because you can’t see the marker in Depth).</p>
+<p>Here is an example of what you should see in Kinect Viewer (or similar in Realsense Viewer):</p>
+<figure class="align-default">
+<img alt="Screenshot of RGB and D capture" src="_images/rgbd-capture.jpg" />
+</figure>
+<p>Have a person stand at the origin and ensure their head is not cut off. Adjust camera angles and such.
+Lock down the cameras, all of the adjustable screws and bolts and such on your tripods. And lock the
+tripods to the floor with gaffer tape.</p>
+</section>
+</section>
+<section id="finding-your-cameras">
+<h2>Finding your cameras<a class="headerlink" href="#finding-your-cameras" title="Link to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Usually <code class="docutils literal notranslate"><span class="pre">cwipc_register</span> <span class="pre">--guided</span></code> will take you through this process just as easily.
+This section left here for reference.</p>
+</div>
+<p>The first step is to use <code class="docutils literal notranslate"><span class="pre">cwipc_register</span> <span class="pre">--noregister</span></code> to create a <code class="docutils literal notranslate"><span class="pre">cameraconfig.json</span></code> file that
+simply contains the serial number of every camera. If there already is such a file in the current
+directory this step does nothing. Remove the <code class="docutils literal notranslate"><span class="pre">cameraconfig.json</span></code> file if you want to re-run.</p>
+<p>Usually it will find what type of camera you have attached automatically. If this fails you can supply
+the <code class="docutils literal notranslate"><span class="pre">--kinect</span></code> or <code class="docutils literal notranslate"><span class="pre">--realsense</span></code> option to help it.</p>
+</section>
+<section id="coarse-registration">
+<h2>Coarse registration<a class="headerlink" href="#coarse-registration" title="Link to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Usually <code class="docutils literal notranslate"><span class="pre">cwipc_register</span> <span class="pre">--guided</span></code> will take you through this process just as easily.
+This section left here for reference.</p>
+</div>
+<p>The easiest way to do coarse calibration is to put the origin marker on the floor (the picture above
+gives you an idea of where you should place your origin marker) and run <code class="docutils literal notranslate"><span class="pre">cwipc_register</span> <span class="pre">--rgb</span> <span class="pre">--nofine</span></code>.</p>
+<p>This will run a coarse calibration step for each camera in turn, <em>but only if the camera has not been
+coarse-calibrated before</em>. In other words, you can run this multiple times if some cameras were missed
+the previous time. But on the other hand if you had to move cameras you should remove <code class="docutils literal notranslate"><span class="pre">cameraconfig.json</span></code>
+and restart at the previous step.</p>
+<p>For each camera, the RGB image is used to find the origin marker Aruco pattern. The Depth image is then
+used to find the distance and orientation of the Aruco marker from the camera. This information is then
+used to compute the <code class="docutils literal notranslate"><span class="pre">4*4</span></code> transformation matrix from camera coordinates to world coordinates, and this
+information is stored in <code class="docutils literal notranslate"><span class="pre">cameraconfig.json</span></code>.</p>
+<p>If the Aruco marker cannot be found automatically you can also use a manual procedure, by <strong>not</strong> supplying
+the <code class="docutils literal notranslate"><span class="pre">--rgb</span></code> argument. You will then be provided with a point cloud viewer window where you have to manually
+select the corners of the marker (using shift-click with the mouse) <strong>in the right order</strong>.</p>
+<p>After this step you have a complete registration. You can run <code class="docutils literal notranslate"><span class="pre">cwipc_view</span></code> to see your point cloud.
+It should be approximately correct, but in the areas that are seen by multiple cameras you will see the
+alignment is not perfect.</p>
+<figure class="align-default">
+<img alt="Captured point cloud from all cameras after coarse registration" src="_images/coarse-pointcloud.jpg" />
+</figure>
+</section>
+<section id="limiting-your-point-clouds">
+<h2>Limiting your point clouds<a class="headerlink" href="#limiting-your-point-clouds" title="Link to this heading"></a></h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This section is important, even when using <code class="docutils literal notranslate"><span class="pre">cwipc_register</span> <span class="pre">--guided</span></code></p>
+</div>
+<p>At this point, if you view your point cloud with <code class="docutils literal notranslate"><span class="pre">cwipc_view</span></code> you will see that it contains all the walls,
+floor, ceiling, furniture, etc. All cameras should be somewhat aligned by the coarse calibration.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently you have to fix this by manually editing <code class="docutils literal notranslate"><span class="pre">cameraconfig.json</span></code>. It should be possible to
+edit <code class="docutils literal notranslate"><span class="pre">cameraconfig.json</span></code> while <code class="docutils literal notranslate"><span class="pre">cwipc_view</span></code> is running, and then typing <code class="docutils literal notranslate"><span class="pre">c</span></code> to reload
+<code class="docutils literal notranslate"><span class="pre">cameraconfig.json</span></code>. But this does not always work, you may have to stop and restart <code class="docutils literal notranslate"><span class="pre">cwipc_view</span></code>
+to see the result of your edits.</p>
+</div>
+<section id="near-and-far-points">
+<h3>Near and far points<a class="headerlink" href="#near-and-far-points" title="Link to this heading"></a></h3>
+<p>The first thing to edit is <code class="docutils literal notranslate"><span class="pre">threshold_near</span></code> and <code class="docutils literal notranslate"><span class="pre">threshold_far</span></code>. These are the near and far point for
+all depth cameras (in meters). Adjust these to get rid of most of the walls, while keeping the whole target
+area visible. Looking at the floor is a good way to determine how you are doing.</p>
+</section>
+<section id="radius">
+<h3>Radius<a class="headerlink" href="#radius" title="Link to this heading"></a></h3>
+<p>There is another parameter you can play with: <code class="docutils literal notranslate"><span class="pre">radius_filter</span></code> applies a cylindrical filter around the origin.</p>
+</section>
+<section id="remove-ceiling">
+<h3>Remove ceiling<a class="headerlink" href="#remove-ceiling" title="Link to this heading"></a></h3>
+<p>Next adjust <code class="docutils literal notranslate"><span class="pre">height_min</span></code> and <code class="docutils literal notranslate"><span class="pre">height_max</span></code> to get rid of the ceiling, <strong>but keep the floor for now</strong>.
+Both have to be non-zero otherwise the filter will not be applied (but <code class="docutils literal notranslate"><span class="pre">height_min</span></code> can be less than zero
+if you want to keep the floor visible).</p>
+</section>
+</section>
+<section id="fine-registration">
+<h2>Fine registration<a class="headerlink" href="#fine-registration" title="Link to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Usually <code class="docutils literal notranslate"><span class="pre">cwipc_register</span> <span class="pre">--guided</span></code> will take you through this process just as easily.
+This section left here for reference.</p>
+</div>
+<p>If you have only a single RGBD camera there is no point in doing fine calibration, but if you have multiple
+cameras it will slightly adjust the registration of the cameras to try and get maximum overlap of the point clouds.</p>
+<p>Have a person stand at the origin.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Note:</strong> at the moment, the pose of you subject is important. Best results are obtained by having the
+person look in the direction between the first camera and one of the adjacent cameras. Arms should be
+slightly spread, or maybe angled forward at the elbows.</p>
+</div>
+<p>Run <code class="docutils literal notranslate"><span class="pre">cwipc_register</span></code>. If there is already a complete coarse calibration for all cameras this will
+automatically do a fine calibration. If you are using <code class="docutils literal notranslate"><span class="pre">cwipc_register</span> <span class="pre">--interactive</span></code> type a <code class="docutils literal notranslate"><span class="pre">w</span></code>
+to capture a point cloud and start the registration.</p>
+<p>The algorithm will iterate over the cameras, making slight adjustments to the alignment. When it cannot
+improve the results any more it stops and saves <code class="docutils literal notranslate"><span class="pre">cameraconfig.json</span></code>.</p>
+<p>Check the results with <code class="docutils literal notranslate"><span class="pre">cwipc_view</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The algorithm is not perfect, and it can sometimes get into a local minimum. You will see this as
+a disjunct point cloud, often with cameras pairwise aligned and those pairs disaligned.</p>
+<p>The workaround is to try fine alignment again, with the subject standing in a different pose.</p>
+</div>
+<section id="remove-floor-and-ceiling">
+<h3>Remove floor and ceiling<a class="headerlink" href="#remove-floor-and-ceiling" title="Link to this heading"></a></h3>
+<p>Next adjust <code class="docutils literal notranslate"><span class="pre">height_min</span></code> and <code class="docutils literal notranslate"><span class="pre">height_max</span></code> to get rid of both floor and ceiling. Both have to be
+non-zero otherwise the filter will not be applied.</p>
+</section>
+<section id="color-matching">
+<h3>Color matching<a class="headerlink" href="#color-matching" title="Link to this heading"></a></h3>
+<p>You probably want to play with the various exposure parameters such as <code class="docutils literal notranslate"><span class="pre">color_whitebalance</span></code> and
+<code class="docutils literal notranslate"><span class="pre">color_exposure_time</span></code> to get the best color fidelity, but you really have to experiment here.</p>
+<p>We are working on partially automating this process, but that is not done yet.</p>
+<p>Depth exposure can be left on auto (if the camera supports it) but color should be manual, so that
+it is the same for all cameras.</p>
+</section>
+<section id="final-results">
+<h3>Final results<a class="headerlink" href="#final-results" title="Link to this heading"></a></h3>
+<p>After all the steps have been done you should be able to get point clouds like the one below.</p>
+<figure class="align-default">
+<img alt="Calibrated point cloud captured with cwipc_view" src="_images/calibrated.jpg" />
+</figure>
+</section>
+</section>
+<section id="special-cases">
+<h2>Special cases<a class="headerlink" href="#special-cases" title="Link to this heading"></a></h2>
+<p>Here are some odds and ends that did not fit anywhere else.</p>
+<section id="registering-head-and-shoulders-shots">
+<h3>Registering head-and-shoulders shots<a class="headerlink" href="#registering-head-and-shoulders-shots" title="Link to this heading"></a></h3>
+<p>There is a way to register a single camera without any markers at all. If your camera is in landscape
+orientation, at approximately <code class="docutils literal notranslate"><span class="pre">1.20m</span></code> height, and approximately <code class="docutils literal notranslate"><span class="pre">1m</span></code> away from a seated subject.</p>
+<p>Incidentally, this is exactly what happens if you put the camera on your desk, on a small tripod,
+next to your monitor.</p>
+<p>If you now run <code class="docutils literal notranslate"><span class="pre">cwipc_register</span> <span class="pre">--tabletop</span></code> you will get a <code class="docutils literal notranslate"><span class="pre">cameraconfig.json</span></code> that will capture
+a head and shoulders shot of you.</p>
+<p>Here is a picture of the setup and the resulting point cloud in <code class="docutils literal notranslate"><span class="pre">cwipc_view</span></code>:</p>
+<figure class="align-default">
+<img alt="Tabletop Setup" src="_images/tabletop-setup.jpg" />
+</figure>
+<p>This is useful for developer testing, but it may also be usable for virtual meetings, etc.</p>
+</section>
+<section id="registering-pre-recorded-footage">
+<h3>Registering pre-recorded footage<a class="headerlink" href="#registering-pre-recorded-footage" title="Link to this heading"></a></h3>
+<p>If you have pre-recorded footage (<code class="docutils literal notranslate"><span class="pre">.mkv</span></code> files for Kinect, <code class="docutils literal notranslate"><span class="pre">.bag</span></code> files for realsense) and you have
+captured some sort of a marker (either the Aruco origin marker, or the older four-color-corner marker)
+you can create a <code class="docutils literal notranslate"><span class="pre">cameraconfig.json</span></code> for this recording:</p>
+<ul class="simple">
+<li><p>Put all your files in a single directory, lets say <code class="docutils literal notranslate"><span class="pre">new-recording</span></code>.</p></li>
+<li><p>In that directory, run <code class="docutils literal notranslate"><span class="pre">cwipc_register</span> <span class="pre">--noregister</span> <span class="pre">new-recording</span></code>. This will create the initial
+<code class="docutils literal notranslate"><span class="pre">cameraconfig.json</span></code> inside that directory, with references to all the recording files.</p>
+<ul>
+<li><p><strong>NOTE</strong>: if you still have access to the original <code class="docutils literal notranslate"><span class="pre">cameraconfig.json</span></code> that was used to capture
+the recording it is better to manually copy that file here and edit it to become a config for
+a recording. Details will be added here at some point.</p></li>
+</ul>
+</li>
+<li><p>In that directory, run <code class="docutils literal notranslate"><span class="pre">cwipc_register</span> <span class="pre">--guided</span></code>. But note that you cannot change any of the
+hardware parameters, such as <code class="docutils literal notranslate"><span class="pre">fps</span></code> or capture width and height.</p></li>
+</ul>
+</section>
+<section id="registering-large-spaces">
+<h3>Registering large spaces<a class="headerlink" href="#registering-large-spaces" title="Link to this heading"></a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This section is not for the faint of heart.</p>
+</div>
+<p>If you have a large space, or if not all of your cameras can see the origin, you may still be able to
+do a registration using the <em>Auxiliary Aruco Markers</em>.</p>
+<p>In the place where you found the <code class="docutils literal notranslate"><span class="pre">target-a4-aruco-0.pdf</span></code> there are 5 extra markers. These can be
+used as a “bread crumb trail”: put the auxiliary markers on the floor in random places, but ensure
+that every marker can be seen by at least two cameras, and that there is a bread crumb trail from
+every marker back to the origin marker.</p>
+<p>You may want to print the markers at 140% (i.e. on A3 paper).</p>
+<p><code class="docutils literal notranslate"><span class="pre">cwipc_register</span></code> will first do the coarse alignment only of the cameras that can see the origin
+marker. But after that it will have recorded the position of some of the auxiliary markers. It will
+then do a second pass, in which it will align the cameras that could see that second marker but not
+the origin marker. This is then repeated until all cameras are registered.</p>
+</section>
+<section id="registering-without-aruco-markers">
+<h3>Registering without Aruco markers<a class="headerlink" href="#registering-without-aruco-markers" title="Link to this heading"></a></h3>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This section is not for the faint of heart.</p>
+</div>
+<p>If you need to register cameras but you cannot print the Aruco markers you can do a manual coarse
+registration if you have a piece of paper that is approximately A4-sized. And if you don’t even have
+that you can still follow this procedure but you will have to guess how big a piece of A4 paper would
+be, approximately, and simply select points on the floor where the A4 paper would have been.</p>
+<p>Place it on the ground in the origin position and run <code class="docutils literal notranslate"><span class="pre">cwipc_register</span> <span class="pre">--no_aruco</span> <span class="pre">--nofine</span></code>.</p>
+<p>You will be presented with a 3D view of the capture. You can use the mouse and scrollwheel to change
+your viewpoint.</p>
+<p>You must now select 4 points (with shift-left-click) in a specific order:</p>
+<ol class="arabic simple">
+<li><p>Near-left point of the A4 (from the camera view point),</p></li>
+<li><p>Near-right point,</p></li>
+<li><p>Far-right point,</p></li>
+<li><p>Far-left point.</p></li>
+</ol>
+<p>Inspect the result of this coarse calibration with <code class="docutils literal notranslate"><span class="pre">cwipc_view</span></code>, and make double-sure that the
+blue, red and green axes are pointing in the right direction (see image above).</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="distribution.html" class="btn btn-neutral float-left" title="Preparing a distribution" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="raw-recording.html" class="btn btn-neutral float-right" title="Recording point cloud streams" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, CWI.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
