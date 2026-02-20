@@ -2,14 +2,41 @@ Programming interfaces
 ======================
 
 ``cwipc`` provides a stable, language‑neutral API for working with point cloud
-frames.  The core object is a ``cwipc`` handle representing a collection of 3D
+frames.  The core object is a ``cwipc_pointcloud`` handle representing a collection of 3D
 points with colour and metadata.
+
+General
+-------
+
+The ``cwipc_pointcloud`` is the central object, representing a point cloud. It is an opaque handle that can
+be passed around between different components and across language boundaries with
+minimal copying. When used from C or C++ the user is responsible for managing the lifetime of the object and calling
+``cwipc_pointcloud_free()`` when finished.  In Python and C#, the bindings take care of
+this automatically, with a caveat: if your intention is that ownership of the point
+cloud passes to some other component in some other language, which will henceforth be
+responsible for it, you must call ``cwipc_detach()``, and pass the resulting handle to 
+the other component. This will invalidate the old handle (so it can't be used later, and it
+won't be freed when the Python/C# object is garbage collected), and transfer ownership to the new component, 
+which will be responsible for freeing it.
+
+The ``cwipc_source`` interface represents a source of point clouds, such as a camera, network stream decoder, synthetic generator or prerecorded point cloud sequence.  
+It provides a common interface for waiting for the next available point cloud, and for retrieving it as a ``cwipc_pointcloud`` object.
+Most sources (such as cameras, or recordings) will provide an extended interface ``cwipc_activesource`` which has methods to start and stop the source and to get additional metadata such
+as the number of cameras used in the source and their positions and names.
+
+The ``cwipc_sink`` interface represents a destination for point clouds, such as a network stream encoder, or display window. It provides a common interface for sending point clouds to the sink, and for controlling the sink (for example starting and stopping it).
+
+All language bindings follow the same semantic model, with the C++ bindings being the most direct, so knowledge gained in one
+language transfers easily to others. The bindings automatically handle lifetime
+management and resource cleanup.
+
+Language Bindings
+-----------------
 
 Bindings are available for the following languages:
 
-* **C++** – header ``cwipc_util/include/cwipc_util.hpp`` and the ``cwipc_util`` library.
-* **C** – header ``cwipc_util/include/cwipc.h`` and corresponding static/dynamic
-  libraries.
+* **C++ and C** – main header ``cwipc_util/api.h`` (includes both C and C++ interfaces)
+  and the ``cwipc_util`` library.
 * **Python** – package installed as ``cwipc`` (see ``cwipc_pymodules_install.sh``).
 * **C#** – used primarily from Unity via the companion
   `cwipc_unity <https://github.com/cwi-dis/cwipc_unity>`_ repository.
