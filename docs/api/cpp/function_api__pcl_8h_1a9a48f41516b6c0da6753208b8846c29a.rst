@@ -1,0 +1,14 @@
+.. _exhale_function_api__pcl_8h_1a9a48f41516b6c0da6753208b8846c29a:
+
+Function new_cwipc_pcl_pointcloud
+=================================
+
+- Defined in :ref:`file_cwipc_util_include_cwipc_util_api_pcl.h`
+
+
+Function Documentation
+----------------------
+
+
+.. doxygenfunction:: new_cwipc_pcl_pointcloud(void)
+   :project: cwipc

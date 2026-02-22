@@ -1,0 +1,14 @@
+.. _exhale_define_api__pcl_8h_1a4d7bd596f5802180919c906acc209987:
+
+Define _CWIPC_PCL_POINTCLOUD_DEFINED
+====================================
+
+- Defined in :ref:`file_cwipc_util_include_cwipc_util_api_pcl.h`
+
+
+Define Documentation
+--------------------
+
+
+.. doxygendefine:: _CWIPC_PCL_POINTCLOUD_DEFINED
+   :project: cwipc
