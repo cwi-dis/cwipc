@@ -1,7 +1,7 @@
 .. _page_index:
 
-CWI Pointcloud object
-=====================
+cwipc C and C++ API
+===================
 
 .. doxygenpage:: index
    :project: cwipc

@@ -21,6 +21,8 @@ Program Listing for File api_pcl.h
    #include <pcl/point_types.h>
    
    #ifndef _CWIPC_PCL_POINTCLOUD_DEFINED
+   #ifndef DOXYGEN_SHOULD_SKIP_THIS
+   
    struct EIGEN_ALIGN16 _PointXYZRGBMask
    {
        PCL_ADD_POINT4D; // This adds the members x,y,z which can also be accessed using the point (which is float[4])
@@ -67,7 +69,7 @@ Program Listing for File api_pcl.h
                                       (std::uint32_t, rgba, rgba)
                                       )
    POINT_CLOUD_REGISTER_POINT_WRAPPER(PointXYZRGBMask, _PointXYZRGBMask)
-   
+   #endif // DOXYGEN_SHOULD_SKIP_THIS
    
    typedef PointXYZRGBMask cwipc_pcl_point;
    
