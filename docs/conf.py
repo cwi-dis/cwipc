@@ -49,7 +49,7 @@ breathe_default_project = 'cwipc'
 exhale_args = {
     'containmentFolder': './api/cpp',
     'rootFileName': 'index.rst',
-    'rootFileTitle': 'C++ API Reference',
+    'rootFileTitle': 'C and C++ API Reference',
     'doxygenStripFromPath': os.path.abspath('..'),
     'createTreeView': True,
 }

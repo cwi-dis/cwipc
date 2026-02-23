@@ -1,8 +1,12 @@
 .. cwipc documentation master file
    created for ReadTheDocs style
 
-Welcome to the **cwipc** documentation!
-=======================================
+**cwipc** dynamic point cloud suite
+===================================
+
+This is the documentation for the **cwipc** dynamic point cloud suite, a collection of tools and libraries for working with live and recorded point cloud streams.  
+The project is developed by CWI and VRTogether and is open source under the MIT license.
+The github project page is at <https://github.com/cwi-dis/cwipc>.  
 
 .. toctree::
    :maxdepth: 2
@@ -13,10 +17,6 @@ Welcome to the **cwipc** documentation!
    cli-tools
    hardware-setup
    api-overview
-   api-cpp
-   api-c
-   api-python
-   api-csharp
    build-from-source
    distribution
    registration
