@@ -2,30 +2,30 @@ Programming interfaces
 ======================
 
 ``cwipc`` provides a stable, language‑neutral API for working with point cloud
-frames.  The core object is a ``cwipc_pointcloud`` handle representing a collection of 3D
+frames.  The core object is a `cwipc_pointcloud` handle representing a collection of 3D
 points with colour and metadata.
 
 General
 -------
 
-The ``cwipc_pointcloud`` is the central object, representing a point cloud. It is an opaque handle that can
+The :cpp:class:`cwipc_pointcloud` is the central object, representing a point cloud. It is an opaque handle that can
 be passed around between different components and across language boundaries with
 minimal copying. When used from C or C++ the user is responsible for managing the lifetime of the object and calling
-``cwipc_pointcloud_free()`` when finished.  In Python and C#, the bindings take care of
+:cpp:func:`cwipc_pointcloud_free()` (from C) or the :cpp:func:`cwipc_pointcloud::free()` method (from C++) when finished.  In Python and C#, the bindings take care of
 this automatically, with a caveat: if your intention is that ownership of the point
 cloud passes to some other component in some other language, which will henceforth be
-responsible for it, you must call ``cwipc_detach()``, and pass the resulting handle to 
+responsible for it, you must call the ``_detach()`` method, and pass the resulting handle to 
 the other component. This will invalidate the old handle (so it can't be used later, and it
 won't be freed when the Python/C# object is garbage collected), and transfer ownership to the new component, 
 which will be responsible for freeing it.
 
-The ``cwipc_source`` interface represents a source of point clouds, such as a camera, network stream decoder, synthetic generator or prerecorded point cloud sequence.  
-It provides a common interface for waiting for the next available point cloud, and for retrieving it as a ``cwipc_pointcloud`` object.
-Most sources (such as cameras, or recordings) will provide an extended interface ``cwipc_activesource`` which has methods to start and stop the source and to get additional metadata such
+The :cpp:class:`cwipc_source` interface represents a source of point clouds, such as a camera, network stream decoder, synthetic generator or prerecorded point cloud sequence.  
+It provides a common interface for waiting for the next available point cloud, and for retrieving it as a :cpp:class:`cwipc_pointcloud` object.
+Most sources (such as cameras, or recordings) will provide an extended interface :cpp:class:`cwipc_activesource` which has methods to start and stop the source and to get additional metadata such
 as the number of cameras used in the source and their positions and names.
 
 In general, the developer does not need to interact with the ``cwipc_realsense2`` or other camera
-specific APIs directly, but instead uses the ``cwipc_capturer()`` factory function to obtain a ``cwipc_activesource``.
+specific APIs directly, but instead uses the :cpp:func:`cwipc_capturer()` factory function to obtain a :cpp:class:`cwipc_activesource`.
 This method will look at the ``cameraconfig.json`` file in the current directory to determine which cameras are present and how they are configured, and return a source that captures from those cameras with the appropriate registration and synchronization.  See :doc:`registration` for more details on camera configuration.
 From some languages (such as Python and C#) you have to ensure that the capturer module for the specific camera has been loaded and has
 registered itself with the factory. The is done by importing the module and calling a method there, for example::
@@ -33,7 +33,7 @@ registered itself with the factory. The is done by importing the module and call
     import cwipc_realsense2
     _ = cwipc_realsense2.cwipc_get_version_realsense2()
 
-The ``cwipc_sink`` interface represents a destination for point clouds, such as a network stream encoder, or display window. It provides a common interface for sending point clouds to the sink, and for controlling the sink (for example starting and stopping it).
+The :cpp:class:`cwipc_sink` interface represents a destination for point clouds, such as a network stream encoder, or display window. It provides a common interface for sending point clouds to the sink, and for controlling the sink (for example starting and stopping it).
 
 All language bindings follow the same semantic model, with the C++ bindings being the most direct, so knowledge gained in one
 language transfers easily to others. The bindings automatically handle lifetime
