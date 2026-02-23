@@ -1,5 +1,10 @@
 #ifndef cwipc_codec_api_h
 #define cwipc_codec_api_h
+/** @file cwipc_codec/api.h
+ * Header for cwipc codec, including both C and C++ interfaces.
+ *
+ * This header is intended to be the only header needed to use the cwipc compressor and decompressor.
+ */
 #include <stdint.h>
 #include "cwipc_util/api.h"
 #ifdef __cplusplus
