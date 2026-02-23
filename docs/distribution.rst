@@ -104,4 +104,4 @@ The HTML output appears in ``docs/_build/html``.  Run the same commands in a CI
 job to verify formatting or catch broken links.
 
 On ReadTheDocs the project ``https://cwipc.readthedocs.io`` is configured to use this ``docs/`` folder as the
-source. Currently you have to manually trigger a build there.
+source. Currently you have to manually trigger a build there. The project page is at ``https://app.readthedocs.org/projects/cwipc/`` and it may be that only Jack can do this at the moment.
