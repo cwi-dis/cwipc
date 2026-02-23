@@ -1,7 +1,0 @@
-.. _page_index:
-
-cwipc C and C++ API
-===================
-
-.. doxygenpage:: index
-   :project: cwipc

@@ -1,6 +1,7 @@
 installed
 build*/
 docs/_build/*
+docs/api/cpp
 3rdparty_installed/
 vcpkg_installed/
 .vscode/
