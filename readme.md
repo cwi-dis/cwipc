@@ -1,6 +1,7 @@
 # cwipc - CWI Point Clouds software suite
 
 ![build](https://github.com/cwi-dis/cwipc/actions/workflows/build.yml/badge.svg)
+![docs](https://app.readthedocs.org/projects/cwipc/badge/?version=latest&style=flat)
 
 ## Overview
 
