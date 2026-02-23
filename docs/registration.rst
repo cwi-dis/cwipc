@@ -1,22 +1,22 @@
-Setting up your cameras
-=======================
+Setting up your capture hardware
+================================
+
+.. note::
+
+   We are working on a much more extensive document, which will also explain how to setup your space, procure equipment, etc.
+   Contact us if you are interested in helping us write or debug this document.
 
 Currently *cwipc* supports Microsoft Kinect Azure, Intel RealSense D400 series, and Orbbec Femto series cameras.
 It also supports pre-recorded footage of those cameras, as ``.mkv`` or ``.bag`` files. See below.
 
 .. note::
-   Both types are fully supported on Windows. On Linux both types should be supported, but this has
-   not been tested recently. On Mac only the Realsense and Orbbec cameras are supported, but there are major
+   All types are fully supported on Windows. On Linux and Mac only the Realsense and Orbbec cameras are supported, but there are major
    issues at the moment for USB-conected cameras (basically you have to run everything as ``root``). Realsense and Orbbec recordings
-   are supported on Mac.
+   are supported on Mac. Ethernet-connected Orbbec cameras are fine on the Mac.
 
 The preferred way to use your cameras is to put them on tripods, in *portrait mode*, with all cameras
 having a clear view of the floor of your *origin*, the natural "central location" where your subject
 will be. But see below for situations where this is not possible.
-
-.. note::
-   For testing it may be possible that you don't have to do any registration at all, see the
-   *Head and Shoulders* section below.
 
 Here is a picture of a four-camera setup:
 
@@ -48,35 +48,22 @@ the hardware) and tell you what to do::
     cwipc register --guided
 
 But sometimes it may be needed to have more control over the process, or repeat a step, or something else.
-For that it is possible to use arguments to do each of the steps separately.
+See the section :ref:`registration_special_cases` below for more details on this.
 
-cwipc register
---------------
 
-The ``cwipc register`` command line utility is the swiss army knife to help you setup your cameras,
-but it is rather clunky at the moment. An interactive GUI-based tool will come at some point in the future.
+Steps for guided registration
+-----------------------------
 
-Use ``cwipc register --help`` to see all the command line options it has. For now, we will explain
-the most important ones only:
+First ``cwipc register --guided`` with auto-detect available cameras (unless there already is a ``cameraconfig.json`` in the current directory, in which case it will skip this step).
 
-- ``cwipc register`` without any arguments will try to do all of the needed steps (but it is unlikely to
-  succeed unless you know exactly what you are doing).
-- The ``--verbose`` option will show verbose output, and it will also bring up windows to show you the
-  result of every step. Close the window (or press ``ESC`` with the window active) to proceed with
-  the next step.
-- The ``--rgb`` will use the RGB and Depth images to do the coarse registration (instead of the point clouds),
-  if possible. This will give much better results.
-- The ``--interactive`` option will show you the point cloud currently captured. You can press ``w`` in the
-  point cloud window to use this capture for your calibration step. If ``--rgb`` is also given you will be
-  shown the captured RGB data, in a separate window. The ``--rgb_cw`` and ``--rgb_ccw`` options can be given
-  to rotate the RGB images.
+Then it will do the coarse registration: you will be shown the RGB images captured, and when the marker is visible you can press ``w`` to capture that frame and use it for the coarse registration.
 
-  - In ``--interactive`` mode the ``cwipc register`` point cloud window works similar to the ``cwipc view``
-    window. So you can use left-mouse-drag to pan around the point cloud, right-mouse-drag to move up and
-    down, scrollwheel to zoom. ``?`` will print some limited help on ``stdout``.
+After that you will be shown the point cloud captured and fused. Inspect it to see if the cameras are roughly aligned. Edit the `cameraconfig.json` file to adjust while balance, exposure, etc.
+Also adjust ``near`` and ``far`` and ``radius_filter``. For now set ``height_max`` to something like 2m20 but set ``height_min`` to a small negative value, so you capture some floor.
 
-So, with all of these together, using ``cwipc register --rgb --interactive`` may allow you to go through
-the whole procedure in one single step.
+Now do a floor alignment. 
+
+Finally capture a person standing at the origin, with arms slightly spread, and looking in the direction between the first camera and one of the adjacent cameras. Press ``w`` to capture this frame and use it for fine registration.
 
 Hardware setup
 --------------
@@ -244,10 +231,31 @@ After all the steps have been done you should be able to get point clouds like t
 .. figure:: images/calibrated.jpg
    :alt: Calibrated point cloud captured with cwipc view
 
+.. _registration_special_cases:
 Special cases
 -------------
 
-Here are some odds and ends that did not fit anywhere else.
+Setting up specific camera types
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you have multiple camera types attached you can specify which type of camera you want to register with the ``--kinect``, ``--realsense``, or ``--orbbec`` options::
+
+   cwipc register --kinect --guided
+
+The camera type is only needed while finding the cameras, so after an initial ``cameraconfig.json`` has been created it is no longer needed.
+
+Setting up a recording
+^^^^^^^^^^^^^^^^^^^^^^
+
+If you have created a recording recently, according to the guidelines in :doc:`raw-recording`, there is no need to do a registration: the
+``cameraconfig.json`` file in the recording directory already contains all the necessary information.
+
+But if you have created a recording in the past, and you only have a directory with the raw ``.mkv`` or ``.bag`` files, you can create a ``cameraconfig.json`` for this recording with the following steps::
+
+   cwipc register --guided /path/to/recording
+
+Your recording should have captured the origin marker at some point, and also contain at least one capture that is suitable for fine registration (i.e. a person standing at the origin, with arms slightly spread, and looking in the direction between the first camera and one of the adjacent cameras).
+
 
 Registering head-and-shoulders shots
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -268,23 +276,6 @@ Here is a picture of the setup and the resulting point cloud in ``cwipc view``:
 
 This is useful for developer testing, but it may also be usable for virtual meetings, etc.
 
-Registering pre-recorded footage
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-If you have pre-recorded footage (``.mkv`` files for Kinect, ``.bag`` files for RealSense, or Orbbec native formats)
-and you have captured some sort of a marker (either the Aruco origin marker, or the older four-color-corner marker)
-you can create a ``cameraconfig.json`` for this recording:
-
-- Put all your files in a single directory, lets say ``new-recording``.
-- In that directory, run ``cwipc register --noregister new-recording``. This will create the initial
-  ``cameraconfig.json`` inside that directory, with references to all the recording files.
-
-  - **NOTE**: if you still have access to the original ``cameraconfig.json`` that was used to capture
-    the recording it is better to manually copy that file here and edit it to become a config for
-    a recording. Details will be added here at some point.
-
-- In that directory, run ``cwipc register --guided``. But note that you cannot change any of the
-  hardware parameters, such as ``fps`` or capture width and height.
 
 Registering large spaces
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -332,3 +323,36 @@ You must now select 4 points (with shift-left-click) in a specific order:
 
 Inspect the result of this coarse calibration with ``cwipc view``, and make double-sure that the
 blue, red and green axes are pointing in the right direction (see image above).
+
+cwipc register other arguments
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The ``cwipc register`` command line utility is the swiss army knife to help you setup your cameras,
+but it is rather clunky at the moment. An interactive GUI-based tool will come at some point in the future.
+
+Use ``cwipc register --help`` to see all the command line options it has. For now, we will explain
+the most important ones only:
+
+- ``--nofloor`` will skip the floor registration step.
+- ``--nofine`` will skip the fine registration step.
+- ``--coarse`` will do the coarse registration step even if it has already been done before.
+- ``--no-aruco`` will do the coarse registration without using the Aruco marker. You will have to select the corners of the marker manually in the point cloud viewer window, using shift-click with the mouse, and in the right order.
+- ``--correspondence`` allows to override the fine registration maximum correspondence distance.
+- ``--help_algorithms`` will list the available algorithms for coarse and fine registration, and their parameters. You can specify the algorithm to use with ``--algorithm_analyzer``, ``--algorithm_coarse`` and ``--algorithm_fine``.
+- The ``--verbose`` option will show verbose output, and it will also bring up windows to show you the
+  result of every step. Close the window (or press ``ESC`` with the window active) to proceed with
+  the next step.
+- ``cwipc register`` without any arguments will try to do all of the needed steps (but it is unlikely to
+  succeed unless you know exactly what you are doing). It will auto-capture frames, is it is unlikely to work
+  unless you also pass ``--nograb`` and provide an image.
+- The ``--interactive`` option is an older step-by=-step version of `--guided. It will show you the point cloud currently captured. You can press ``w`` in the
+  point cloud window to use this capture for your calibration step. If ``--rgb`` is also given you will be
+  shown the captured RGB data, in a separate window. The ``--rgb_cw`` and ``--rgb_ccw`` options can be given
+  to rotate the RGB images.
+
+  - In ``--interactive`` mode the ``cwipc register`` point cloud window works similar to the ``cwipc view``
+    window. So you can use left-mouse-drag to pan around the point cloud, right-mouse-drag to move up and
+    down, scrollwheel to zoom. ``?`` will print some limited help on ``stdout``.
+
+So, with all of these together, using ``cwipc register --rgb --interactive`` may allow you to go through
+the whole procedure in one single step.

@@ -15,7 +15,6 @@ The github project page is at <https://github.com/cwi-dis/cwipc>.
    introduction
    installation
    cli-tools
-   hardware-setup
    api-overview
    build-from-source
    distribution

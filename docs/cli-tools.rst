@@ -30,7 +30,7 @@ available.
 
 If you run ``cwipc view`` without a source argument it will look for a ``cameraconfig.json`` in the current
 directory and attempt to capture from these cameras. You will first have to setup your cameras,
-see sections :doc:`hardware-setup` and :doc:`registration`.
+see section :doc:`registration`.
 
 While ``cwipc view`` is primarily intended for viewing point cloud streams (either from camera, pre-recorded or synthetic)
 there is also ``cwipc play`` which is mainly intended for viewing single point clouds::
