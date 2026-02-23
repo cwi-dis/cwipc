@@ -33,7 +33,7 @@ html_theme_options = {
 }
 
 # Doxygen integration (Breathe + Exhale)
-_doxygen_dir = os.path.abspath(os.path.join('..', 'cwipc_util', 'doxygen'))
+_doxygen_dir = os.path.abspath(os.path.join('..', 'doxygen'))
 _doxygen_xml_dir = os.path.join(_doxygen_dir, 'xml')
 
 if True or not os.path.isdir(_doxygen_xml_dir):

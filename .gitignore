@@ -2,6 +2,9 @@ installed
 build*/
 docs/_build/*
 docs/api/cpp
+doxygen/html
+doxygen/xml
+doxygen/latex
 3rdparty_installed/
 vcpkg_installed/
 .vscode/
