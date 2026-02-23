@@ -54,8 +54,21 @@ Connect with a viewer on the same or another machine::
 This will "capture" the synthetic point cloud and stream it over the network to the viewer.  You can also use a real camera as the source for the server
 The point cloud stream is compressed by default, but there are ``--noencode`` and ``--nodecode`` options to disable compression.
 
-Streaming is single-sender to single-receiver, but there is a ``cwipc forward`` command that runs an ingest server
+Streaming is single-sender to single-receiver, but there is a ``cwipc netserver`` command that runs an ingest server
 on port 4304 which will allow multiple clients to connect and receive the same live stream (by connecting to port 4303).
+This also allows you yo stream through NAT firewalls, as long as the forwarding server is on a machine with a public IP address.
+
+On the server (let's say ``myserver.example.com``), run::
+
+    cwipc netserver
+
+On the sending client, run::
+
+    cwipc forward --synthetic --forward  myserver.example.com:4303
+
+On the receiving clients, run::
+
+    cwipc view --netclient myserver.example.com:4303
 
 Conversion example
 ------------------
@@ -74,8 +87,7 @@ The `cwipc copy` command can handle sequences as well as single point cloud file
 precise in specifying what output format you want. See `--help` for the options.
 
 
-Additional examples (recording, playback, synthetic streams) appear in the
-README and in :doc:`raw-recording`.
+Additional examples (recording, playback, synthetic streams) appear in :doc:`raw-recording`.
 
 Common arguments
 ----------------
@@ -136,13 +148,13 @@ cwipc API, so they will also work when using the language bindings or developing
 
 Common environment variables include:
 
-* ``CWIPC_LOGGING`` – controls logging output level and destination. Can be set to a log level
+* ``CWIPC_LOGGING`` controls logging output level and destination. Can be set to a log level
   (e.g. ``TRACE``, ``DEBUG``, ``INFO``, ``WARNING``, ``ERROR``) or combined with a file path
   (e.g. ``CWIPC_LOGGING=DEBUG:path/to/output/file.txt``). Defaults to warnings and errors to stderr.
-* ``CWIPC_LIBRARY_DIR`` – (Windows only) set to the directory containing cwipc runtime DLLs and dependencies
+* ``CWIPC_LIBRARY_DIR`` (Windows only) set to the directory containing cwipc runtime DLLs and dependencies
   to help Python packages locate the installation. On macOS and Linux this is typically handled by ``rpath``.
-* ``_CWIPC_DEBUG_DLL_SEARCH_PATH`` – set to ``1`` or ``true`` to print debug output when Python packages
+* ``_CWIPC_DEBUG_DLL_SEARCH_PATH`` set to ``1`` or ``true`` to print debug output when Python packages
   attempt to locate the cwipc installation.
-* ``EDITOR`` – used by tools that allow editing configuration files (e.g. ``cwipc register``).
-* ``SIGNALS_SMD_PATH`` – (low-latency DASH only) path to the ``lldash`` runtime DLLs.
-* ``LLDASH_LOGGING`` – set to enable more verbose logging from the ``lldash`` component.
+* ``EDITOR`` used by tools that allow editing configuration files (e.g. ``cwipc register``).
+* ``SIGNALS_SMD_PATH`` (low-latency DASH only) path to the ``lldash`` runtime DLLs.
+* ``LLDASH_LOGGING`` set to enable more verbose logging from the ``lldash`` component.
