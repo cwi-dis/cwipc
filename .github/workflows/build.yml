@@ -18,8 +18,8 @@ permissions:
   contents: write
 
 jobs:
-    build-windows:
-        name: build-windows
+    build-windows-intel:
+        name: build-windows-intel
         runs-on: windows-latest
         env: 
           USERNAME: cwi-dis
@@ -170,8 +170,8 @@ jobs:
                 ls -l
                 ls -l ..
                 
-    build-macos:
-        name: build-macos
+    build-macos-arm64:
+        name: build-macos-arm64
         runs-on: macos-latest
         env:
           GITHUB_REF_NAME: ${{ github.ref_name }}
@@ -237,7 +237,7 @@ jobs:
           if: ${{ failure() }}
           uses: actions/upload-artifact@v4
           with:
-                name: macos-ctest-output
+                name: macos-arm64-ctest-output
                 path: build/Testing/Temporary/LastTest.log
         - name: Capture build folder as artifact
           if: ${{ failure() }}
@@ -247,7 +247,7 @@ jobs:
           if: ${{ failure() }}
           uses: actions/upload-artifact@v4
           with:
-                name: macos-build-folder
+                name: macos-arm64-build-folder
                 path: build.tar.gz
         - name: Capture installed folder as artifact
           shell: bash
@@ -260,8 +260,98 @@ jobs:
                 name: cwipc-macos-arm64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
                 path: cwipc-macos-arm64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
             
-    build-android:
-        name: build-android
+    build-macos-intel:
+        name: build-macos-intel
+        runs-on: macos-15-intel
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_REF_NAME_SAFE: ${{ github.ref_name }}
+        steps:
+        - name: Santize ref name
+          shell: bash
+          run: |
+                echo "GITHUB_REF_NAME_SAFE=${GITHUB_REF_NAME//\//-}" >> $GITHUB_ENV
+        - name: Checkout code
+          uses: actions/checkout@v3
+          with:
+                submodules: 'recursive'
+                lfs: 'true'
+                fetch-depth: 0
+        - name: Get all tags
+          run: |
+                git show-ref --tags
+                git log -40
+                git describe
+        - name: Install dependencies
+          shell: bash
+          run: ./scripts/install-3rdparty-macos.sh
+          env:
+            HOMEBREW_NO_VERIFY_ATTESTATIONS: "1"
+        - name: Install OrbbecSDK
+          shell: bash
+          run: ./scripts/install-orbbecsdk-macos.sh
+        - name: Install CMake
+          uses: lukka/get-cmake@latest
+          with:
+            cmakeVersion: "~3.31.1"
+        
+        - name: Setup vcpkg
+          uses: lukka/run-vcpkg@v11
+          if: false
+            
+        - name: CMake configure, build vcpkg packages, build & test
+          uses: lukka/run-cmake@v10
+          with:
+            configurePreset: mac-production
+            buildPreset: mac-production
+            testPreset: mac-production
+            #packagePreset: mac-production
+
+        - name: Install with cmake
+          shell: bash
+          run: |
+                cmake --install build --prefix ${{ github.workspace }}/installed
+
+        - name: Show Python and Python module versions used
+          if: always()
+          shell: bash
+          run: |
+                ./build/venv/bin/python --version
+                ./build/venv/bin/python -m pip freeze
+        - name: Create installer
+          shell: bash
+          run: |
+                cpack --config build/CPackConfig.cmake
+                ls -l build/package
+        - name: upload CTest output in case of failure
+          if: ${{ failure() }}
+          uses: actions/upload-artifact@v4
+          with:
+                name: macos-intel-ctest-output
+                path: build/Testing/Temporary/LastTest.log
+        - name: Capture build folder as artifact
+          if: ${{ failure() }}
+          shell: bash
+          run: tar cfz build.tar.gz build
+        - name: Upload build folder
+          if: ${{ failure() }}
+          uses: actions/upload-artifact@v4
+          with:
+                name: macos-intel-build-folder
+                path: build.tar.gz
+        - name: Capture installed folder as artifact
+          shell: bash
+          run: |
+                tar cvfz cwipc-macos-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz -C installed .
+                ls -l
+        - name: Upload installed folder
+          uses: actions/upload-artifact@v4
+          with:
+                name: cwipc-macos-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+                path: cwipc-macos-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+            
+    build-android-arm64:
+        name: build-android-arm64
         runs-on: ubuntu-latest
         env: 
           USERNAME: cwi-dis
@@ -380,8 +470,8 @@ jobs:
             name: cwipc-android-arm64-package-${{ env.GITHUB_REF_NAME_SAFE }}
             path: build/package/*.tar.gz
     
-    build-ubuntu2404:
-        name: build-ubuntu2404
+    build-ubuntu2404-intel:
+        name: build-ubuntu2404-intel
         runs-on: ubuntu-24.04
         env:
           GITHUB_REF_NAME: ${{ github.ref_name }}
@@ -488,10 +578,11 @@ jobs:
         name: create-release
         runs-on: ubuntu-latest
         needs:
-            - build-windows
-            - build-macos
-            - build-ubuntu2404
-            - build-android
+            - build-windows-intel
+            - build-macos-arm64
+            - build-macos-intel
+            - build-ubuntu2404-intel
+            - build-android-arm64
         env:
           GITHUB_REF_NAME: ${{ github.ref_name }}
           GITHUB_REF_NAME_SAFE: ${{ github.ref_name }}
@@ -523,23 +614,28 @@ jobs:
                 tar cfz ../Assets/${{ env.GITHUB_REF_NAME_SAFE }}-complete.tar.gz --exclude-vcs .
                 zip -x '*.git*' -r ../Assets/${{ env.GITHUB_REF_NAME_SAFE }}-complete.zip .
                 awk '/^## /{if(flag){exit}; flag=1} flag' CHANGELOG.md > ../Assets/changes.md
-        - name: Download Windows installed folder
+        - name: Download Windows intelinstalled folder
           uses: actions/download-artifact@v4
           with:
                 name: cwipc-windows-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.zip
                 path: ../Assets/
-        - name: Download Windows installer
+        - name: Download Windows intel installer
           uses: actions/download-artifact@v4
           with:
                 name: cwipc-windows-intel-installer-${{ env.GITHUB_REF_NAME_SAFE }}.exe
                 path: ../Assets/
-        - name: Download MacOS installed folder
+        - name: Download MacOS arm64 installed folder
           uses: actions/download-artifact@v4
           with:
                 name: cwipc-macos-arm64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
                 path: ../Assets/
+        - name: Download MacOS intel installed folder
+          uses: actions/download-artifact@v4
+          with:
+                name: cwipc-macos-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+                path: ../Assets/
 
-        - name: Download Ubuntu 24.04 installed folder
+        - name: Download Ubuntu 24.04 amd64 installed folder
           uses: actions/download-artifact@v4
           with:
                 name: cwipc-ubuntu2404-amd64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
@@ -575,7 +671,7 @@ jobs:
                 tag_name: ${{ github.ref }}
                 body_path: ../Assets/changes.md
 
-        - name: Upload Windows installer
+        - name: Upload Windows intel installer
           uses: actions/upload-release-asset@v1
           env:
             GITHUB_TOKEN: ${{ github.token }}
@@ -585,7 +681,7 @@ jobs:
             asset_name: cwipc-windows-intel-installer-${{ env.GITHUB_REF_NAME_SAFE }}.exe
             asset_content_type: application/gzip
         
-        - name: Upload Windows installed folder
+        - name: Upload Windows intel installed folder
           uses: actions/upload-release-asset@v1
           env:
             GITHUB_TOKEN: ${{ github.token }}
@@ -595,7 +691,7 @@ jobs:
             asset_name: cwipc-windows-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.zip
             asset_content_type: application/zip
         
-        - name: Upload MacOS installed folder
+        - name: Upload MacOS arm64 installed folder
           uses: actions/upload-release-asset@v1
           env:
             GITHUB_TOKEN: ${{ github.token }}
@@ -605,7 +701,17 @@ jobs:
             asset_name: cwipc-macos-arm64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
             asset_content_type: application/gzip
 
-        - name: Upload Ubuntu 24.04 installed folder
+        - name: Upload MacOS intel installed folder
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: ../Assets/cwipc-macos-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+            asset_name: cwipc-macos-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
+            asset_content_type: application/gzip
+
+        - name: Upload Ubuntu 24.04 intel installed folder
           uses: actions/upload-release-asset@v1
           env:
             GITHUB_TOKEN: ${{ github.token }}
