@@ -112,6 +112,22 @@ All Python scripts also accept a ``--pausefordebug`` command line option. This w
 
 Additionally, you can send ``SIGQUIT`` to all the Python scripts to cause them to dump the Python stacktraces of all threads.
 
+Debugging from Unity
+--------------------
+
+If you are using ``cwipc_unity`` you can set ``CwipcConfig.overrideNativeLoadPath`` to set an absolute path where the native libraries will be loaded from.
+If you set this to your ``build/bin`` directory (or ``build/bin/RelWithDebInfo`` on Windows) that works just fine.
+You can then attach the native debugger.
+
+More Debugging features
+-----------------------
+
+The environment variable ``CWIPC_LOGGING`` allows you to control the level of log messages in the native code. Setting it to ``TRACE`` gives you moderate levels of output, ``DEBUG`` really requires you to know the code intimately.
+
+For capturers, you can also set (in ``cameraconfig.json``) ``system.debug`` to enable debug logging from the native cwipc libraries. (This will appear in the Unity console for Unity use).
+
+For Kinect and Orbbec capturers you can also set ``system.apiDebug`` there, which will enable debug logging from the SDK. But you _really_ have to want this... :-)
+
 Notes
 -----
 
