@@ -169,7 +169,7 @@ find_package(PCL REQUIRED COMPONENTS common io octree filters features geometry 
 #
 # First see if it is already installed.
 
-find_package(nlohmann_json 3.11.3)
+find_package(nlohmann_json 3.12.0)
 
 if(NOT nlohmann_json_FOUND)
 	# If it is not installed already we download a private copy.
