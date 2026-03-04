@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - 309-k4a-vcpkg
     tags:
       - nightly
       - 'v*'
