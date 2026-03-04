@@ -7,11 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
-We are preparing for an 8.0 release. The API is in flux.
+We are preparing for an 8.0 release. This release is not compatible with the 7.X API, see the Changed
+section. Main change is that you must now call start() on a cwipc_capturer. Python APIs have seen much more
+substantial changes.
 
 ### Added
 
 - Documentation! It is not complete yet, but better than nothing (#308)
+- On Windows, Azure Kinect DLLs are now included in the installer (#309)
 - Experimental capturer for Orbbec Femto Mega cameras has been added (#113)
 - Recordings through `cameraconfig.json` now automatically get a correct `cameraconfig.json` themselves. (#263)
 - Logging has been added. Can be captured from Python or C#. Can be enabled with environment variable. (#43, #247, #273)
@@ -38,6 +41,8 @@ We are preparing for an 8.0 release. The API is in flux.
 - Support for `cameraconfig.xml` files has been removed.
 - Support for Certh capturer has been removed.
 - Support for Ubuntu 22.04 has been removed.
+- Support for Azure Kinect on Ubuntu has therefore also been removed.
+- Support for Azure Kinect skeleton tracking has been removed.
 
 ## [7.7.5] - 2025-11-21
 
