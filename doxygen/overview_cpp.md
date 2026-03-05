@@ -1,5 +1,5 @@
 # C and C++ API References
-## Bar
+## Specific to C and C++
 
 When you are using the C API but also the C++ API you, the programmer, are responsible for calling the `free()` method
 on the objects you have created once you no longer need them.
@@ -23,7 +23,7 @@ The `cwipc_source` and `cwipc_activesource` objects are interfaces that produce 
 
 The `cwipc_sink` objects are interfaces that consume `cwipc_pointcloud` objects. Think: display windows, compressors, file writers.
 
-## Common to Python, C++, C and C#
+## Common to Python, C++, C and Csharp
 
 ### Top-level global functions
 
