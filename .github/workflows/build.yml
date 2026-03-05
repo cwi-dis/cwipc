@@ -30,6 +30,10 @@ jobs:
           VCPKG_INSTALL_OPTIONS: --x-abi-tools-use-exact-versions --debug
           GITHUB_REF_NAME: ${{ github.ref_name }}
           GITHUB_REF_NAME_SAFE: unknown
+          #CWIPC_LOGGING: DEBUG
+          #K4A_ENABLE_LOG_TO_STDOUT: 1
+          #K4A_LOG_LEVEL: TRACE
+
         steps:
         - name: Santize ref name
           shell: bash
