@@ -12,7 +12,8 @@
     "capturers": {
       "description": "Build camera capturers",
       "dependencies": [
-        "realsense2"
+        "realsense2",
+        "azure-kinect-sensor-sdk"
       ]
     },
     "gui": {
