@@ -1,7 +1,7 @@
 installed
 build*/
 docs/_build/*
-docs/api/cpp
+docs/api/doxygen
 doxygen/html
 doxygen/xml
 doxygen/latex

@@ -1,25 +1,42 @@
-# cwipc C and C++ API
 
-## cwipc_pointcloud
 
-The `cwipc_pointcloud` object is intended as an abstract object representing a pointcloud.
+## cwipc API objects in Python
 
-It is implemented in the `cwipc_util` library, together with some auxiliary obects to obtain
-point cloud objects, compress them, etc.
+[cwipc.util.cwipc_pointcloud_wrapper]: @ref cwipc.util.cwipc_pointcloud_wrapper "cwipc.util.cwipc_pointcloud_wrapper"
+[cwipc.util.cwipc_source_wrapper]: @ref cwipc.util.cwipc_source_wrapper "cwipc.util.cwipc_source_wrapper"
+[cwipc.util.cwipc_activesource_wrapper]: @ref cwipc.util.cwipc_activesource_wrapper "cwipc.util.cwipc_activesource_wrapper"
+[cwipc.util.cwipc_sink_wrapper]: @ref cwipc.util.cwipc_sink_wrapper "cwipc.util.cwipc_sink_wrapper"
 
-The library can be used from C and C++. In the latter case it will expose a virtual object API, in the former case an opaque object is passed as the first argument to many functions. Interfaces for Python and C# are also available, and mimick the C++ interface.
+### cwipc_pointcloud
 
-In case the library is used from C++ it can also export a PCL (Point Cloud Library) API, which allows access to the underlying PCL implementations of the pointclouds.
+The Python class [cwipc.util.cwipc_pointcloud_wrapper] is a Python wrapper around the native C/C++ [cwipc_pointcloud] object. Unlike for the native object you should normally _not_ call `free()`, and you will be warned if you do so.
 
-## cwipc_source
+If you do not want to free the native object together with the Python object you should call the `detach()` method, but this is only used for special cases, such as when you have forwarded the point cloud pointer to code in some other programming language (like C#).
 
-The `cwipc_source` and `cwipc_activesource` objects are interfaces that produce `cwipc_pointcloud` objects. Think: cameras, file readers, decompressors.
+The Python implementation has a number of convenience methods that return the point cloud data in a form that is more suitable for running algorithms on it:
 
-## cwipc_sink
+- Numpy array of numpy structs
+- Numpy matrix
+- Open3D point cloud
+- Python list of points as Python tuples
 
-The `cwipc_sink` objects are interfaces that consume `cwipc_pointcloud` objects. Think: display windows, compressors, file writers.
+See the [cwipc.util.cwipc_pointcloud_wrapper] class documentation for the exact signature of these methods. 
 
-## Top-level global functions
+For each of these formats there is a corresponding toplevel function such as `cwipc.util.cwipc_from_numpy_array` to create a cwipc point cloud from those representations.
+
+### cwipc_source and cwipc_sink
+
+The classes [cwipc.util.cwipc_source_wrapper], [cwipc.util.cwipc_activesource_wrapper] and [cwipc.util.cwipc_sink_wrapper] are pretty much identical to their C/C++ counterparts, but again the Python programmer is not responsible for calling `free()`.
+
+## cwipc API objects in C#
+
+Currently, the C# interface follows the C/C++ model more closely than the Python model (except the programmer does not have to call `free()` themselves).
+
+The C# API is not as feature-complete as the Python API, because it is intended mainly to allow use of point clouds in Unity VR experiences.
+
+## Common to Python, C++, C and C#
+
+### Top-level global functions
 
 There are a few global functions to control overall functionality of cwipc:
 
@@ -27,19 +44,23 @@ There are a few global functions to control overall functionality of cwipc:
 - `cwipc_log_configure` to setup logging.
 - `cwipc_dangling_allocations` for debugging memory management (your calling of `free()`)
 
-## Creating point clouds
+### Creating point clouds
 
 Point clouds are created through a `cwipc_source` or using the functions `cwipc_read`, `cwipc_read_debugdump`, `cwipc_from_points`, `cwipc_from_packet`.
 
-## Saving point clouds
+### Saving point clouds
 
 Point clouds can be written to file with `cwipc_write`, `cwipc_write_ext` and `cwipc_write_debugdump`.
 
-## Creating point cloud sources
+### Creating point cloud sources
 
 Instances of `cwipc_activesource` are created with `cwipc_synthetic`, `cwipc_capturer` and `cwipc_proxy`.
 
-## cwipc_pointcloud C++ interface
+## Odds and ends
+
+Here is some information that hasn't been sorted into the right place yet.
+
+### cwipc_pointcloud C++ interface
 
 To use abstract `cwipc_pointcloud` pointclouds, transfer them to other libraries (modules, languages) and to get access to the external representation of the points:
 
@@ -79,7 +100,7 @@ struct cwipc_point {
 };
 ```
 
-## cwipc C++ PCL interface
+### cwipc C++ PCL interface
 
 Include the PCL-compatible header before you include
 the general *api.h* header:
@@ -93,7 +114,7 @@ Again, the API is documented using Doxygen. But in short:
 
 - `access_pcl_pointcloud()` returns a reference to the underlying PCL pointcloud. This will remain valid until `free()` is called.
 
-## cwipc C interface
+### cwipc C interface
 
 The C interface is contained in the same header as the C++ interface:
 
@@ -105,11 +126,11 @@ The C functions are have the same names as the C++ methods above, but with `cwip
 
 These functions take a `cwipc_pointcloud *` first argument, and the rest of their arguments are the same as for their C++ counterparts.
 
-## Utility function interface
+### Utility function interface
 
 Again fully documented in Doxygen, but there are functions to read and write PLY files, convert external representation to cwipc pointclouds and convert PCL pointclouds to cwipc pointclouds.
 
-## Historic reasons for design of API for pointclouds
+### Historic reasons for design of API for pointclouds
 
 > NOTE: the following section is no longer factually correct, but it is the original design document
 > written around 2019. We keep it around because it provides insight into the design ideas for cwipc.
@@ -144,7 +165,7 @@ It is a requirement that the uncompressed pointclouds can also be made available
 
 It is a requirement that _pcl2dash_ does not have to include PCL or Boost or other headers (it only has to transfer the pointcloud data structures between the capturer and the codec).
 
-## Header files, stubs
+#### Header files, stubs
 
 There are a number of distinct header files for different types of use:
 
@@ -154,7 +175,7 @@ There are a number of distinct header files for different types of use:
 
 > Discussion point: It feels elegant to have to C# bridge (the code that currently lives in Unity, in <https://github.com/cwi-dis/VRTogether-PointCloud-Rendering/tree/master/Unity/Assets/Scripts/CWI>) be part of our API. But I don't know how well that integrates with Unity (can unity refer to scripts that don't live inside their directory structure? Or should we simply say that the scripts need to be copied verbatim into the directory structure, just as the DLLs are also copied at the moment?).
 
-## Data structures
+#### Data structures
 
 Uncompressed pointclouds produced by the capturer or decoder are represented by an opaque datastructure `opaque_pointcloud`. In C++ this is a class in the `cwipc` namespace with methods to access it. In C it is a `struct cwipc_opaque_pointcloud` that is passed as the first parameter to the accessor functions.
 

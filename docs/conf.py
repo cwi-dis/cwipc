@@ -47,7 +47,7 @@ breathe_projects = {
 breathe_default_project = 'cwipc'
 
 exhale_args = {
-    'containmentFolder': './api/cpp',
+    'containmentFolder': './_build/doxygen',
     'rootFileName': 'index.rst',
     'rootFileTitle': 'C and C++ API Reference',
     'doxygenStripFromPath': os.path.abspath('..'),
