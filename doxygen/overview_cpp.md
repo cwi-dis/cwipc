@@ -1,4 +1,4 @@
-# Foo
+# C and C++ API References
 ## Bar
 
 When you are using the C API but also the C++ API you, the programmer, are responsible for calling the `free()` method
