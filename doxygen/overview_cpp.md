@@ -3,14 +3,9 @@
 When you are using the C API but also the C++ API you, the programmer, are responsible for calling the `free()` method
 on the objects you have created once you no longer need them.
 
-[cwipc_pointcloud]: @ref cwipc_pointcloud "cwipc_pointcloud"
-[cwipc_source]: @ref cwipc_source "cwipc_source"
-[cwipc_activesource]: @ref cwipc_activesource "cwipc_activesource"
-[cwipc_sink]: @ref cwipc_sink "cwipc_sink"
-
 ### cwipc_pointcloud
 
-The [cwipc_pointcloud] object is intended as an abstract object representing a pointcloud.
+The `cwipc_pointcloud` object is intended as an abstract object representing a pointcloud.
 
 It is implemented in the `cwipc_util` library, together with some auxiliary obects to obtain
 point cloud objects, compress them, etc.
@@ -21,11 +16,11 @@ In case the library is used from C++ it can also export a PCL (Point Cloud Libra
 
 ### cwipc_source
 
-The [cwipc_source] and [cwipc_activesource] objects are interfaces that produce [cwipc_pointcloud] objects. Think: cameras, file readers, decompressors.
+The `cwipc_source` and `cwipc_activesource` objects are interfaces that produce `cwipc_pointcloud` objects. Think: cameras, file readers, decompressors.
 
 ### cwipc_sink
 
-The [cwipc_sink] objects are interfaces that consume [cwipc_pointcloud] objects. Think: display windows, compressors, file writers.
+The `cwipc_sink` objects are interfaces that consume `cwipc_pointcloud` objects. Think: display windows, compressors, file writers.
 
 ## Common to Python, C++, C and C#
 
