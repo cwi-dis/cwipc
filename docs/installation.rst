@@ -10,6 +10,7 @@ all of the runtime libraries, command‑line tools and language bindings.
    showing a synthetic point cloud stream (a rotating paraboloid with blinking eyes).
    You can also run ``cwipc_check`` to verify the installation and dependencies, it will
    print any warnings or errors it finds.  
+   
 macOS
 -----
 
