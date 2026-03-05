@@ -1,4 +1,5 @@
-## cwipc API objects in C and C++
+# Foo
+## Bar
 
 When you are using the C API but also the C++ API you, the programmer, are responsible for calling the `free()` method
 on the objects you have created once you no longer need them.
