@@ -42,6 +42,7 @@ When creating a new release, ensure the following have been done:
 - For Windows and Android, the ``vcpkg`` dependent packages should all be updated to the most recent version::
 
     cd .\vcpkg
+    git checkout master
     git pull
     .\bootstrap-vcpkg.bat
     cd ..
