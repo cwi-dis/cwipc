@@ -21,6 +21,7 @@ When creating a new release, ensure the following have been done:
 	- Check ``.github/workflows/build.yml`` for the Python versions used.
 - Check whether ``nlohman_json`` can be updated (``CMakeLists.txt``)
 - Check whether ``nsis`` can be updated (``.github/workflows/build.yml``)
+- Check whether the slurped and modified ``cpack`` config files for ``nsis`` (in ``CMakeFiles``) need to be updated.
 - Dependencies for the ``.deb`` installer for apt/Ubuntu need to be updated. There may be better ways to do this, but this works
 
   - On the targeted Ubuntu, check out and edit ``CMakeFiles/CwipcInstallers.cmake``
