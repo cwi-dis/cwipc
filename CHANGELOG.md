@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
+## [8.0.0] - 2026-03-08
 
-We are preparing for an 8.0 release. This release is not compatible with the 7.X API, see the Changed
-section. Main change is that you must now call start() on a cwipc_capturer. Python APIs have seen much more
-substantial changes.
+8.0 is a major release, with various incompatible changes, especially when using capturers or when using the
+API calls from Python. The good news is that most incompatible changes will give an error message when you are
+using the old methods. The _Changed_ section below should help fixing things.
 
 ### Added
 
