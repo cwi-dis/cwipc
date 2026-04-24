@@ -19,7 +19,10 @@ dependencies = [
     "opencv-python ~= 4.13", 
     "scipy ~= 1.17", 
     "matplotlib ~= 3.10",
-    "debugpy ~= 1.8"
+    "debugpy ~= 1.8",
+    # Qt (with OpenGL)
+    "PySide6>=6.11.0",
+    "PyOpenGL>=3.1.10"
 ]
 
 [project.scripts]
