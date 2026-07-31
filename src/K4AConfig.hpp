@@ -71,6 +71,22 @@ struct K4ACaptureMetadataConfig {
     bool want_rgb = false;
     bool want_depth = false;
     bool want_skeleton = false;
+    bool want_camera_specs = false;
+};
+
+struct K4ACameraMetadataCameraSpecs {
+    // Focal length in pixels
+    float focal_length_x;
+    float focal_length_y;
+    // Principal point (optical center) in pixels
+    float principal_point_x;
+    float principal_point_y;
+    // Color image size
+    unsigned int color_image_width;
+    unsigned int color_image_height;
+    // Default near and far plane
+    float near_plane;
+    float far_plane;
 };
 
 struct K4ACaptureConfig : CwipcBaseCaptureConfig {
