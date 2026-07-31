@@ -303,6 +303,8 @@ public:
     virtual bool is_playing() = 0;
     /// Reload configuration.
     virtual bool config_reload(const char* configFilename) = 0;
+    /// Fast reload configuration.
+    virtual bool config_reload_fast(const char* configFilename) = 0;
     /// Start the capturer.
     virtual bool start() = 0;
     /// Stop capturing.
@@ -426,6 +428,10 @@ public:
 
     virtual bool reload_config(const char* configFile) override final {
         return m_grabber->config_reload(configFile);
+    }
+
+    virtual bool reload_config_fast(const char* configFile) override final {
+        return m_grabber->config_reload_fast(configFile);
     }
 
     bool eof() override final {

@@ -832,6 +832,10 @@ bool cwipc_activesource_reload_config(cwipc_activesource* src, const char* confi
     return src->reload_config(configFile);
 }
 
+bool cwipc_activesource_reload_config_fast(cwipc_activesource* src, const char* configFile) {
+    return src->reload_config_fast(configFile);
+}
+
 size_t cwipc_activesource_get_config(cwipc_activesource* src, char* buffer, size_t size) {
     return src->get_config(buffer, size);
 }

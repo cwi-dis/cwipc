@@ -473,7 +473,10 @@ def cwipc_util_dll_load(libname : Optional[str]=None) -> ctypes.CDLL:
     
     _cwipc_util_dll_reference.cwipc_activesource_reload_config.argtypes = [cwipc_activesource_p, ctypes.c_char_p]
     _cwipc_util_dll_reference.cwipc_activesource_reload_config.restype = ctypes.c_bool
-    
+
+    _cwipc_util_dll_reference.cwipc_activesource_reload_config_fast.argtypes = [cwipc_activesource_p, ctypes.c_char_p]
+    _cwipc_util_dll_reference.cwipc_activesource_reload_config_fast.restype = ctypes.c_bool
+
     _cwipc_util_dll_reference.cwipc_activesource_get_config.argtypes = [cwipc_activesource_p, ctypes.POINTER(ctypes.c_byte), ctypes.c_size_t]
     _cwipc_util_dll_reference.cwipc_activesource_get_config.restype = ctypes.c_size_t
     
@@ -814,7 +817,13 @@ class cwipc_activesource_wrapper(cwipc_source_wrapper, cwipc_activesource_abstra
         if type(config) == str:
             config = config.encode('utf8')
         return cwipc_util_dll_load().cwipc_activesource_reload_config(self.as_cwipc_source_p(), config)
-        
+
+    def reload_config_fast(self, config : Union[str, bytes]) -> None:
+        """Fast load a config from file or JSON string"""
+        if type(config) == str:
+            config = config.encode('utf8')
+        return cwipc_util_dll_load().cwipc_activesource_reload_config_fast(self.as_cwipc_source_p(), config)
+            
     def get_config(self) -> bytes:
         """Return current capturer cameraconfig as JSON"""
         nBytes = cwipc_util_dll_load().cwipc_activesource_get_config(self.as_cwipc_source_p(), None, 0)

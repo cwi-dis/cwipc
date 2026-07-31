@@ -65,6 +65,11 @@ public:
         return false;
     }
 
+    virtual bool reload_config_fast(const char* configFile) override final {
+        cwipc_log(CWIPC_LOG_LEVEL_WARNING, "cwipc_synthetic", "reload_config_fast() not implemented (nor needed)");
+        return false;
+    }
+
     virtual size_t get_config(char* buffer, size_t size) override final {
         return 0;
     }
