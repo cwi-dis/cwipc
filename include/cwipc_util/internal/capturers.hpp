@@ -312,7 +312,7 @@ public:
     /// Get complete current configuration as JSON string.
     virtual std::string config_get() = 0;
     /// Request specific metadata to be added to pointclouds.
-    virtual void request_metadata(bool rgb, bool depth, bool timestamps, bool skeleton) = 0;
+    virtual void request_metadata(bool rgb, bool depth, bool timestamps, bool skeleton, bool camera_specs) = 0;
 
     //
     // This section has the public capturer-independent API used during normal runtime.
