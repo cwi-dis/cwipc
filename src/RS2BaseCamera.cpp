@@ -41,6 +41,7 @@ RS2BaseCamera::RS2BaseCamera(rs2::context& _ctx, RS2CaptureConfig& configuration
   processing_frame_queue(1),
   camera_pipeline(_ctx),
   camera_started(false),
+  camera_processing_thread(nullptr),
   rs2filter_align_color_to_depth(RS2_STREAM_DEPTH),
   rs2filter_align_depth_to_color(RS2_STREAM_COLOR),
   debug(configuration.debug),
@@ -368,7 +369,7 @@ void RS2BaseCamera::wait_for_pointcloud_processed() {
 
 void RS2BaseCamera::save_frameset_metadata(cwipc_pointcloud *pc)
 {
-    if (!metadata.want_depth && !metadata.want_rgb && !metadata.want_timestamps) return;
+    if (!metadata.want_depth && !metadata.want_rgb && !metadata.want_timestamps && !metadata.want_camera_specs) return;
     std::unique_lock<std::mutex> lock(processing_mutex);
 
     auto aligned_frameset = current_processed_frameset;
@@ -448,6 +449,28 @@ void RS2BaseCamera::save_frameset_metadata(cwipc_pointcloud *pc)
             cwipc_metadata *ap = pc->access_metadata();
             ap->_add(name, description, pointer, size, ::free);
         }
+    }
+
+    if (metadata.want_camera_specs) {
+        rs2::pipeline_profile profile = camera_pipeline.get_active_profile();
+        auto color_stream = profile.get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>();
+        rs2_intrinsics intrinsics = color_stream.get_intrinsics();
+
+        // Extract the required specs
+        RS2CameraMetadataCameraSpecs* specs = (RS2CameraMetadataCameraSpecs*)malloc(sizeof(RS2CameraMetadataCameraSpecs));
+        specs->focal_length_x = intrinsics.fx;
+        specs->focal_length_y = intrinsics.fy;
+        specs->principal_point_x = intrinsics.ppx;
+        specs->principal_point_y = intrinsics.ppy;
+        specs->color_image_width = intrinsics.width;
+        specs->color_image_height = intrinsics.height;
+        specs->near_plane = 0.1f;
+        specs->far_plane = 10.0f;
+
+        // Save the specs in the meta-data
+        const std::string name = "camera." + serial;
+        cwipc_metadata* ap = pc->access_metadata();
+        ap->_add(name, "", (void*)specs, sizeof(RS2CameraMetadataCameraSpecs), ::free);
     }
 }
 

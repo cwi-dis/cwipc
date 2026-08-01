@@ -118,12 +118,60 @@ public:
         return true;
     }
 
+    virtual bool config_reload_fast(const char* configFilename) override final {
+        // Only reloads what is safe to reload without re-starting the cameras.
+        // Only configuration files or inline JSON is supported here, no auto.
+
+        RS2CaptureConfig new_configuration;
+        bool success = false;
+        if (configFilename != nullptr) {
+            if (configFilename[0] == '{') {
+                // Read from JSON string
+                success = new_configuration.from_string(configFilename, type);
+            }
+            else {
+                // Check file extension
+                const char* extension = strrchr(configFilename, '.');
+                if (extension != nullptr && strcmp(extension, ".json") == 0) {
+                    // Try to read from file
+                    success = new_configuration.from_file(configFilename, type);
+                }
+            }
+        }
+
+        //
+        // If loading of the new configuration was successful copy over the suitable parts.
+        //
+
+        if (success) {
+            // Copy over processing configuration (should be safe)
+            configuration.processing = new_configuration.processing;
+
+            // Copy over camera transforms (camera count must match!)
+            if (configuration.all_camera_configs.size() == new_configuration.all_camera_configs.size()) {
+                for (size_t i = 0; i < new_configuration.all_camera_configs.size(); ++i) {
+                    configuration.all_camera_configs[i].trafo = new_configuration.all_camera_configs[i].trafo;
+                    configuration.all_camera_configs[i].cameraposition = new_configuration.all_camera_configs[i].cameraposition;
+                }
+            }
+            else {
+                _log_error("Invalid configuration for fast reload (RS2) (size of cameras changed): '" + std::string(configFilename) + "'");
+            }
+        }
+        else {
+            _log_error("Invalid configuration for fast reload (RS2) (either not file or invalid JSON): '" + std::string(configFilename) + "'");
+        }
+
+        return success;
+    }
+
     virtual std::string config_get() override final {
         if (cameras.size() == 0) {
             _log_error("Must start() before getting config");
             return "";
         }
-                // We get the hardware parameters from the first camera.
+        
+        // We get the hardware parameters from the first camera.
         RS2CameraHardwareConfig curHardwareConfig;
         cameras[0]->get_camera_hardware_parameters(curHardwareConfig);
         configuration.hardware = curHardwareConfig;
@@ -140,10 +188,11 @@ public:
     }
 
     /// Tell the capturer that each point cloud should also include RGB and/or D images and/or RGB/D capture timestamps.
-    virtual void request_metadata(bool rgb, bool depth, bool timestamps, bool skeleton) override final {
+    virtual void request_metadata(bool rgb, bool depth, bool timestamps, bool skeleton, bool camera_specs) override final {
         metadata.want_rgb = rgb;
         metadata.want_depth = depth;
         metadata.want_timestamps = timestamps;
+        metadata.want_camera_specs = camera_specs;
     }
 
     //

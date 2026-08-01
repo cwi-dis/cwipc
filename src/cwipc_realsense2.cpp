@@ -65,7 +65,8 @@ public:
             cwipc_activesource::is_metadata_requested("rgb"), 
             cwipc_activesource::is_metadata_requested("depth"), 
             cwipc_activesource::is_metadata_requested("timestamps"),
-            false
+            false,
+            cwipc_activesource::is_metadata_requested("camera")
         );
     }
 

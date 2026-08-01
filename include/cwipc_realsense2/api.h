@@ -1,6 +1,6 @@
 #ifndef cwipc_realsense_api_h
 #define cwipc_realsense_api_h
-/** @file cwipc_orbbec/api.h
+/** @file cwipc_realsense/api.h
  * Header for cwipc Realsense2 capturer, including both C and C++ interfaces.
  *
  * This header is intended to be the only header needed to use the cwipc Realsense2 capturer.
