@@ -150,6 +150,11 @@ public:
         return true;
     }
 
+    virtual bool config_reload_fast(const char* configFilename) override final {
+        _log_error("xxxjack: pbauszat hasn't implemented config_reload_fast yet");
+        return false;
+    }
+
     virtual std::string config_get() override {
         if (cameras.size() == 0) {
             _log_error("Must start() before getting config");
@@ -159,9 +164,12 @@ public:
     }
 
     /// Tell the capturer that each point cloud should also include RGB and/or D images and/or RGB/D capture timestamps.
-    virtual void request_metadata(bool rgb, bool depth, bool timestamps, bool skeleton) override final {
+    virtual void request_metadata(bool rgb, bool depth, bool timestamps, bool skeleton, bool camera_specs ) override final {
         metadata.want_rgb = rgb;
         metadata.want_depth = depth;
+        if (camera_specs) {
+            _log_warning("xxxjack: pbauszat hasn't implemented camera_specs yet");
+        }
     }
 
     virtual bool pointcloud_available(bool wait) override final {

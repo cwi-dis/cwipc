@@ -44,7 +44,8 @@ public:
             cwipc_activesource::is_metadata_requested("rgb"), 
             cwipc_activesource::is_metadata_requested("depth"), 
             false,
-            false
+            false,
+            cwipc_activesource::is_metadata_requested("camera")
         );
     }
 
