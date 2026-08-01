@@ -44,7 +44,8 @@ public:
             cwipc_activesource::is_metadata_requested("rgb"),
             cwipc_activesource::is_metadata_requested("depth"),
             false,
-            cwipc_activesource::is_metadata_requested("skeleton")
+            cwipc_activesource::is_metadata_requested("skeleton"),
+            cwipc_activesource::is_metadata_requested("camera")
         );
     }
 
