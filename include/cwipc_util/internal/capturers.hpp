@@ -303,6 +303,8 @@ public:
     virtual bool is_playing() = 0;
     /// Reload configuration.
     virtual bool config_reload(const char* configFilename) = 0;
+    /// Fast reload configuration.
+    virtual bool config_reload_fast(const char* configFilename) = 0;
     /// Start the capturer.
     virtual bool start() = 0;
     /// Stop capturing.
@@ -310,7 +312,7 @@ public:
     /// Get complete current configuration as JSON string.
     virtual std::string config_get() = 0;
     /// Request specific metadata to be added to pointclouds.
-    virtual void request_metadata(bool rgb, bool depth, bool timestamps, bool skeleton) = 0;
+    virtual void request_metadata(bool rgb, bool depth, bool timestamps, bool skeleton, bool camera_specs) = 0;
 
     //
     // This section has the public capturer-independent API used during normal runtime.
@@ -426,6 +428,10 @@ public:
 
     virtual bool reload_config(const char* configFile) override final {
         return m_grabber->config_reload(configFile);
+    }
+
+    virtual bool reload_config_fast(const char* configFile) override final {
+        return m_grabber->config_reload_fast(configFile);
     }
 
     bool eof() override final {

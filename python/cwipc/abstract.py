@@ -63,6 +63,11 @@ class cwipc_activesource_abstract(cwipc_source_abstract):
         ...
 
     @abstractmethod
+    def reload_config_fast(self, config : Union[str, bytes]) -> None:
+        """Fast load a config from file or JSON string"""
+        ...
+        
+    @abstractmethod
     def get_config(self) -> bytes:
         """Return current capturer cameraconfig as JSON"""
         ...

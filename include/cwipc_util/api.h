@@ -356,6 +356,16 @@ public:
     */
     virtual bool reload_config(const char* configFile) = 0;
 
+    /** \brief Reload parts of the capturer based on a new configuration
+    *
+    * Only implemented for actual cameras (realsense, kinect). Does NOT close the cameras, but updates only
+    * the parts of the configuration which can be updated without restart (e.g., camera trafos and processing).
+    *
+    * \param configFile The pathname to the new camera configuration or an inline json configuration string.
+    * \return A boolean that is true if the fast reload was successful.
+    */
+    virtual bool reload_config_fast(const char* configFile) = 0;
+
     /** \brief Return current configuration as a JSON string
     * 
     * For actual camera capturers this returns the current configuration in a buffer supplied by the caller.
@@ -866,6 +876,17 @@ extern "C" {
     * \return A boolean that is true if the reload was successful.
     */
     _CWIPC_UTIL_EXPORT bool cwipc_activesource_reload_config(cwipc_activesource* src, const char* configFile);
+
+    /** \brief Reload parts of the capturer based on a new configuration
+    *
+    * Only implemented for actual cameras (realsense, kinect). Does NOT close the cameras, but updates only
+    * the parts of the configuration which can be updated without restart (e.g., camera trafos and processing).
+    *
+    * \param src The cwipc_activesource object.
+     * \param configFile The pathname to the new camera configuration or an inline json configuration string.
+    * \return A boolean that is true if the reload was successful.
+    */
+    _CWIPC_UTIL_EXPORT bool cwipc_activesource_reload_config_fast(cwipc_activesource* src, const char* configFile);
 
     /** \brief Return current configuration as a JSON string
     *
