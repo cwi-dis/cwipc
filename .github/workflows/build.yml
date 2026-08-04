@@ -20,7 +20,7 @@ permissions:
 jobs:
     build-windows-intel:
         name: build-windows-intel
-        runs-on: windows-2025-vs2022
+        runs-on: windows-2025-vs2026
         env: 
           USERNAME: cwi-dis
           VCPKG_EXE: ${{ github.workspace }}/vcpkg/vcpkg

@@ -35,7 +35,7 @@
   	{
   		"name" : "windows",
   		"description" : "Build for production on Windows",
-  		"generator" : "Visual Studio 17 2022",
+  		"generator" : "Visual Studio 18 2026",
   		"inherits" : "vcpkg",
   		"installDir": "${sourceDir}/../installed",
 		"condition": {
