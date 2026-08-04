@@ -103,7 +103,7 @@ jobs:
         - name: Install CMake
           uses: lukka/get-cmake@latest
           with:
-            cmakeVersion: "~3.31.1"
+            cmakeVersion: "~4.2.2"
         
         - name: Setup vcpkg
           uses: lukka/run-vcpkg@v11
