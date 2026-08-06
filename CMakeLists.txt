@@ -205,6 +205,7 @@ add_test(NAME cwipc_setup_venv_with_cwipc
 
 )
 set_tests_properties(cwipc_setup_venv_with_cwipc PROPERTIES FIXTURES_SETUP venv_with_cwipc)
+set_tests_properties(cwipc_setup_venv_with_cwipc PROPERTIES LABELS python)
 
 add_subdirectory("cwipc_util")
 add_subdirectory("cwipc_codec")

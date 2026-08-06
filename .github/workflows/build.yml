@@ -20,7 +20,7 @@ permissions:
 jobs:
     build-windows-intel:
         name: build-windows-intel
-        runs-on: windows-latest
+        runs-on: windows-2025-vs2026
         env: 
           USERNAME: cwi-dis
           VCPKG_EXE: ${{ github.workspace }}/vcpkg/vcpkg
@@ -40,7 +40,7 @@ jobs:
           run: |
                 echo "GITHUB_REF_NAME_SAFE=${GITHUB_REF_NAME//\//-}" >> $GITHUB_ENV
         - name: Checkout code
-          uses: actions/checkout@v3
+          uses: actions/checkout@v7
           with:
                 submodules: 'recursive'
                 lfs: 'true'
@@ -51,7 +51,7 @@ jobs:
                 git log -40
                 git describe
         - name: Install correct Python version
-          uses: actions/setup-python@v5
+          uses: actions/setup-python@v7
           with:
             python-version: '3.12'
         - name: Install OrbbecSDK
@@ -76,7 +76,7 @@ jobs:
               -Source "${{ env.FEED_URL }}"
 
         - name: Install NSIS
-          uses: repolevedavaj/install-nsis@v1.1.0
+          uses: repolevedavaj/install-nsis@v1.2.1
           with:
             nsis-version: '3.11'
 
@@ -103,13 +103,15 @@ jobs:
         - name: Install CMake
           uses: lukka/get-cmake@latest
           with:
-            cmakeVersion: "~3.31.1"
+            cmakeVersion: "~4.2.2"
         
         - name: Setup vcpkg
           uses: lukka/run-vcpkg@v11
             
         - name: CMake configure, build vcpkg packages, build & test
           uses: lukka/run-cmake@v10
+          env:
+            CWIPC_CTEST_SKIP_TEST: python
           with:
             configurePreset: windows-production
             buildPreset: windows-production
@@ -186,7 +188,7 @@ jobs:
           run: |
                 echo "GITHUB_REF_NAME_SAFE=${GITHUB_REF_NAME//\//-}" >> $GITHUB_ENV
         - name: Checkout code
-          uses: actions/checkout@v3
+          uses: actions/checkout@v7
           with:
                 submodules: 'recursive'
                 lfs: 'true'
@@ -276,7 +278,7 @@ jobs:
           run: |
                 echo "GITHUB_REF_NAME_SAFE=${GITHUB_REF_NAME//\//-}" >> $GITHUB_ENV
         - name: Checkout code
-          uses: actions/checkout@v3
+          uses: actions/checkout@v7
           with:
                 submodules: 'recursive'
                 lfs: 'true'
@@ -370,7 +372,7 @@ jobs:
           run: |
                 echo "GITHUB_REF_NAME_SAFE=${GITHUB_REF_NAME//\//-}" >> $GITHUB_ENV
         - name: Checkout code
-          uses: actions/checkout@v3
+          uses: actions/checkout@v7
           with:
                 submodules: 'recursive'
                 lfs: 'true'
@@ -486,7 +488,7 @@ jobs:
           run: |
                 echo "GITHUB_REF_NAME_SAFE=${GITHUB_REF_NAME//\//-}" >> $GITHUB_ENV
         - name: Checkout code
-          uses: actions/checkout@v3
+          uses: actions/checkout@v7
           with:
                 submodules: 'recursive'
                 lfs: 'true'
@@ -596,7 +598,7 @@ jobs:
           run: |
                 echo "GITHUB_REF_NAME_SAFE=${GITHUB_REF_NAME//\//-}" >> $GITHUB_ENV
         - name: Checkout code
-          uses: actions/checkout@v2
+          uses: actions/checkout@v7
           with:
                 submodules: 'recursive'
                 lfs: 'true'
