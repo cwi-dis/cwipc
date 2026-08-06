@@ -39,7 +39,10 @@ macro(cwipc_python_test)
 	set(multiValueArgs TEST FIXTURES_REQUIRED)
 	cmake_parse_arguments(MYARGS "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
+	# Label it as a Python test
+	set_tests_properties(${MYARGS_TEST} PROPERTIES LABELS python)
 	# Setup required fixtures, if any
+	# xxxjack could be simplified: always called with the same arguments.
 	if(MYARGS_FIXTURES_REQUIRED)
 		set_tests_properties(${MYARGS_TEST} PROPERTIES FIXTURES_REQUIRED ${MYARGS_FIXTURES_REQUIRED})
 	endif()
