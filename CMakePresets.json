@@ -198,8 +198,23 @@
 	}
   ],
   "testPresets" : [
+	{
+		"name": "test-production",
+		"hidden": true,
+		"filter": {
+			"exclude": {
+				"label": "$penv{CWIPC_CTEST_SKIP_TEST}"
+			}
+		}
+	},
+	{
+		"name": "test-develop",
+		"inherits": "test-production",
+		"hidden": true
+	},
   	{
   		"name" : "windows-production",
+		"inherits": "test-production",
   		"configurePreset" : "windows-production",
   		"configuration" : "Release",
 		"condition": {
@@ -210,6 +225,7 @@
   	},
 	{
   		"name" : "windows-develop",
+		"inherits": "test-develop",
   		"configurePreset" : "windows-develop",
   		"configuration" : "RelWithDebInfo",
 		"condition": {
@@ -220,6 +236,7 @@
   	},
   	{
   		"name" : "mac-production",
+		"inherits": "test-production",
   		"configurePreset" : "mac-production",
   		"configuration" : "Release",
 		"condition": {
@@ -230,6 +247,7 @@
   	},
 	{
   		"name" : "mac-develop",
+		"inherits": "test-develop",
   		"configurePreset" : "mac-develop",
   		"configuration" : "RelWithDebInfo",
 		"condition": {
@@ -240,6 +258,7 @@
   	},
 	{
   		"name" : "linux-production",
+		"inherits": "test-production",
   		"configurePreset" : "linux-production",
   		"configuration" : "Release",
 		"condition": {
@@ -250,6 +269,7 @@
   	},
 	{
   		"name" : "linux-develop",
+		"inherits": "test-develop",
   		"configurePreset" : "linux-develop",
   		"configuration" : "RelWithDebInfo",
 		"condition": {
