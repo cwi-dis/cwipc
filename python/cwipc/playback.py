@@ -29,6 +29,9 @@ class _Filesource(cwipc_activesource_abstract):
         
     def reload_config(self, config: str | bytes | None) -> None:
         return
+
+    def reload_config_fast(self, config : str | bytes) -> None:
+        return
     
     def get_config(self) -> Optional[str]:
         return None
