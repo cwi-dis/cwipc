@@ -127,6 +127,10 @@ class _NetPassthrough(threading.Thread, cwipc_activesource_abstract):
         raise NotImplementedError
 
     @override
+    def reload_config_fast(self, config: Union[str, bytes]) -> None:
+        raise NotImplementedError
+
+    @override
     def get_config(self) -> bytes:
         raise NotImplementedError
 
@@ -145,6 +149,7 @@ class _NetPassthrough(threading.Thread, cwipc_activesource_abstract):
     @override
     def get_tileinfo_dict(self, tilenum: int) -> dict[str, Any]:
         raise NotImplementedError
+
 
     
 def cwipc_activesource_passthrough(source : cwipc_activerawsource_abstract, verbose : bool=False) -> cwipc_activesource_abstract:

@@ -255,6 +255,10 @@ class _MQSynchronizer(_Synchronizer):
         raise NotImplementedError
 
     @override
+    def reload_config_fast(self, config: str | bytes) -> None:
+        raise NotImplementedError
+
+    @override
     def get_config(self) -> bytes:
         raise NotImplementedError
 
