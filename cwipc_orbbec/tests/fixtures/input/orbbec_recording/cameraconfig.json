@@ -1,0 +1,81 @@
+{
+  "camera": [
+    {
+      "_cameraposition": [
+        -0.09855348429779323,
+        -0.9854677656014679,
+        -1.4622323891415283
+      ],
+      "disabled": false,
+      "serial": "CL2A141002N",
+      "trafo": [
+        [
+          -0.04058538449748081,
+          -0.9969605921397797,
+          -0.06650116003118042,
+          0.09855348429779323
+        ],
+        [
+          -0.9812960255690579,
+          0.05230543557276308,
+          -0.1852626557402074,
+          0.9854677656014679
+        ],
+        [
+          0.18817793910967023,
+          0.05773836791808845,
+          -0.9804363029297689,
+          1.4622323891415283
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "type": "orbbec_playback"
+    }
+  ],
+  "filtering": {
+    "do_threshold": true,
+    "map_color_to_depth": false,
+    "threshold_far": 6.0,
+    "threshold_near": 0.15
+  },
+  "hardware": {
+    "color_backlight_compensation": 0,
+    "color_brightness": 0,
+    "color_contrast": 32,
+    "color_exposure_time": -200,
+    "color_gain": 60,
+    "color_height": 720,
+    "color_powerline_frequency": 2,
+    "color_saturation": 54,
+    "color_whitebalance": -6500,
+    "color_width": 1280,
+    "depth_height": 576,
+    "depth_width": 640,
+    "fps": 5
+  },
+  "processing": {
+    "depth_x_erosion": 0,
+    "depth_y_erosion": 0,
+    "greenscreenremoval": true,
+    "height_max": 0.0,
+    "height_min": 0.0,
+    "radius_filter": 0.6
+  },
+  "sync": {
+    "ignore_sync": false,
+    "sync_master_serial": ""
+  },
+  "system": {
+    "debug": false,
+    "new_timestamps": false,
+    "record_to_directory": "",
+    "single_tile": -1
+  },
+  "type": "orbbec_playback",
+  "version": 5
+}
