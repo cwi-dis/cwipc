@@ -1,0 +1,22 @@
+[build-system]
+
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+
+name = "cwipc_orbbec"
+description="Python interface to cwipc_orbbec library (ctypes-based)"
+authors=[
+    {name="Jack Jansen", email="Jack.Jansen@cwi.nl"}
+]
+dynamic = ["version"]
+requires-python = ">= 3.9"
+dependencies = [
+    "cwipc_util"
+]
+
+[project.scripts]
+
+[tool.setuptools.packages.find]
+exclude = ["build*"]

@@ -1,0 +1,13 @@
+# CMake
+build/
+build-*/
+
+# Various
+.DS_Store
+*~
+.vs
+__pycache__
+*.pyc
+*.egg-info
+python/dist
+tests/fixtures/output/*.ply

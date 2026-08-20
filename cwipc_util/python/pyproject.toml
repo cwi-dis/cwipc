@@ -1,0 +1,42 @@
+[build-system]
+
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+
+name = "cwipc_util"
+description="Python interface to cwipc libraries (ctypes-based)"
+authors=[
+    {name="Jack Jansen", email="Jack.Jansen@cwi.nl"}
+]
+dynamic = ["version"]
+requires-python = ">= 3.12"
+dependencies = [
+    "numpy ~= 2.4", 
+    "open3d ~= 0.19", 
+    "pillow ~= 12.1", 
+    "opencv-python ~= 4.13", 
+    "scipy ~= 1.17", 
+    "matplotlib ~= 3.10",
+    "debugpy ~= 1.8",
+    # Qt (with OpenGL)
+    "PySide6>=6.11.0",
+    "PyOpenGL>=3.1.10"
+]
+
+[project.scripts]
+cwipc = "cwipc.__main__:main"
+cwipc_grab = "cwipc.scripts.cwipc_grab:main"
+cwipc_view = "cwipc.scripts.cwipc_view:main"
+cwipc_register = "cwipc.scripts.cwipc_register:main"
+cwipc_forward = "cwipc.scripts.cwipc_forward:main"
+cwipc_toproxy = "cwipc.scripts.cwipc_toproxy:main"
+cwipc_timing = "cwipc.scripts.cwipc_timing:main"
+cwipc_find_transform = "cwipc.scripts.cwipc_find_transform:main"
+cwipc_analyze_registration = "cwipc.scripts.cwipc_analyze_registration:main"
+cwipc_netserver = "cwipc.scripts.cwipc_netserver:main"
+cwipc_play = "cwipc.scripts.cwipc_play:main"
+
+[tool.setuptools.packages.find]
+exclude = ["build*"]
