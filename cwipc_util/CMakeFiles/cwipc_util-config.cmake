@@ -1,0 +1,7 @@
+get_filename_component(SELF_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+include(${SELF_DIR}/cwipc_util.cmake)
+get_filename_component(cwipc_util_INCLUDE_DIRS "${SELF_DIR}/../../../include" ABSOLUTE)
+get_filename_component(cwipc_util_LIBRARY_DIRS "${SELF_DIR}/../../../lib" ABSOLUTE)
+get_filename_component(cwipc_util_PYTHON_DIRS "${SELF_DIR}/../../../share/cwipc_util/python" ABSOLUTE)
+set(cwipc_util_LIBRARIES cwipc_util)
+set(cwipc_util_FOUND TRUE)
