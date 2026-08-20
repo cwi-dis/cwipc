@@ -1,0 +1,20 @@
+[build-system]
+
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+
+name = "cwipc_realsense2"
+description="Python interface to cwipc_realsense2 library (ctypes-based)"
+authors=[
+    {name="Jack Jansen", email="Jack.Jansen@cwi.nl"}
+]
+dynamic = ["version"]
+requires-python = ">= 3.9"
+dependencies = [
+    "cwipc_util"
+]
+
+[tool.setuptools.packages.find]
+exclude = ["build*"]
