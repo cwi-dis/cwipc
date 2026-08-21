@@ -53,10 +53,11 @@ When creating a new release, ensure the following have been done:
 
 - The toplevel ``vcpkg.json`` has a version string.
 - ``setup.py`` in ``cwipc_util/python`` and every other package has a default version string that is only used when installing with ``pip install -e`` (because usually it is dynamically determined at build time. For good measure update these default version strings when doing a major release.
+- ``CMakeFiles/GetGitVersion.cmake`` has a ``CWIPC_VERSION_UNKNOWN`` that is only used when building from a source distribution. Update it.
 - ``CWIPC_API_VERSION`` incremented if there are any API changes (additions only).
 - ``CWIPC_API_VERSION_OLD`` incremented if there are API changes that are not backward compatible.
 
-	- Both these need to be changed in ``api.h`` and ``cwipc/util.py``.
+	- Both these need to be changed in ``cwipc_util/include/api.h`` and ``cwipc_util/python/cwipc/util.py``.
 
 - ``CHANGELOG.md`` updated.
 

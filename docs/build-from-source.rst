@@ -24,7 +24,7 @@ Building from the command line
        git clone https://github.com/cwi-dis/cwipc.git
        cd cwipc
        git submodule update --init --recursive
-       git lfs init
+       git lfs install
        git lfs pull
 
    - On Mac/Linux, get the source tarball and unpack it.
