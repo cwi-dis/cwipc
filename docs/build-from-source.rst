@@ -17,13 +17,22 @@ Prerequisites
 Building from the command line
 ------------------------------
 
-1. Clone the repository, ensuring you also pull the git lfs content and the vcpkg submodule::
+1. Get the source. There are multiple options depending on your needs:
+
+   - Clone the git repository, ensuring you also pull the git lfs content and the vcpkg submodule::
 
        git clone https://github.com/cwi-dis/cwipc.git
        cd cwipc
        git submodule update --init --recursive
        git lfs init
        git lfs pull
+
+   - On Mac/Linux, get the source tarball and unpack it.
+
+   - On Windows, get the source zipfile and unpack it. Subsequently, install vcpkg::
+
+       cd cwipc
+       git clone https://github.com/microsoft/vcpkg.git
 
 2. Install third‑party packages:
    
