@@ -1,0 +1,107 @@
+{
+  "camera": [
+    {
+      "disabled": false,
+      "serial": "CL2A141009T",
+      "trafo": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "type": "orbbec_playback"
+    },
+    {
+      "disabled": false,
+      "serial": "CL2A141002N",
+      "trafo": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "type": "orbbec_playback"
+    }
+  ],
+  "filtering": {
+    "do_threshold": true,
+    "map_color_to_depth": false,
+    "threshold_far": 6.0,
+    "threshold_near": 0.15
+  },
+  "hardware": {
+    "color_backlight_compensation": 0,
+    "color_brightness": 0,
+    "color_contrast": 32,
+    "color_exposure_time": 200,
+    "color_gain": 60,
+    "color_height": 720,
+    "color_powerline_frequency": 2,
+    "color_saturation": 54,
+    "color_whitebalance": 3500,
+    "color_width": 1280,
+    "depth_height": 576,
+    "depth_width": 640,
+    "fps": 5
+  },
+  "processing": {
+    "depth_x_erosion": 0,
+    "depth_y_erosion": 0,
+    "greenscreenremoval": false,
+    "height_max": 0.0,
+    "height_min": 0.0,
+    "radius_filter": 0.0
+  },
+  "sync": {
+    "ignore_sync": false,
+    "sync_master_serial": ""
+  },
+  "system": {
+    "debug": true,
+    "new_timestamps": false,
+    "record_to_directory": "",
+    "single_tile": -1
+  },
+  "type": "orbbec_playback",
+  "version": 5
+}
