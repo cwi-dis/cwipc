@@ -110,8 +110,8 @@ jobs:
             
         - name: CMake configure, build vcpkg packages, build & test
           uses: lukka/run-cmake@v10
-          env:
-            CWIPC_CTEST_SKIP_TEST: python
+          #env:
+          #  CWIPC_CTEST_SKIP_TEST: python
           with:
             configurePreset: windows-production
             buildPreset: windows-production
