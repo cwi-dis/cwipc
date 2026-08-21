@@ -628,6 +628,10 @@ jobs:
           with:
                 name: cwipc-windows-intel-installer-${{ env.GITHUB_REF_NAME_SAFE }}.exe
                 path: ../Assets/
+        - name: Rename nsis installer
+          shell: bash
+          run: |
+                mv ../Assets/*.exe ../Assets/cwipc-windows-intel-installer-${{ env.GITHUB_REF_NAME_SAFE }}.exe
         - name: Download MacOS arm64 installed folder
           uses: actions/download-artifact@v4
           with:
