@@ -5,13 +5,10 @@ This section describes how to compile **cwipc** from the GitHub repository on
 macOS, Linux or Windows.  The project uses CMake with a vcpkg‑based third
 dependency tree.
 
-If you want to build offline (i.e. without cloning the repository) you must download the ``cwipc--fullsource`` archive,
-either as ``.zip`` or ``.tar.gz``, from the `releases page <https://github.com/cwi-dis/cwipc/releases>`_. The standard GitHub ``Source code`` downloads do not include the submodules therefore they will not work.
-
 Prerequisites
 -------------
 
-* A recent CMake (3.20+).
+* A recent CMake (3.31+).
 * A C++17 compiler (clang, gcc, MSVC).
 * Git toolchain.
 * Python 3.12.
@@ -20,7 +17,7 @@ Prerequisites
 Building from the command line
 ------------------------------
 
-1. Clone the repository, ensuring you also pull the submodules and the git lfs content::
+1. Clone the repository, ensuring you also pull the git lfs content and the vcpkg submodule::
 
        git clone https://github.com/cwi-dis/cwipc.git
        cd cwipc
@@ -142,3 +139,4 @@ Environment variables
 - ``CWIPC_TEST_HAVE_KINECT_HARDWARE`` can be set to run the tests that require Azure Kinect hardware.
 - ``CWIPC_TEST_HAVE_ORBBEC_HARDWARE`` can be set to run the tests that require Orbbec hardware.
 - ``CWIPC_TEST_HAVE_REALSENSE2_HARDWARE`` can be set to run the tests that require Realsense2 hardware.
+- ``CWIPC_CTEST_SKIP_TEST`` can be used to skip test categories.

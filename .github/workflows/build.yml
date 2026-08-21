@@ -613,12 +613,10 @@ jobs:
           with:
                 name: cached-git-version
                 path: .
-        - name: Create Assets and full sourcecode assets
+        - name: Create Assets folder and changes.md
           shell: bash
           run: |
                 mkdir ../Assets
-                tar cfz ../Assets/${{ env.GITHUB_REF_NAME_SAFE }}-complete.tar.gz --exclude-vcs .
-                zip -x '*.git*' -r ../Assets/${{ env.GITHUB_REF_NAME_SAFE }}-complete.zip .
                 awk '/^## /{if(flag){exit}; flag=1} flag' CHANGELOG.md > ../Assets/changes.md
         - name: Download Windows intelinstalled folder
           uses: actions/download-artifact@v4
@@ -745,23 +743,4 @@ jobs:
             upload_url: ${{ steps.create_release.outputs.upload_url }}
             asset_path: ../Assets/cwipc-android-arm64-package-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
             asset_name: cwipc-android-arm64-package-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
-            asset_content_type: application/zip
-        - name: Upload complete source (zip)
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/${{ env.GITHUB_REF_NAME_SAFE }}-complete.zip
-            asset_name: cwipc-fullsource-${{ env.GITHUB_REF_NAME_SAFE }}.zip
-            asset_content_type: application/zip
-
-        - name: Upload complete source (gzipped tar)
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/${{ env.GITHUB_REF_NAME_SAFE }}-complete.tar.gz
-            asset_name: cwipc-fullsource-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
             asset_content_type: application/zip

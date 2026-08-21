@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## unreleased
 
+- The submodules cwipc_* have gone. They are now subdirectories (#332)
+- The fullsource zip and tarball are no longer included in the releases (#332)
 - Switched to VS2026 for Windows build (#327)
 - Temporarily disabled Python checks on Windows (#325)
 
