@@ -654,93 +654,20 @@ jobs:
           with:
                 name: cwipc-android-arm64-package-${{ env.GITHUB_REF_NAME_SAFE }}
                 path: ../Assets/
-        - name: Find Artefact names
-          run: |
-                windows_exe_path=$(ls ../Assets/*.exe | head -n 1)
-                ubuntu2404_deb_path=$(ls ../Assets/*2404*.deb | head -n 1)
-                echo "windows_exe_path=${windows_exe_path}" >> $GITHUB_ENV
-                echo "ubuntu2404_deb_path=${ubuntu2404_deb_path}" >> $GITHUB_ENV
         - name: Check what is there
           shell: bash
-          run: ls -l . ../Assets
+          run: ls -l ../Assets
+
         - name: Create Release
-          uses: comnoco/create-release-action@v2.0.5
-          id: create_release
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
+          uses: softprops/action-gh-release@v3
           with:
                 draft: false
                 prerelease: true
-                release_name: ${{ github.ref }}
+                name: ${{ github.ref }}
                 tag_name: ${{ github.ref }}
                 body_path: ../Assets/changes.md
+                token: ${{ github.token }}
+                files: |
+                  ../Assets/cwipc-*
 
-        - name: Upload Windows intel installer
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ${{ env.windows_exe_path }}
-            asset_name: cwipc-windows-intel-installer-${{ env.GITHUB_REF_NAME_SAFE }}.exe
-            asset_content_type: application/gzip
-        
-        - name: Upload Windows intel installed folder
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/cwipc-windows-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.zip
-            asset_name: cwipc-windows-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.zip
-            asset_content_type: application/zip
-        
-        - name: Upload MacOS arm64 installed folder
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/cwipc-macos-arm64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
-            asset_name: cwipc-macos-arm64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
-            asset_content_type: application/gzip
 
-        - name: Upload MacOS intel installed folder
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/cwipc-macos-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
-            asset_name: cwipc-macos-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
-            asset_content_type: application/gzip
-
-        - name: Upload Ubuntu 24.04 intel installed folder
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/cwipc-ubuntu2404-amd64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
-            asset_name: cwipc-ubuntu2404-amd64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
-            asset_content_type: application/gzip
-
-        - name: Upload Ubuntu 24.04 debian package
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ${{ env.ubuntu2404_deb_path }}
-            asset_name: cwipc-ubuntu2404-amd64-package-${{ env.GITHUB_REF_NAME_SAFE }}.deb
-            asset_content_type: application/gzip
-
-        - name: Upload Android package
-          uses: actions/upload-release-asset@v1
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ steps.create_release.outputs.upload_url }}
-            asset_path: ../Assets/cwipc-android-arm64-package-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
-            asset_name: cwipc-android-arm64-package-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
-            asset_content_type: application/zip
