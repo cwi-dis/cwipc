@@ -35,10 +35,18 @@ Building from the command line
        git clone https://github.com/microsoft/vcpkg.git
 
 2. Install third‑party packages:
-   
+
    * macOS: ``scripts/install-3rdparty-macos.sh``
    * Ubuntu: ``scripts/install-3rdparty-ubuntu2404.sh``
    * Windows: ``scripts/install-3rdparty-windows.ps1`` (run as Administrator).
+
+   If you want Orbbec camera support, also run the matching
+   ``scripts/install-orbbecsdk-{macos,ubuntu2404}.sh`` or
+   ``scripts/install-orbbecsdk-windows.ps1``. This installs the SDK into
+   ``3rdparty_installed/orbbecsdk``, where CMake expects to find it. Without
+   this step CMake silently configures without Orbbec support (a
+   ``find_package(OrbbecSDK)`` warning, no error) and ``cwipc_orbbec`` is
+   skipped.
 
 3. Configure and build with CMake presets::
 
