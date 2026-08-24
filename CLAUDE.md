@@ -89,6 +89,26 @@ Tests are wired through CTest (`add_test`, gated by `CWIPC_WITH_TESTS`); Python 
 additionally run via `unittest` — see `cwipc_util/python/test_cwipc_util.py` as the pattern
 (fixtures under `<module>/tests/fixtures`).
 
+The macOS build/test path has been execution-verified (actually built + `ctest`'d, not just
+read). The Windows path is CI-verified only (`.github/workflows/build.yml`'s
+`build-windows-intel` job executes and passes) — no session has actually run it, since running
+Claude Code itself on Windows hasn't worked out for Jack so far. Weigh confidence in
+Windows-specific build claims accordingly.
+
+## Scripts directory — ask before running
+
+Don't run anything under `scripts/` without checking with the user first. Several have
+real side effects beyond this repo: installing packages system-wide via the platform
+package manager (`install-3rdparty-*`), or pushing a git tag to trigger a GitHub Actions
+release (`nightly.sh`). The user may not want those effects at a given point in time, and
+some aren't easily reversible.
+
+Exceptions — safe to run without asking:
+
+- `scripts/activate*` — only affects the current shell (`PATH`, venv), no lasting side effects.
+- `scripts/install-orbbecsdk-*` — installs the Orbbec SDK locally under `3rdparty_installed/`,
+  inside the repo checkout, nothing system-wide.
+
 ## CLI tools
 
 One `cwipc` entry point with git-style subcommands (`check`, `register`, `grab`, `view`, `play`,
