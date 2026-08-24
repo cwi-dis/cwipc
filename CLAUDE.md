@@ -89,6 +89,13 @@ Tests are wired through CTest (`add_test`, gated by `CWIPC_WITH_TESTS`); Python 
 additionally run via `unittest` — see `cwipc_util/python/test_cwipc_util.py` as the pattern
 (fixtures under `<module>/tests/fixtures`).
 
+Quick manual smoke test after building: `source scripts/activate && cwipc view --synthetic
+--count 3` (add `--nodisplay` for a non-visual variant that just prints grab stats).
+Confirmed working from a Claude Code Bash tool call on macOS: the windowed version genuinely
+opens an on-screen window (briefly, for 3 frames) and exits cleanly on its own — this isn't a
+given for GUI apps launched from an agent's shell, so don't assume it'll behave the same on
+other platforms/setups without checking.
+
 The macOS build/test path has been execution-verified (actually built + `ctest`'d, not just
 read). The Windows path is CI-verified only (`.github/workflows/build.yml`'s
 `build-windows-intel` job executes and passes) — no session has actually run it, since running
@@ -121,6 +128,15 @@ One `cwipc` entry point with git-style subcommands (`check`, `register`, `grab`,
 Live at `cwipc_util/python/cwipc/` (`util.py`, `codec.py`, `kinect.py`, `orbbec.py`,
 `realsense2.py`, `playback.py`, `abstract.py`). Runnable examples in
 `cwipc_util/python/examples/`.
+
+## Releasing
+
+Full checklist (Python/vcpkg version bumps, `CWIPC_API_VERSION`/`CWIPC_API_VERSION_OLD`,
+Debian dependency regeneration, tagging, Homebrew formula update): `docs/distribution.rst`.
+Note in particular `CWIPC_API_VERSION` (bump on additive API changes) and
+`CWIPC_API_VERSION_OLD` (bump on breaking ones), in `cwipc_util/include/api.h` and
+`cwipc_util/python/cwipc/util.py` — the ABI-tracking convention for cross-language consumers
+like `cwipc_unity`.
 
 ## State / active work
 
