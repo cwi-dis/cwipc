@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## unreleased
+## [8.1.0] - 2026-08-24
+
+### Changed
 
 - The submodules cwipc_* have gone. They are now subdirectories (#332)
 - The fullsource zip and tarball are no longer included in the releases (#332)

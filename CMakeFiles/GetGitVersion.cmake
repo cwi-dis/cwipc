@@ -1,6 +1,6 @@
 macro(get_git_version)
 	# Fallback version. Update on major 
-	set(CWIPC_VERSION_UNKNOWN "8.0+unknown")
+	set(CWIPC_VERSION_UNKNOWN "8.1+unknown")
 	set(options)
 	set(oneValueArgs VERSION_VAR)
 	set(multiValueArgs)

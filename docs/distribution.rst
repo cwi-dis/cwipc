@@ -65,7 +65,7 @@ Version numbers for the release no longer need to be updated manually, but note 
 
 After making all these changes push to github. Ensure the CI/CD build passes (easiest is by running ``./scripts/nightly.sh`` which does a nightly build). This build will take a looooong time, most likely, because the ``vcpkg`` dependencies have been updated and the Windows runner will have to rebuild the world.
 
-After that tag all submodules and the main module with *v_X_._Y_._Z_*.
+After that tag with *v_X_._Y_._Z_*.
 
 If one of the next steps fails just fix the issue and do another micro-release. Has happened to me every single release, I think:-)
 
