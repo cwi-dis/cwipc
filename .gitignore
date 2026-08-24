@@ -11,3 +11,4 @@ vcpkg_installed/
 .cachedgitversion.txt
 __pycache__/
 tmp/
+*.egg-info/
