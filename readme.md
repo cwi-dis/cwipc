@@ -42,6 +42,7 @@ If you build cwipc from source you can also build it for reading it offline, in 
 ### Documentation quick links:
 
 - [Installation](https://cwipc.readthedocs.io/en/latest/installation.html)
+- [Scripted installs and CI](https://cwipc.readthedocs.io/en/latest/installation.html#scripted-installs-and-ci) (`get-cwipc.sh`, GitHub Action)
 - [Command line usage](https://cwipc.readthedocs.io/en/latest/cli-tools.html)
 
 

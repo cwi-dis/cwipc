@@ -1,0 +1,46 @@
+# Test the install-cwipc action (.github/actions/install-cwipc) and the scripts
+# behind it (scripts/get-cwipc.sh, scripts/setup-cwipc.sh) on every platform,
+# against a released cwipc. See cwi-dis/cwipc#353.
+
+name: Test install-cwipc action
+
+on:
+  push:
+    paths:
+      - '.github/actions/install-cwipc/**'
+      - '.github/workflows/test-install-action.yml'
+      - 'scripts/get-cwipc.sh'
+      - 'scripts/setup-cwipc.sh'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'cwipc release to install (on macOS also "master")'
+        required: false
+        default: 'v8.1.0'
+
+jobs:
+  install-and-smoke-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest, macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        if: runner.os == 'Windows'
+        with:
+          python-version: '3.12'
+
+      - id: cwipc
+        uses: ./.github/actions/install-cwipc
+        with:
+          version: ${{ inputs.version || 'v8.1.0' }}
+
+      - name: Smoke test
+        shell: bash
+        run: |
+          echo "prefix: ${{ steps.cwipc.outputs.prefix }}"
+          echo "cwipc version: ${{ steps.cwipc.outputs.cwipc-version }}"
+          cwipc view --synthetic --count 3 --nodisplay
