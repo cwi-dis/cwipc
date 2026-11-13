@@ -129,9 +129,6 @@ jobs:
           run: |
                 cpack --config build/CPackConfig.cmake
                 ls -l build/package
-        - name: Test the installer (install, cwipc_check, Start menu, uninstall)
-          shell: bash
-          run: ./.github/scripts/test-nsis-installer.sh build/package/*.exe
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
           uses: actions/upload-artifact@v4
@@ -539,9 +536,6 @@ jobs:
           run: |
                 cpack --config build/CPackConfig.cmake -D CPACK_DEBIAN_FILE_NAME="cwipc-ubuntu2404-amd64-package-${{ env.GITHUB_REF_NAME_SAFE }}.deb"
                 ls -l build/package
-        - name: Test the Debian package (install, cwipc_check, remove)
-          shell: bash
-          run: ./.github/scripts/test-deb-package.sh build/package/*.deb
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
           uses: actions/upload-artifact@v4
@@ -583,6 +577,56 @@ jobs:
                 name: debian-package-2404.deb
                 path: build/package/*.deb
 
+    #
+    # Installer tests (cwi-dis/cwipc#355): on a fresh runner, not the one that built the
+    # installer, so the build dependencies aren't there and can't hide a missing
+    # dependency of the package. "Re-run failed jobs" redoes only the test.
+    #
+    test-installer-windows-intel:
+        name: test-installer-windows-intel
+        needs: build-windows-intel
+        runs-on: windows-2025-vs2026
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_REF_NAME_SAFE: unknown
+        steps:
+        - name: Santize ref name
+          shell: bash
+          run: |
+                echo "GITHUB_REF_NAME_SAFE=${GITHUB_REF_NAME//\//-}" >> $GITHUB_ENV
+        - name: Checkout the test scripts
+          uses: actions/checkout@v7
+          with:
+                sparse-checkout: .github
+        - name: Download the installer
+          uses: actions/download-artifact@v4
+          with:
+                name: cwipc-windows-intel-installer-${{ env.GITHUB_REF_NAME_SAFE }}.exe
+                path: package
+        - name: Test the installer (install, cwipc_check, Start menu, uninstall)
+          shell: bash
+          run: ./.github/scripts/test-nsis-installer.sh package/*.exe
+
+    test-package-ubuntu2404-intel:
+        name: test-package-ubuntu2404-intel
+        needs: build-ubuntu2404-intel
+        runs-on: ubuntu-24.04
+        steps:
+        - name: Checkout the test scripts
+          uses: actions/checkout@v7
+          with:
+                sparse-checkout: .github
+        - name: Download the Debian package
+          uses: actions/download-artifact@v4
+          with:
+                name: debian-package-2404.deb
+                path: package
+        - name: Test the Debian package (install, cwipc_check, remove)
+          shell: bash
+          run: |
+                sudo apt-get update
+                ./.github/scripts/test-deb-package.sh package/*.deb
+
     create-release:
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
         name: create-release
@@ -593,6 +637,8 @@ jobs:
             - build-macos-intel
             - build-ubuntu2404-intel
             - build-android-arm64
+            - test-installer-windows-intel
+            - test-package-ubuntu2404-intel
         env:
           GITHUB_REF_NAME: ${{ github.ref_name }}
           GITHUB_REF_NAME_SAFE: ${{ github.ref_name }}

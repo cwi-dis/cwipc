@@ -2,7 +2,8 @@
 #
 # test-deb-package.sh DEB - install the cwipc Debian package, check it, remove it, and
 # check that nothing of the setup is left (cwi-dis/cwipc#355). Needs sudo. Used by the
-# Ubuntu CI build job; on a machine of your own only where installing cwipc is fine.
+# test-package-ubuntu2404-intel CI job, on a fresh runner; on a machine of your own only
+# where installing cwipc is fine.
 #
 set -euo pipefail
 deb="$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"

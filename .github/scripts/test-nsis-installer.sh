@@ -3,7 +3,7 @@
 # test-nsis-installer.sh INSTALLER - install the cwipc Windows installer silently,
 # check it (including the Start-menu .bat files), uninstall it, and check that the
 # installation directory is gone (cwi-dis/cwipc#355). Git Bash, as administrator. Used by
-# the Windows CI build job.
+# the test-installer-windows-intel CI job, on a fresh runner.
 #
 set -euo pipefail
 installer="$(cygpath -w "$1")"
