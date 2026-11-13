@@ -1,2 +1,6 @@
 *.mkv filter=lfs diff=lfs merge=lfs -text
 *.bag filter=lfs diff=lfs merge=lfs -text
+# PLY files must be byte-exact: some are binary, and line endings matter (#66).
+# -text rather than binary, so ASCII PLY files still get readable diffs.
+*.ply -text
+*.cwipcdump binary

@@ -7,6 +7,7 @@ add_library(cwipc_util SHARED
 	cwipc_filters.cpp 
 	cwipc_window.cpp 
 	cwipc_proxy.cpp 
+	cwipc_ply.cpp 
 )
 
 target_sources(cwipc_util
@@ -16,6 +17,7 @@ target_sources(cwipc_util
 	"../include/cwipc_util/api_pcl.h"
 	"../include/cwipc_util/internal/logging.hpp"
 	"../include/cwipc_util/internal/capturers.hpp"
+	"../include/cwipc_util/internal/ply.hpp"
 )
 
 if(CWIPC_WITH_GUI)
