@@ -13,7 +13,9 @@ all of the runtime libraries, command‑line tools and language bindings.
    terminal you run it in*; if not, it tells you whether the installation itself is
    broken (``cwipc_check install`` may fix that) or whether your environment leads
    elsewhere: ``bin`` not on ``PATH`` (open a new terminal after installing), or
-   another cwipc installation found first.
+   another cwipc installation found first. A camera module whose SDK isn't installed (for
+   example ``librealsense2``, which the Debian package only recommends) is reported as not
+   available; that is not an error.
    
 macOS
 -----

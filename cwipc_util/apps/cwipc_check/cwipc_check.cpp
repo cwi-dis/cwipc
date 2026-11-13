@@ -226,14 +226,36 @@ static bool same_file_as_one_of(const fs::path& found, const std::vector<fs::pat
 struct Check {
     std::string name;
     std::string cmd;
+    // For a capturer: what it needs that is installed separately (or not at all). Empty
+    // for the core modules and Python.
+    std::string optional_needs;
 };
+
+// The capturers are optional: their vendor library may be missing (the Debian package
+// only recommends librealsense2, which comes from the RealSense apt repository).
+static std::string capturer_needs(const std::string& module) {
+    if (module == "cwipc_realsense2") return "librealsense2, for RealSense cameras";
+    if (module == "cwipc_kinect") return "the Azure Kinect SDK, for Kinect cameras";
+    if (module == "cwipc_orbbec") return "the OrbbecSDK, for Orbbec cameras";
+    return "";
+}
+
+// Did the program not even start because a shared library is missing? (The loader's exit
+// status: 127 on Linux and macOS, STATUS_DLL_NOT_FOUND on Windows.)
+static bool library_missing(int status) {
+#ifdef WIN32
+    return status == (int)0xC0000135;
+#else
+    return status == 127;
+#endif
+}
 
 static std::vector<Check> all_checks() {
     std::vector<Check> rv;
     for (const fs::path& program : install_check_programs()) {
         std::string module = program.stem().string();
         module = module.substr(0, module.size() - strlen("_install_check"));
-        rv.push_back({module, quote(program)});
+        rv.push_back({module, quote(program), capturer_needs(module)});
     }
     fs::path python = venv_bin() / (std::string("python") + EXE_SUFFIX);
     std::error_code ec;
@@ -244,26 +266,34 @@ static std::vector<Check> all_checks() {
     return rv;
 }
 
-// Run the checks; return the ones that failed.
-static std::vector<Check> run_checks(const std::vector<Check>& checks) {
+struct CheckResults {
     std::vector<Check> failed;
+    std::vector<Check> unavailable;   // optional, and a library it needs is missing
+};
+
+static CheckResults run_checks(const std::vector<Check>& checks) {
+    CheckResults rv;
     for (const Check& c : checks) {
         std::cerr << c.name << ": checking" << std::endl;
         int status = run(c.cmd);
-        if (status != 0) {
-            std::cerr << c.name << ": not ok (exit status " << status << ")" << std::endl;
-            failed.push_back(c);
-        } else {
+        if (status == 0) {
             std::cerr << c.name << ": ok" << std::endl;
+        } else if (!c.optional_needs.empty() && library_missing(status)) {
+            std::cerr << c.name << ": not available (a library it needs is missing; it needs " << c.optional_needs << ")" << std::endl;
+            rv.unavailable.push_back(c);
+        } else {
+            std::cerr << c.name << ": not ok (exit status " << status << ")" << std::endl;
+            rv.failed.push_back(c);
         }
     }
-    return failed;
+    return rv;
 }
 
 // cwipc_check checks whether cwipc works *from the environment it was started in* (a
 // terminal, the Start menu): that decides the exit status. If something fails, it runs
 // the failed checks again with the tree's own environment, to tell a broken installation
-// from an environment that doesn't lead to it (cwi-dis/cwipc#355).
+// from an environment that doesn't lead to it (cwi-dis/cwipc#355). A capturer whose
+// vendor library is missing is reported as not available, which is not a failure.
 static int check() {
     std::error_code ec;
     // broken: problems that no environment fixes.
@@ -279,7 +309,7 @@ static int check() {
         std::cerr << "python: no venv with the cwipc modules (" << python.string() << " not found): not ok" << std::endl;
         broken = true;
     }
-    std::vector<Check> failed = run_checks(checks);
+    CheckResults results = run_checks(checks);
 
     // What this environment leads to.
     std::cerr << std::endl << "environment: checking" << std::endl;
@@ -314,14 +344,24 @@ static int check() {
     }
 #endif
 
-    // Tell a broken installation from an environment that doesn't lead to it.
-    if (!failed.empty()) {
+    // Tell a broken installation from an environment that doesn't lead to it. Capturers
+    // that weren't available go along: on Windows a missing PATH looks the same.
+    std::vector<Check> again = results.failed;
+    again.insert(again.end(), results.unavailable.begin(), results.unavailable.end());
+    std::vector<Check> unavailable = results.unavailable;
+    if (!again.empty()) {
         std::cerr << std::endl << "Checking again what failed, with the environment of this installation (" << prefix.string() << "):" << std::endl;
         set_tree_environment();
-        if (!run_checks(failed).empty()) broken = true;
-        env_problem = true;
+        CheckResults results2 = run_checks(again);
+        if (!results2.failed.empty()) broken = true;
+        // Something that works with the tree's environment but didn't in the caller's.
+        if (results2.failed.size() + results2.unavailable.size() < again.size()) env_problem = true;
+        unavailable = results2.unavailable;
     }
     std::cerr << std::endl;
+    for (const Check& c : unavailable) {
+        std::cerr << c.name << " is not available; it needs " << c.optional_needs << " (optional)." << std::endl;
+    }
     if (broken) {
         std::cerr << "The installation itself is broken; see the messages above." << std::endl;
 #ifdef WIN32
