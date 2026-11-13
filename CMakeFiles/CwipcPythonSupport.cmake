@@ -13,7 +13,8 @@ macro(cwipc_setup_python_venv)
 		# Create venv for testing, and re-set Python3_EXECUTABLE to that Python.
 		# We disable use of system-installed packages, because otherwise the testing of the scripts will fail.
 		#
-		get_filename_component(VENV_DIR "${CMAKE_BINARY_DIR}/venv" ABSOLUTE)
+		# Same place as in an installed tree (cwi-dis/cwipc#354).
+		get_filename_component(VENV_DIR "${CMAKE_BINARY_DIR}/libexec/cwipc/venv" ABSOLUTE)
 		execute_process(COMMAND ${Python3_EXECUTABLE} -m venv "${VENV_DIR}")
 		set(ENV{VIRTUAL_ENV} "${VENV_DIR}")
 		if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")

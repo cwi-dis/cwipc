@@ -1,27 +1,17 @@
-# Set PATH and DYLD_LIBRARY_PATH to include built executables and dynamic libraries and enable Python venv.
-# use with "source", don't execute.
+# Set up the environment for using cwipc from this source tree (bash/zsh).
+# Use with "source", don't execute.
+#
+# Transitional (cwi-dis/cwipc#355): the real work is done by setup-cwipc.sh, which
+# writes build/activate. This file runs it the first time, then sources the result.
+# To redo the setup (for example after adding a capturer): scripts/setup-cwipc.sh
 if [[ "${BASH_SOURCE}" == "" ]]; then
-    myPath=`realpath "${(%):-%N}"`
+    _cwipc_mypath=`realpath "${(%):-%N}"`
 else
-    myPath=`realpath "${BASH_SOURCE}"`
+    _cwipc_mypath=`realpath "${BASH_SOURCE}"`
 fi
-myDir=`dirname $myPath`
-buildDir=`cd $myDir/../build && pwd`
-export PATH="$buildDir/bin:$buildDir/bin/RelWithDebInfo:$buildDir/bin/Release:$PATH"
-# Setting DYLD_LIBRARY_PATH doesn't work, but luckily it usually isn't needed
-export DYLD_LIBRARY_PATH="$buildDir/lib:$DYLD_LIBRARY_PATH"
-export LD_LIBRARY_PATH="$buildDir/lib:$LD_LIBRARY_PATH"
-export CWIPC_LIBRARY_DIR="$buildDir/lib"
-if [ -f $buildDir/venv/Scripts/activate ]; then
-    # Windows bash
-    source $buildDir/venv/Scripts/activate
-else
-    source $buildDir/venv/bin/activate
+_cwipc_topdir=`dirname "$(dirname "$_cwipc_mypath")"`
+if [ ! -f "$_cwipc_topdir/build/activate" ]; then
+    bash "$_cwipc_topdir/scripts/setup-cwipc.sh"
 fi
-# Install editable Python packages
-(cd $buildDir/../cwipc_util/python && python -m pip install -e .)
-(cd $buildDir/../cwipc_codec/python && python -m pip install -e .)
-(cd $buildDir/../cwipc_realsense2/python && python -m pip install -e .)
-(cd $buildDir/../cwipc_kinect/python && python -m pip install -e .)
-(cd $buildDir/../cwipc_orbbec/python && python -m pip install -e .)
-
+source "$_cwipc_topdir/build/activate"
+unset _cwipc_mypath _cwipc_topdir

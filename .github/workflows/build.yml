@@ -127,8 +127,8 @@ jobs:
           if: always()
           shell: bash
           run: |
-                ./build/venv/Scripts/python --version
-                ./build/venv/Scripts/python -m pip freeze
+                ./build/libexec/cwipc/venv/Scripts/python --version
+                ./build/libexec/cwipc/venv/Scripts/python -m pip freeze
         - name: Create installer
           shell: bash
           run: |
@@ -232,8 +232,8 @@ jobs:
           if: always()
           shell: bash
           run: |
-                ./build/venv/bin/python --version
-                ./build/venv/bin/python -m pip freeze
+                ./build/libexec/cwipc/venv/bin/python --version
+                ./build/libexec/cwipc/venv/bin/python -m pip freeze
         - name: Create installer
           shell: bash
           run: |
@@ -322,8 +322,8 @@ jobs:
           if: always()
           shell: bash
           run: |
-                ./build/venv/bin/python --version
-                ./build/venv/bin/python -m pip freeze
+                ./build/libexec/cwipc/venv/bin/python --version
+                ./build/libexec/cwipc/venv/bin/python -m pip freeze
         - name: Create installer
           shell: bash
           run: |
@@ -531,8 +531,8 @@ jobs:
           shell: bash
           run: |
                 python3 --version
-                ./build/venv/bin/python --version
-                ./build/venv/bin/python -m pip freeze
+                ./build/libexec/cwipc/venv/bin/python --version
+                ./build/libexec/cwipc/venv/bin/python -m pip freeze
         - name: Create installer
           shell: bash
           run: |

@@ -5,12 +5,19 @@
 # activate file. See cwi-dis/cwipc#354 for the design.
 #
 # Usage: setup-cwipc.sh [options]
-#   --prefix DIR   The tree to set up. Default: found from this script's location
-#                  (<prefix>/libexec/cwipc/scripts/setup-cwipc.sh).
-#   --deps         Also install runtime dependencies (system-wide: uses sudo/brew).
+#   --prefix DIR   The tree to set up. Default: found from this script's location:
+#                  <prefix>/libexec/cwipc/scripts/setup-cwipc.sh (installed tree), or
+#                  <repo>/scripts/setup-cwipc.sh (source tree, prefix <repo>/build).
+#   --deps         Also install dependencies (system-wide: uses sudo/brew).
 #   --no-python    Don't create the venv or install the Python modules.
 #   --existing-venv  The tree already has its venv with the cwipc modules (a brew
 #                  install): use it as it is.
+#   --editable     Install the Python modules editable from the source tree
+#                  (default in a source tree).
+#   --wheels       Install the Python modules from the wheels in
+#                  <prefix>/share/cwipc/python (default in an installed tree).
+#   --config CFG   Windows source tree: use build/bin/CFG. Default: the first of
+#                  Debug, RelWithDebInfo, Release that exists.
 #   --python PY    Python to create the venv with. Default: python3.12 (or python3)
 #                  on Linux/macOS, python on Windows.
 #   --help         Show this help.
@@ -24,14 +31,15 @@
 #   env NAME=VALUE      set NAME
 #   libpath NAME DIR    prepend DIR to the library path variable NAME
 #
-# Phase 0 (cwi-dis/cwipc#353): installed trees only (unpacked -built- archives).
-# Source trees (prefix <repo>/build) follow in phase 1 (cwi-dis/cwipc#355).
+# In a source tree the venv is normally created by CMake (at configure time, for
+# building the wheels and for the Python tests); this script reuses it and never
+# recreates it there.
 #
 set -euo pipefail
 
 progname=$(basename "$0")
 usage() {
-    sed -n '3,30p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '3,37p' "$0" | sed 's/^# \{0,1\}//'
 }
 die() {
     echo "$progname: $*" >&2
@@ -42,6 +50,8 @@ prefix=""
 deps=false
 python_modules=true
 existing_venv=false
+modules=""      # editable or wheels; default from the context
+config=""
 python=""
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -49,6 +59,9 @@ while [ $# -gt 0 ]; do
     --deps) deps=true; shift ;;
     --no-python) python_modules=false; shift ;;
     --existing-venv) existing_venv=true; shift ;;
+    --editable) modules=editable; shift ;;
+    --wheels) modules=wheels; shift ;;
+    --config) config="$2"; shift 2 ;;
     --python) python="$2"; shift 2 ;;
     --help|-h) usage; exit 0 ;;
     *) die "unknown argument: $1 (try --help)" ;;
@@ -70,25 +83,55 @@ esac
 #
 # Find the prefix.
 #
+# Source tree: this script is <repo>/scripts/setup-cwipc.sh. Also used to find the
+# Python package sources for editable installs.
+srcdir=""
+if [ -f "$scriptdir/../CMakeLists.txt" ] && [ -d "$scriptdir/../cwipc_util" ]; then
+    srcdir=$(cd "$scriptdir/.." && pwd)
+fi
 if [ -z "$prefix" ]; then
     case "$scriptdir" in
     */libexec/cwipc/scripts)
         prefix=$(cd "$scriptdir/../../.." && pwd)
         ;;
     *)
-        if [ -f "$scriptdir/../CMakeLists.txt" ] && [ -d "$scriptdir/../cwipc_util" ]; then
-            die "running from a source tree is not supported yet (cwi-dis/cwipc#355). Use --prefix for an installed tree."
-        fi
-        die "cannot determine the cwipc tree from the script location $scriptdir. Use --prefix."
+        [ -n "$srcdir" ] || die "cannot determine the cwipc tree from the script location $scriptdir. Use --prefix."
+        prefix="$srcdir/build"
+        [ -d "$prefix" ] || die "no build directory $prefix: configure and build cwipc first (see docs/build-from-source.rst)"
         ;;
     esac
 fi
 [ -d "$prefix" ] || die "no such directory: $prefix"
 prefix=$(cd "$prefix" && pwd)
 [ -d "$prefix/bin" ] || die "$prefix does not look like a cwipc tree (no bin/)"
+context=installed
+if [ -n "$srcdir" ] && [ "$prefix" = "$srcdir/build" ]; then
+    context=source
+fi
+if [ -z "$modules" ]; then
+    if [ "$context" = source ]; then modules=editable; else modules=wheels; fi
+fi
+if [ "$modules" = editable ] && [ -z "$srcdir" ]; then
+    die "--editable needs a source tree (run the copy of this script in <repo>/scripts)"
+fi
 
+# Executables (and on Windows the DLLs). A Windows source tree has bin/<Config>.
+bindir="$prefix/bin"
+if [ "$platform" = windows ] && [ "$context" = source ]; then
+    if [ -n "$config" ]; then
+        [ -d "$bindir/$config" ] || die "no such configuration: $bindir/$config"
+        bindir="$bindir/$config"
+    else
+        for c in Debug RelWithDebInfo Release; do
+            if [ -d "$bindir/$c" ]; then
+                bindir="$bindir/$c"
+                break
+            fi
+        done
+    fi
+fi
 if [ "$platform" = windows ]; then
-    libdir="$prefix/bin"
+    libdir="$bindir"
 else
     libdir="$prefix/lib"
 fi
@@ -140,27 +183,41 @@ if $python_modules && $existing_venv; then
     [ -x "$venvpython" ] || die "--existing-venv, but there is no venv in $venv"
     echo "$progname: using the existing venv $venv"
 elif $python_modules; then
-    if [ -z "$python" ]; then
-        if [ "$platform" = windows ]; then
-            python=python
-        elif command -v python3.12 >/dev/null 2>&1; then
-            python=python3.12
-        else
-            python=python3
+    if [ "$context" = source ] && [ -x "$venvpython" ]; then
+        # Created by CMake, which also uses it to build the wheels: don't recreate.
+        echo "$progname: using the venv $venv"
+    else
+        if [ -z "$python" ]; then
+            if [ "$platform" = windows ]; then
+                python=python
+            elif command -v python3.12 >/dev/null 2>&1; then
+                python=python3.12
+            else
+                python=python3
+            fi
         fi
+        command -v "$python" >/dev/null 2>&1 || die "Python not found: $python (use --python)"
+        echo "$progname: creating venv $venv with $("$python" --version 2>&1)"
+        mkdir -p "$(dirname "$venv")"
+        "$python" -m venv --clear "$(native "$venv")"
+        "$venvpython" -m pip install --quiet --upgrade pip
     fi
-    command -v "$python" >/dev/null 2>&1 || die "Python not found: $python (use --python)"
-    ls "$wheeldir"/cwipc_*.whl >/dev/null 2>&1 || die "no cwipc wheels in $wheeldir"
-    echo "$progname: creating venv $venv with $("$python" --version 2>&1)"
-    mkdir -p "$(dirname "$venv")"
-    "$python" -m venv --clear "$(native "$venv")"
-    echo "$progname: installing the cwipc Python modules"
-    wheels=()
-    for w in "$wheeldir"/cwipc_*.whl; do
-        wheels+=("$(native "$w")")
-    done
-    "$venvpython" -m pip install --quiet --upgrade pip
-    "$venvpython" -m pip install --quiet --upgrade --find-links="$(native "$wheeldir")" "${wheels[@]}"
+    if [ "$modules" = editable ]; then
+        echo "$progname: installing the cwipc Python modules editable from $srcdir"
+        packages=()
+        for m in cwipc_util cwipc_codec cwipc_realsense2 cwipc_kinect cwipc_orbbec; do
+            packages+=(--editable "$(native "$srcdir/$m/python")")
+        done
+        "$venvpython" -m pip install --quiet "${packages[@]}"
+    else
+        ls "$wheeldir"/cwipc_*.whl >/dev/null 2>&1 || die "no cwipc wheels in $wheeldir"
+        echo "$progname: installing the cwipc Python modules from $wheeldir"
+        wheels=()
+        for w in "$wheeldir"/cwipc_*.whl; do
+            wheels+=("$(native "$w")")
+        done
+        "$venvpython" -m pip install --quiet --upgrade --find-links="$(native "$wheeldir")" "${wheels[@]}"
+    fi
 fi
 
 #
@@ -169,7 +226,7 @@ fi
 mkdir -p "$(dirname "$envfile")"
 {
     echo "# Generated by $progname. Format: see the comment at the top of setup-cwipc.sh."
-    echo "path $(native "$prefix/bin")"
+    echo "path $(native "$bindir")"
     if $python_modules; then
         echo "path $(native "$venvbin")"
         echo "env VIRTUAL_ENV=$(native "$venv")"
@@ -183,7 +240,7 @@ mkdir -p "$(dirname "$envfile")"
 
 {
     echo "# Generated by $progname: use with \"source\", don't execute."
-    echo "export PATH=\"$prefix/bin:\$PATH\""
+    echo "export PATH=\"$bindir:\$PATH\""
     echo "export CWIPC_LIBRARY_DIR=\"$(native "$libdir")\""
     case "$platform" in
     linux) echo "export LD_LIBRARY_PATH=\"$libdir\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}\"" ;;
@@ -197,7 +254,7 @@ mkdir -p "$(dirname "$envfile")"
 if [ "$platform" = windows ]; then
     {
         echo "# Generated by $progname: run in PowerShell to set up the environment."
-        echo "\$Env:Path = \"$(native "$prefix/bin");\" + \$Env:Path"
+        echo "\$Env:Path = \"$(native "$bindir");\" + \$Env:Path"
         echo "\$Env:CWIPC_LIBRARY_DIR = \"$(native "$libdir")\""
         if $python_modules; then
             echo "& \"$(native "$venvbin/Activate.ps1")\""
