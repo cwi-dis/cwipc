@@ -182,3 +182,6 @@ if [ -n "$prefix_file" ]; then
     echo "$prefix" > "$prefix_file"
 fi
 echo "$progname: cwipc is in $prefix"
+if [ -f "$prefix/libexec/cwipc/activate" ]; then
+    echo "$progname: to use it: source $prefix/libexec/cwipc/activate"
+fi

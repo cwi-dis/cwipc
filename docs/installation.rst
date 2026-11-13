@@ -62,7 +62,7 @@ Git Bash). It gets cwipc onto the machine and sets it up::
 
     curl -sSfL -o get-cwipc.sh https://raw.githubusercontent.com/cwi-dis/cwipc/<tag or commit>/scripts/get-cwipc.sh
     bash get-cwipc.sh v8.1.0 /opt/cwipc
-    source /opt/cwipc/activate
+    source /opt/cwipc/libexec/cwipc/activate
 
 - On Linux and Windows it downloads the ``-built-`` archive of that release for
   this machine and unpacks it into the given directory. ``--archive FILE`` uses a
@@ -79,9 +79,9 @@ Git Bash). It gets cwipc onto the machine and sets it up::
 Afterwards ``setup-cwipc.sh`` (run by ``get-cwipc.sh``) has created a Python venv
 in ``<prefix>/libexec/cwipc/venv`` with the cwipc modules, and written:
 
-- ``<prefix>/activate``: ``source`` it to get ``PATH``, the library path,
-  ``CWIPC_LIBRARY_DIR`` and the venv (on Windows also ``activate.ps1`` for
-  PowerShell);
+- ``<prefix>/libexec/cwipc/activate``: ``source`` it to get ``PATH``, the
+  library path, ``CWIPC_LIBRARY_DIR`` and the venv (on Windows also
+  ``activate.ps1`` for PowerShell);
 - ``<prefix>/libexec/cwipc/environment``: the same settings in a simple
   machine-readable form, one per line: ``path DIR`` (prepend to ``PATH``),
   ``env NAME=VALUE`` and ``libpath NAME DIR`` (prepend to the library path

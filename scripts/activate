@@ -2,7 +2,8 @@
 # Use with "source", don't execute.
 #
 # Transitional (cwi-dis/cwipc#355): the real work is done by setup-cwipc.sh, which
-# writes build/activate. This file runs it the first time, then sources the result.
+# writes build/libexec/cwipc/activate. This file runs it the first time, then sources
+# the result.
 # To redo the setup (for example after adding a capturer): scripts/setup-cwipc.sh
 if [[ "${BASH_SOURCE}" == "" ]]; then
     _cwipc_mypath=`realpath "${(%):-%N}"`
@@ -10,8 +11,8 @@ else
     _cwipc_mypath=`realpath "${BASH_SOURCE}"`
 fi
 _cwipc_topdir=`dirname "$(dirname "$_cwipc_mypath")"`
-if [ ! -f "$_cwipc_topdir/build/activate" ]; then
+if [ ! -f "$_cwipc_topdir/build/libexec/cwipc/activate" ]; then
     bash "$_cwipc_topdir/scripts/setup-cwipc.sh"
 fi
-source "$_cwipc_topdir/build/activate"
+source "$_cwipc_topdir/build/libexec/cwipc/activate"
 unset _cwipc_mypath _cwipc_topdir
