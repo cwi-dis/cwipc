@@ -39,13 +39,12 @@ if [ ! -f "$realsense_key" ] || [ ! -f "$realsense_list" ]; then
     echo "deb [signed-by=$realsense_key] https://librealsense.realsenseai.com/Debian/apt-repo $(lsb_release -cs) main" | sudo tee "$realsense_list" > /dev/null
 fi
 
+# The same as the Debian package's dependencies (dpkg-shlibdeps; Ubuntu links with
+# --as-needed, so of PCL only libpcl-common is needed at runtime), plus librealsense2.
 runtime_packages=(
     python3-venv
-    libglfw3 libglu1-mesa libopengl0 libegl1 libgomp1
-    libturbojpeg libjpeg8 liblz4-1
-    libopencv-core406t64 libopencv-imgproc406t64
-    libpcl-common1.14 libpcl-octree1.14 libpcl-filters1.14 libpcl-features1.14
-    libpcl-search1.14 libpcl-kdtree1.14 libpcl-sample-consensus1.14
+    libglfw3 libglu1-mesa libopengl0 libgomp1 libjpeg8 liblz4-1
+    libpcl-common1.14
     librealsense2
 )
 build_packages=(

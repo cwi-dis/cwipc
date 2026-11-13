@@ -1,4 +1,20 @@
-cwipc_pymodules_install.sh
-echo NOTE: the realsense is not installed automatically,
-echo NOTE: because it comes from private repositories.
-echo NOTE: Inspect script /usr/share/cwipc/scripts/install-3rdparty-ubuntu2404.sh to install.
+#!/bin/sh
+# cwipc Debian package: set up the Python modules (cwi-dis/cwipc#355).
+# Creates the venv in /usr/libexec/cwipc/venv with the cwipc wheels (downloading their
+# dependencies from PyPI) and puts the cwipc* launchers in /usr/bin as symlinks.
+# If that fails (for example without network access) the package stays installed: the
+# native libraries and programs work without it, and "sudo cwipc_check install" redoes it.
+set -e
+
+case "$1" in
+configure)
+    if ! /usr/libexec/cwipc/scripts/setup-cwipc.sh --prefix /usr --launchers; then
+        echo "" >&2
+        echo "WARNING: setting up the cwipc Python modules failed (see above)." >&2
+        echo "WARNING: the native cwipc libraries and programs are installed and work." >&2
+        echo "WARNING: to set up the Python modules later, run: sudo cwipc_check install" >&2
+        echo "" >&2
+    fi
+    ;;
+esac
+exit 0
