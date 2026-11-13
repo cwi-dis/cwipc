@@ -171,15 +171,18 @@ if $deps; then
     case "$platform" in
     linux) depscript=install-deps-ubuntu2404.sh ;;
     macos) depscript=install-deps-macos.sh ;;
-    windows) depscript="" ;;  # the Windows archive carries its DLLs in bin/
+    windows) depscript=install-deps-windows.ps1 ;;  # the native DLLs come with the tree; this checks Python (and the build tools)
     esac
-    if [ -n "$depscript" ]; then
-        if [ -f "$prefix/libexec/cwipc/scripts/$depscript" ]; then
-            depscript="$prefix/libexec/cwipc/scripts/$depscript"
-        else
-            depscript="$scriptdir/$depscript"
-        fi
-        echo "$progname: installing dependencies ($deps_level level) with $depscript"
+    if [ -f "$prefix/libexec/cwipc/scripts/$depscript" ]; then
+        depscript="$prefix/libexec/cwipc/scripts/$depscript"
+    else
+        depscript="$scriptdir/$depscript"
+    fi
+    echo "$progname: installing dependencies ($deps_level level) with $depscript"
+    if [ "$platform" = windows ]; then
+        if [ "$deps_level" = build ]; then level_arg=-Build; else level_arg=-Runtime; fi
+        powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(native "$depscript")" "$level_arg"
+    else
         bash "$depscript" "--$deps_level"
     fi
 fi
