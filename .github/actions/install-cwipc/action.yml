@@ -1,0 +1,59 @@
+name: Install cwipc
+description: >
+  Install cwipc and make it available to the following steps of the job:
+  PATH, the library path, CWIPC_LIBRARY_DIR and the cwipc Python venv.
+  Linux and Windows use the -built- release archive; macOS builds through the
+  brew formula cwi-dis/cwipc/cwipc. See cwi-dis/cwipc#353 and #354.
+
+inputs:
+  version:
+    description: 'cwipc release tag, for example v8.1.0. On macOS also "master" (brew --HEAD).'
+    required: true
+  method:
+    description: '"archive" or "brew". Default: brew on macOS, archive elsewhere.'
+    required: false
+    default: ''
+  archive:
+    description: 'Archive method: a local -built- archive to use instead of downloading one.'
+    required: false
+    default: ''
+  prefix:
+    description: 'Archive method: where to install. Default: <runner temp>/cwipc.'
+    required: false
+    default: ''
+  deps:
+    description: 'Install the runtime dependencies (Linux: apt, macOS archive method: brew). "true" or "false".'
+    required: false
+    default: 'true'
+  python-modules:
+    description: 'Create the venv with the cwipc Python modules. "true" or "false".'
+    required: false
+    default: 'true'
+  python:
+    description: 'Python to create the venv with. Must be within PYTHON_VERSION_MIN to PYTHON_VERSION of scripts/versions.env. Default: python3.12 (or python3) on Linux/macOS, python on Windows.'
+    required: false
+    default: ''
+
+outputs:
+  prefix:
+    description: 'Where cwipc is installed.'
+    value: ${{ steps.install.outputs.prefix }}
+  cwipc-version:
+    description: 'The version of the installed cwipc, as reported by its Python module (empty without Python modules).'
+    value: ${{ steps.install.outputs.cwipc-version }}
+
+runs:
+  using: composite
+  steps:
+    - id: install
+      shell: bash
+      env:
+        INPUT_VERSION: ${{ inputs.version }}
+        INPUT_METHOD: ${{ inputs.method }}
+        INPUT_ARCHIVE: ${{ inputs.archive }}
+        INPUT_PREFIX: ${{ inputs.prefix }}
+        INPUT_DEPS: ${{ inputs.deps }}
+        INPUT_PYTHON_MODULES: ${{ inputs.python-modules }}
+        INPUT_PYTHON: ${{ inputs.python }}
+        RUNNER_TEMP_DIR: ${{ runner.temp }}
+      run: bash "$GITHUB_ACTION_PATH/install-cwipc.sh"

@@ -1,47 +1,22 @@
-# Set PATH to include built executables and dynamic libraries and enable Python venv.
-# For use in Powershell, for example from within VSCode.
-# Set-PSDebug -Trace 2
-Push-Location
-$mypath = $MyInvocation.MyCommand.Path
-Write-Output $myPath
-$myDir = Split-Path $mypath -Parent
-Write-Output $myDir
-$topDir = Split-Path $myDir -Parent
-Write-Output $topDir
-$buildDir = $topDir + "\build"
-Write-Output $buildDir
-$candidate1BinDir = $buildDir + "\bin\Debug"
-$candidate2BinDir = $buildDir + "\bin\RelWithDebInfo"
-$candidate3BinDir = $buildDir + "\bin\Release"
-if (Test-Path -Path $candidate1BinDir) {
-    $binDir = $candidate1BinDir
-} elseif (Test-Path -Path $candidate2BinDir) {
-    $binDir = $candidate2BinDir
-} elseif (Test-Path -Path $candidate3BinDir) {
-    $binDir = $candidate3BinDir
-} else {
-    $binDir = $buildDir + "\bin"
+# Set up the environment for using cwipc from this source tree (PowerShell, Windows).
+# Run it with ". scripts\activate.ps1" (or "& scripts\activate.ps1").
+#
+# Transitional (cwi-dis/cwipc#355): the real work is done by setup-cwipc.sh (run with
+# Git Bash), which writes build\libexec\cwipc\activate.ps1. This file runs it the first
+# time, then runs the result.
+# To redo the setup (for example after building another configuration):
+#   bash scripts/setup-cwipc.sh [--config Release]
+$topDir = Split-Path -Parent $PSScriptRoot
+$generated = Join-Path $topDir "build\libexec\cwipc\activate.ps1"
+if (-not (Test-Path $generated)) {
+    if (-not (Get-Command bash -ErrorAction SilentlyContinue)) {
+        Write-Error "activate.ps1: bash (Git Bash) is needed to run scripts/setup-cwipc.sh"
+        return
+    }
+    & bash (Join-Path $PSScriptRoot "setup-cwipc.sh")
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "activate.ps1: scripts/setup-cwipc.sh failed"
+        return
+    }
 }
-Write-Output "binDir = " + $binDir
-$binDirExists = Test-Path $binDir
-if (-Not $binDirExists) {
-    Write-Output "binDir does not exist. Not enabling venv"
-    exit
-}
-$Env:CWIPC_LIBRARY_DIR = $binDir
-$Env:PATH = $binDir + ";" + $Env:PATH
-Write-Output $Env:PATH
-& $buildDir/venv/Scripts/Activate.ps1
-# Install editable Python packages
-cd $topDir/cwipc_util/python
-& python -m pip install -e .
-cd $topDir/cwipc_codec/python
-& python -m pip install -e .
-cd $topDir/cwipc_realsense2/python
-& python -m pip install -e .
-cd $topDir/cwipc_kinect/python
-& python -m pip install -e .
-cd $topDir/cwipc_orbbec/python
-& python -m pip install -e .
-cd $topDir
-Pop-Location
+. $generated

@@ -13,7 +13,14 @@ macro(cwipc_setup_python_venv)
 		# Create venv for testing, and re-set Python3_EXECUTABLE to that Python.
 		# We disable use of system-installed packages, because otherwise the testing of the scripts will fail.
 		#
-		get_filename_component(VENV_DIR "${CMAKE_BINARY_DIR}/venv" ABSOLUTE)
+		# Same place as in an installed tree (cwi-dis/cwipc#354).
+		get_filename_component(VENV_DIR "${CMAKE_BINARY_DIR}/libexec/cwipc/venv" ABSOLUTE)
+		if(EXISTS "${VENV_DIR}/pyvenv.cfg")
+			set(_cwipc_venv_verb "Using existing")
+		else()
+			set(_cwipc_venv_verb "Created")
+		endif()
+		# On an existing venv this keeps the installed packages.
 		execute_process(COMMAND ${Python3_EXECUTABLE} -m venv "${VENV_DIR}")
 		set(ENV{VIRTUAL_ENV} "${VENV_DIR}")
 		if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
@@ -26,7 +33,7 @@ macro(cwipc_setup_python_venv)
 			set(Python3_EXECUTABLE "${Python3_BINDIR}/python")
 		endif()
 		execute_process(COMMAND ${Python3_EXECUTABLE} -m pip --quiet install --upgrade pip setuptools build wheel)
-		message(STATUS "Created Python venv in ${VENV_DIR}")
+		message(STATUS "${_cwipc_venv_verb} Python venv in ${VENV_DIR}")
 	endif()
 endmacro()
 
@@ -84,9 +91,11 @@ macro(cwipc_build_wheel)
 	# We need a trick to pass CWIPC_VERSION in the environment at build time: use cmake -E env.
 	add_custom_target("${MYARGS_NAME}_wheel" 
 		ALL
-		COMMAND ${CMAKE_COMMAND} -E rm -rf ${MYARGS_SOURCEDIR}/build ${MYARGS_SOURCEDIR}/{${MYARGS_NAME}.egg_info 
+		COMMAND ${CMAKE_COMMAND} -E rm -rf ${MYARGS_SOURCEDIR}/build ${MYARGS_SOURCEDIR}/${MYARGS_NAME}.egg-info
+		# Remove this package's wheels from earlier builds: the version includes the commit
+		# hash, so they would accumulate, get installed together and conflict (cwi-dis/cwipc#355).
+		COMMAND ${CMAKE_COMMAND} -DWHEELDIR=${MYARGS_WHEELDIR} -DNAME=${MYARGS_NAME} -P ${CMAKE_SOURCE_DIR}/CMakeFiles/CwipcRemoveOldWheels.cmake
 		COMMAND ${CMAKE_COMMAND} -E env "CWIPC_VERSION=${CWIPC_VERSION}" ${Python3_EXECUTABLE} -m build --wheel --no-isolation --outdir ${MYARGS_WHEELDIR} ${MYARGS_SOURCEDIR} 
-		COMMAND ${Python3_EXECUTABLE} -m pip uninstall -qq -y "${MYARGS_NAME}"
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 		)
 endmacro()

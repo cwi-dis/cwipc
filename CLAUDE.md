@@ -106,15 +106,25 @@ Windows-specific build claims accordingly.
 
 Don't run anything under `scripts/` without checking with the user first. Several have
 real side effects beyond this repo: installing packages system-wide via the platform
-package manager (`install-3rdparty-*`), or pushing a git tag to trigger a GitHub Actions
-release (`nightly.sh`). The user may not want those effects at a given point in time, and
-some aren't easily reversible.
+package manager (`install-deps-*`, and `setup-cwipc.sh --deps`, which runs them), or
+pushing a git tag to trigger a GitHub Actions release (`nightly.sh`). The user may not
+want those effects at a given point in time, and some aren't easily reversible. Note that
+a real `brew install` also *upgrades* outdated packages: to test, use `brew install
+--dry-run` or `apt-get --simulate`, or fake the script.
 
 Exceptions — safe to run without asking:
 
-- `scripts/activate*` — only affects the current shell (`PATH`, venv), no lasting side effects.
+- `scripts/activate*` — the source tree's entry points: run `setup-cwipc.sh` the first time
+  (inside `build/` only), then set up the current shell (`PATH`, venv).
+- `scripts/setup-cwipc.sh` *without* `--deps` — creates or reuses the venv in
+  `build/libexec/cwipc/venv` (source tree) or `<prefix>/libexec/cwipc/venv`, installs the
+  Python modules there, writes the per-tree files next to it; nothing system-wide (pip may
+  download packages).
 - `scripts/install-orbbecsdk-*` — installs the Orbbec SDK locally under `3rdparty_installed/`,
-  inside the repo checkout, nothing system-wide.
+  inside the repo checkout, nothing system-wide. Skips if the pinned version is there.
+
+The design of these scripts (source tree vs installed tree, prefix, per-tree files,
+runtime and build dependency levels, `versions.env`): cwi-dis/cwipc#354 and #355.
 
 ## CLI tools
 
