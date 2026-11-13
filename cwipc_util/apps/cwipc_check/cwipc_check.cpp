@@ -14,6 +14,7 @@
 #include <vector>
 #include <algorithm>
 #include <filesystem>
+#include <fstream>
 #include <cstdlib>
 #include <cstring>
 
@@ -146,53 +147,201 @@ static fs::path venv_bin() {
 #endif
 }
 
-static int check() {
-    bool ok = true;
+#ifdef WIN32
+static const char PATH_SEP = ';';
+#else
+static const char PATH_SEP = ':';
+#endif
 
-    // Native modules.
-    std::vector<fs::path> checks = install_check_programs();
-    if (checks.empty()) {
-        std::cerr << progName << ": no *_install_check programs found in " << (prefix / "libexec" / "cwipc").string() << " or " << exeDir.string() << std::endl;
-        ok = false;
+static std::string get_env(const char* name) {
+    const char* v = std::getenv(name);
+    return v ? std::string(v) : std::string();
+}
+
+static void set_env(const std::string& name, const std::string& value) {
+#ifdef WIN32
+    _putenv_s(name.c_str(), value.c_str());
+#else
+    setenv(name.c_str(), value.c_str(), 1);
+#endif
+}
+
+static void prepend_env(const std::string& name, const std::string& dir) {
+    std::string old = get_env(name.c_str());
+    set_env(name, old.empty() ? dir : dir + PATH_SEP + old);
+}
+
+// Give our child processes the tree's own environment, as its activate file would: from
+// <prefix>/libexec/cwipc/environment, written by the setup script (format: see
+// setup-cwipc.sh). Without that file: our own directory first on PATH.
+static void set_tree_environment() {
+    std::ifstream f(prefix / "libexec" / "cwipc" / "environment");
+    if (!f) {
+        prepend_env("PATH", exeDir.string());
+        set_env("CWIPC_LIBRARY_DIR", exeDir.string());
+        return;
     }
-    for (const fs::path& program : checks) {
+    std::string line;
+    while (std::getline(f, line)) {
+        if (!line.empty() && line.back() == '\r') line.pop_back();
+        if (line.rfind("path ", 0) == 0) {
+            prepend_env("PATH", line.substr(5));
+        } else if (line.rfind("env ", 0) == 0) {
+            size_t eq = line.find('=');
+            if (eq != std::string::npos) set_env(line.substr(4, eq - 4), line.substr(eq + 1));
+        } else if (line.rfind("libpath ", 0) == 0) {
+            size_t sp = line.find(' ', 8);
+            if (sp != std::string::npos) prepend_env(line.substr(8, sp - 8), line.substr(sp + 1));
+        }
+    }
+}
+
+// The first file called name in the directories on PATH, or empty.
+static fs::path find_on_path(const std::string& name) {
+    std::string path = get_env("PATH");
+    size_t pos = 0;
+    while (pos <= path.size()) {
+        size_t next = path.find(PATH_SEP, pos);
+        if (next == std::string::npos) next = path.size();
+        std::string dir = path.substr(pos, next - pos);
+        pos = next + 1;
+        if (dir.empty()) continue;
+        std::error_code ec;
+        fs::path candidate = fs::path(dir) / name;
+        if (fs::is_regular_file(candidate, ec)) return candidate;
+    }
+    return fs::path();
+}
+
+// Is found the same file as one of ours (after resolving symlinks, such as the Debian
+// package's /usr/bin/cwipc -> /usr/libexec/cwipc/venv/bin/cwipc)?
+static bool same_file_as_one_of(const fs::path& found, const std::vector<fs::path>& ours) {
+    std::error_code ec;
+    for (const fs::path& p : ours) {
+        if (fs::exists(p, ec) && fs::equivalent(found, p, ec)) return true;
+    }
+    return false;
+}
+
+struct Check {
+    std::string name;
+    std::string cmd;
+};
+
+static std::vector<Check> all_checks() {
+    std::vector<Check> rv;
+    for (const fs::path& program : install_check_programs()) {
         std::string module = program.stem().string();
         module = module.substr(0, module.size() - strlen("_install_check"));
-        std::cerr << module << ": checking" << std::endl;
-        int status = run(quote(program));
-        if (status != 0) {
-            std::cerr << module << ": not ok (exit status " << status << ")" << std::endl;
-            ok = false;
-        } else {
-            std::cerr << module << ": ok" << std::endl;
-        }
+        rv.push_back({module, quote(program)});
     }
-
-    // Python modules, in the tree's venv.
     fs::path python = venv_bin() / (std::string("python") + EXE_SUFFIX);
     std::error_code ec;
-    if (!fs::exists(python, ec)) {
-        std::cerr << "python: no venv with the cwipc modules (" << python.string() << " not found): not ok" << std::endl;
-        ok = false;
-    } else {
-        std::cerr << "python modules: checking" << std::endl;
-        int status = run(quote(python) + " -c \"import cwipc; print('cwipc', cwipc.cwipc_get_version())\"");
+    if (fs::exists(python, ec)) {
+        rv.push_back({"python modules", quote(python) + " -c \"import cwipc; print('cwipc', cwipc.cwipc_get_version())\""});
+        rv.push_back({"command line utilities", quote(venv_bin() / (std::string("cwipc_view") + EXE_SUFFIX)) + " --version"});
+    }
+    return rv;
+}
+
+// Run the checks; return the ones that failed.
+static std::vector<Check> run_checks(const std::vector<Check>& checks) {
+    std::vector<Check> failed;
+    for (const Check& c : checks) {
+        std::cerr << c.name << ": checking" << std::endl;
+        int status = run(c.cmd);
         if (status != 0) {
-            std::cerr << "python modules: not ok (exit status " << status << ")" << std::endl;
-            ok = false;
+            std::cerr << c.name << ": not ok (exit status " << status << ")" << std::endl;
+            failed.push_back(c);
         } else {
-            std::cerr << "python modules: ok" << std::endl;
-        }
-        std::cerr << "command line utilities: checking" << std::endl;
-        status = run(quote(venv_bin() / (std::string("cwipc_view") + EXE_SUFFIX)) + " --version");
-        if (status != 0) {
-            std::cerr << "command line utilities: not ok (exit status " << status << ")" << std::endl;
-            ok = false;
-        } else {
-            std::cerr << "command line utilities: ok" << std::endl;
+            std::cerr << c.name << ": ok" << std::endl;
         }
     }
-    return ok ? 0 : 1;
+    return failed;
+}
+
+// cwipc_check checks whether cwipc works *from the environment it was started in* (a
+// terminal, the Start menu): that decides the exit status. If something fails, it runs
+// the failed checks again with the tree's own environment, to tell a broken installation
+// from an environment that doesn't lead to it (cwi-dis/cwipc#355).
+static int check() {
+    std::error_code ec;
+    // broken: problems that no environment fixes.
+    bool broken = false;
+
+    std::vector<Check> checks = all_checks();
+    if (install_check_programs().empty()) {
+        std::cerr << progName << ": no *_install_check programs found in " << (prefix / "libexec" / "cwipc").string() << " or " << exeDir.string() << std::endl;
+        broken = true;
+    }
+    fs::path python = venv_bin() / (std::string("python") + EXE_SUFFIX);
+    if (!fs::exists(python, ec)) {
+        std::cerr << "python: no venv with the cwipc modules (" << python.string() << " not found): not ok" << std::endl;
+        broken = true;
+    }
+    std::vector<Check> failed = run_checks(checks);
+
+    // What this environment leads to.
+    std::cerr << std::endl << "environment: checking" << std::endl;
+    bool system_install = fs::exists(prefix / "libexec" / "cwipc" / "launchers", ec);
+    std::string cwipc_cmd = std::string("cwipc") + EXE_SUFFIX;
+    fs::path found_cmd = find_on_path(cwipc_cmd);
+    bool env_problem = false;
+    if (found_cmd.empty()) {
+        if (system_install) {
+            std::cerr << "environment: the cwipc command is not on PATH: not ok" << std::endl;
+            env_problem = true;
+        } else {
+            std::cerr << "environment: the cwipc command is not on PATH (normal for this kind of installation: use " << (prefix / "libexec" / "cwipc" / "activate").string() << ")" << std::endl;
+        }
+    } else if (same_file_as_one_of(found_cmd, { exeDir / cwipc_cmd, venv_bin() / cwipc_cmd })) {
+        std::cerr << "environment: the cwipc command is " << found_cmd.string() << ", from this installation: ok" << std::endl;
+    } else {
+        std::cerr << "environment: the cwipc command is " << found_cmd.string() << ", from another installation: not ok" << std::endl;
+        env_problem = true;
+    }
+#ifdef WIN32
+    // Windows finds the DLLs through PATH, for the programs and for Python.
+    fs::path found_dll = find_on_path("cwipc_util.dll");
+    if (found_dll.empty()) {
+        std::cerr << "environment: cwipc_util.dll is not on PATH: not ok" << std::endl;
+        env_problem = true;
+    } else if (same_file_as_one_of(found_dll, { exeDir / "cwipc_util.dll" })) {
+        std::cerr << "environment: cwipc_util.dll is " << found_dll.string() << ", from this installation: ok" << std::endl;
+    } else {
+        std::cerr << "environment: cwipc_util.dll is " << found_dll.string() << ", from another installation: not ok" << std::endl;
+        env_problem = true;
+    }
+#endif
+
+    // Tell a broken installation from an environment that doesn't lead to it.
+    if (!failed.empty()) {
+        std::cerr << std::endl << "Checking again what failed, with the environment of this installation (" << prefix.string() << "):" << std::endl;
+        set_tree_environment();
+        if (!run_checks(failed).empty()) broken = true;
+        env_problem = true;
+    }
+    std::cerr << std::endl;
+    if (broken) {
+        std::cerr << "The installation itself is broken; see the messages above." << std::endl;
+#ifdef WIN32
+        std::cerr << "Running \"cwipc_check install\", or \"Attempt to fix cwipc installation\" from the Start menu, may fix it." << std::endl;
+#else
+        std::cerr << "Running \"cwipc_check install\" may fix it." << std::endl;
+#endif
+        return 1;
+    }
+    if (env_problem) {
+        std::cerr << "The installation itself works, but not from this environment (see \"environment:\" above)." << std::endl;
+#ifdef WIN32
+        std::cerr << "If you have just installed cwipc: open a new terminal window. Otherwise, check PATH," << std::endl;
+        std::cerr << "or use: & \"" << (prefix / "libexec" / "cwipc" / "activate.ps1").string() << "\"" << std::endl;
+#else
+        std::cerr << "Check PATH, or use: source " << quote(prefix / "libexec" / "cwipc" / "activate") << std::endl;
+#endif
+        return 1;
+    }
+    return 0;
 }
 
 static int install() {
@@ -266,14 +415,7 @@ int main(int argc, char** argv) {
     if (command == "check") {
         int sts = check();
         if (sts == 0) {
-            std::cerr << std::endl << "Your cwipc installation appears to be fully functional." << std::endl;
-        } else {
-            std::cerr << std::endl << "There are problems with your cwipc installation; see the messages above." << std::endl;
-#ifdef WIN32
-            std::cerr << "Running \"cwipc_check install\", or \"Attempt to fix cwipc installation\" from the Start menu, may fix them." << std::endl;
-#else
-            std::cerr << "Running \"cwipc_check install\" may fix them." << std::endl;
-#endif
+            std::cerr << "Your cwipc installation appears to be fully functional." << std::endl;
         }
         return sts;
     }

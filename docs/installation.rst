@@ -9,7 +9,11 @@ all of the runtime libraries, command‑line tools and language bindings.
    After installing, running ``cwipc view --synthetic`` should open a window
    showing a synthetic point cloud stream (a rotating paraboloid with blinking eyes).
    You can also run ``cwipc_check`` to verify the installation and dependencies, it will
-   print any warnings or errors it finds.  
+   print any warnings or errors it finds. It checks whether cwipc works *from the
+   terminal you run it in*; if not, it tells you whether the installation itself is
+   broken (``cwipc_check install`` may fix that) or whether your environment leads
+   elsewhere: ``bin`` not on ``PATH`` (open a new terminal after installing), or
+   another cwipc installation found first.
    
 macOS
 -----

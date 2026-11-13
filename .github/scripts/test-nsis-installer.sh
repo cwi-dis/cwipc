@@ -20,12 +20,24 @@ test -f "$destu/libexec/cwipc/venv/Scripts/python.exe" || { echo "FAIL: no venv"
 test -f "$destu/bin/cwipc.exe" || { echo "FAIL: no cwipc.exe launcher in bin"; exit 1; }
 cat "$destu/libexec/cwipc/launchers"
 
-echo "=== cwipc_check"
-"$destu/bin/cwipc_check.exe"
+# The installer puts bin on the machine's PATH, but this shell started before that: the
+# situation of a terminal that was open during the installation. cwipc_check must say
+# that the installation works, but not from this environment (exit status 1).
+echo "=== cwipc_check, without bin on PATH: must diagnose the environment"
+status=0
+"$destu/bin/cwipc_check.exe" > cwipc_check.out 2>&1 || status=$?
+cat cwipc_check.out
+if [ "$status" -eq 0 ]; then
+    echo "FAIL: cwipc_check succeeded without bin on PATH"; exit 1
+fi
+grep -q "The installation itself works, but not from this environment" cwipc_check.out || { echo "FAIL: cwipc_check did not diagnose the environment"; exit 1; }
+rm cwipc_check.out
 
-# The Start-menu shortcuts run .bat files that expect bin on PATH (the installer puts it
-# on the machine's PATH; this shell started before that). They end with "pause".
+# From here on, as in a new terminal. The Start-menu shortcuts run .bat files that expect
+# bin on PATH. They end with "pause".
 export PATH="$destu/bin:$PATH"
+echo "=== cwipc_check, with bin on PATH: must succeed"
+"$destu/bin/cwipc_check.exe"
 cd "$destu/libexec/cwipc/scripts"
 echo "=== Start menu: Check cwipc installation"
 echo | cmd //c run-cwipc-check.bat
