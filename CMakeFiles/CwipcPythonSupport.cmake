@@ -85,12 +85,11 @@ macro(cwipc_build_wheel)
 	# We need a trick to pass CWIPC_VERSION in the environment at build time: use cmake -E env.
 	add_custom_target("${MYARGS_NAME}_wheel" 
 		ALL
-		COMMAND ${CMAKE_COMMAND} -E rm -rf ${MYARGS_SOURCEDIR}/build ${MYARGS_SOURCEDIR}/{${MYARGS_NAME}.egg_info 
+		COMMAND ${CMAKE_COMMAND} -E rm -rf ${MYARGS_SOURCEDIR}/build ${MYARGS_SOURCEDIR}/${MYARGS_NAME}.egg-info
 		# Remove this package's wheels from earlier builds: the version includes the commit
 		# hash, so they would accumulate, get installed together and conflict (cwi-dis/cwipc#355).
 		COMMAND ${CMAKE_COMMAND} -DWHEELDIR=${MYARGS_WHEELDIR} -DNAME=${MYARGS_NAME} -P ${CMAKE_SOURCE_DIR}/CMakeFiles/CwipcRemoveOldWheels.cmake
 		COMMAND ${CMAKE_COMMAND} -E env "CWIPC_VERSION=${CWIPC_VERSION}" ${Python3_EXECUTABLE} -m build --wheel --no-isolation --outdir ${MYARGS_WHEELDIR} ${MYARGS_SOURCEDIR} 
-		COMMAND ${Python3_EXECUTABLE} -m pip uninstall -qq -y "${MYARGS_NAME}"
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 		)
 endmacro()
