@@ -127,12 +127,25 @@ if(CWIPC_WITH_PYTHON)
 	install(CODE "message(\"-- Remove ${WHEELDEST}\")")
 	install(CODE "file(REMOVE_RECURSE \"${WHEELDEST}\")")
 
-	# The upper limit on the Python version is caused by opencv and open3d,
-	# which can lag behind some times. As soon as those packages are available
-	# for a new release of Python we can update this version.
-	# See cwipc_util/python/pyproject.toml for the current versions of those packages.
+	# The accepted Python versions come from scripts/versions.env (cwi-dis/cwipc#355):
+	# PYTHON_VERSION_MIN up to and including PYTHON_VERSION, the newest found preferred.
+	# The upper limit is there because pip packages we need (open3d, opencv, see
+	# cwipc_util/python/pyproject.toml) can lag behind new Python releases.
 	#
-	find_package(Python3 3.12...<3.13 REQUIRED COMPONENTS Interpreter)
+	file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/scripts/versions.env" _cwipc_python_versions REGEX "^PYTHON_VERSION(_MIN)?=")
+	foreach(_line IN LISTS _cwipc_python_versions)
+		if(_line MATCHES "^PYTHON_VERSION=([0-9]+)\\.([0-9]+)$")
+			set(_cwipc_python_max_major ${CMAKE_MATCH_1})
+			math(EXPR _cwipc_python_max_minor_next "${CMAKE_MATCH_2} + 1")
+		elseif(_line MATCHES "^PYTHON_VERSION_MIN=([0-9]+\\.[0-9]+)$")
+			set(_cwipc_python_min ${CMAKE_MATCH_1})
+		endif()
+	endforeach()
+	if(NOT _cwipc_python_min OR NOT _cwipc_python_max_major)
+		message(FATAL_ERROR "scripts/versions.env: PYTHON_VERSION or PYTHON_VERSION_MIN missing")
+	endif()
+	set(Python3_FIND_STRATEGY VERSION)
+	find_package(Python3 ${_cwipc_python_min}...<${_cwipc_python_max_major}.${_cwipc_python_max_minor_next} REQUIRED COMPONENTS Interpreter)
 
 	#
 	# Now we can setup the venv.

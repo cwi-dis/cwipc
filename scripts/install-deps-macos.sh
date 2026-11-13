@@ -27,11 +27,19 @@ command -v brew >/dev/null 2>&1 || { echo "$(basename "$0"): Homebrew not found,
 
 # pcl brings boost, flann and lz4 (and vtk/qt, which cwipc doesn't use, cwi-dis/cwipc#357).
 runtime_packages=(pcl libomp opencv jpeg-turbo glfw librealsense)
-# Python: any python$PYTHON_VERSION will do (brew, python.org, pyenv): everything cwipc
-# needs goes into a venv. Only install brew's if there is none, because brew's can't be
-# linked over another one (such as python.org's on the GitHub macOS runners).
-if command -v "python$PYTHON_VERSION" >/dev/null 2>&1; then
-    echo "$(basename "$0"): using $(command -v "python$PYTHON_VERSION")"
+# Python: any python$PYTHON_VERSION or python$PYTHON_VERSION_MIN will do (brew,
+# python.org, pyenv): everything cwipc needs goes into a venv. Only install brew's
+# (the preferred version) if there is none, because brew's can't be linked over another
+# one (such as python.org's on the GitHub macOS runners).
+found_python=""
+for v in "$PYTHON_VERSION" "$PYTHON_VERSION_MIN"; do
+    if command -v "python$v" >/dev/null 2>&1; then
+        found_python=$(command -v "python$v")
+        break
+    fi
+done
+if [ -n "$found_python" ]; then
+    echo "$(basename "$0"): using $found_python"
 else
     runtime_packages+=("python@$PYTHON_VERSION")
 fi

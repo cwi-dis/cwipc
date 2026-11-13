@@ -21,9 +21,10 @@
 #                  <prefix>/share/cwipc/python (default in an installed tree).
 #   --config CFG   Windows source tree: use build/bin/CFG. Default: the first of
 #                  Debug, RelWithDebInfo, Release that exists.
-#   --python PY    Python to create the venv with. Must be PYTHON_VERSION from
-#                  versions.env (3.12). Default: python3.12 (or python3) on
-#                  Linux/macOS, python on Windows.
+#   --python PY    Python to create the venv with. Must be between PYTHON_VERSION_MIN
+#                  and PYTHON_VERSION from versions.env. Default: the first suitable
+#                  of python<PYTHON_VERSION>, python<PYTHON_VERSION_MIN>, python3
+#                  on Linux/macOS; python on Windows.
 #   --launchers    Also put the Python launchers (cwipc, cwipc_view, ...) in
 #                  <prefix>/bin: copies on Windows, symlinks elsewhere. For system
 #                  installations (Windows installer, Debian package), so cwipc works
@@ -208,6 +209,17 @@ fi
 #
 # Python venv with the cwipc modules.
 #
+python_version() {
+    "$1" -c 'import sys; print("%d.%d" % sys.version_info[:2])' 2>/dev/null || echo unknown
+}
+# Is Python $1 between PYTHON_VERSION_MIN and PYTHON_VERSION (minor versions)?
+python_version_ok() {
+    local v
+    v=$(python_version "$1")
+    [ "$v" != unknown ] || return 1
+    [ "$(printf '%s\n%s\n' "$PYTHON_VERSION_MIN" "$v" | sort -t. -k1,1n -k2,2n | head -1)" = "$PYTHON_VERSION_MIN" ] &&
+    [ "$(printf '%s\n%s\n' "$v" "$PYTHON_VERSION" | sort -t. -k1,1n -k2,2n | head -1)" = "$v" ]
+}
 if [ "$platform" = windows ]; then
     venvbin="$venv/Scripts"
     venvpython="$venvbin/python.exe"
@@ -223,19 +235,27 @@ elif $python_modules; then
         # Created by CMake, which also uses it to build the wheels: don't recreate.
         echo "$progname: using the venv $venv"
     else
+        # Accepted: PYTHON_VERSION_MIN up to and including PYTHON_VERSION (versions.env,
+        # cwi-dis/cwipc#355). The preferred (newest) one first.
+        pyrange="$PYTHON_VERSION_MIN to $PYTHON_VERSION"
+        [ "$PYTHON_VERSION_MIN" = "$PYTHON_VERSION" ] && pyrange="$PYTHON_VERSION"
         if [ -z "$python" ]; then
             if [ "$platform" = windows ]; then
-                python=python
-            elif command -v "python$PYTHON_VERSION" >/dev/null 2>&1; then
-                python="python$PYTHON_VERSION"
+                candidates=(python)
             else
-                python=python3
+                candidates=("python$PYTHON_VERSION" "python$PYTHON_VERSION_MIN" python3)
             fi
+            for c in "${candidates[@]}"; do
+                if command -v "$c" >/dev/null 2>&1 && python_version_ok "$c"; then
+                    python="$c"
+                    break
+                fi
+            done
+            [ -n "$python" ] || die "no Python $pyrange found (use --deps to install it, or --python)"
+        else
+            command -v "$python" >/dev/null 2>&1 || die "Python not found: $python"
+            python_version_ok "$python" || die "Python $pyrange needed, but $python is $(python_version "$python")"
         fi
-        command -v "$python" >/dev/null 2>&1 || die "Python $PYTHON_VERSION not found (use --deps to install it, or --python)"
-        # cwipc is built and tested with exactly this version (pinned, cwi-dis/cwipc#355).
-        pyver=$("$python" -c 'import sys; print("%d.%d" % sys.version_info[:2])' 2>/dev/null) || pyver="unknown"
-        [ "$pyver" = "$PYTHON_VERSION" ] || die "Python $PYTHON_VERSION needed, but $python is $pyver (use --deps to install it, or --python)"
         echo "$progname: creating venv $venv with $("$python" --version 2>&1)"
         mkdir -p "$(dirname "$venv")"
         "$python" -m venv --clear "$(native "$venv")"

@@ -11,7 +11,7 @@ Prerequisites
 * A recent CMake (3.31+).
 * A C++17 compiler (clang, gcc, MSVC).
 * Git toolchain.
-* Python 3.12.
+* Python 3.12 (``PYTHON_VERSION_MIN`` up to ``PYTHON_VERSION`` in ``scripts/versions.env``).
 * ``bash`` or ``zsh`` on macOS/Linux; PowerShell on Windows.
 
 Building from the command line

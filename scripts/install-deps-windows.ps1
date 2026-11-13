@@ -29,6 +29,7 @@ Get-Content (Join-Path $PSScriptRoot "versions.env") | Where-Object { $_ -match 
     $versions[$key.Trim()] = $value.Trim()
 }
 $pythonVersion = $versions["PYTHON_VERSION"]
+$pythonVersionMin = $versions["PYTHON_VERSION_MIN"]
 $pythonInstallerVersion = $versions["PYTHON_WINDOWS_INSTALLER_VERSION"]
 
 $missing = @()
@@ -42,16 +43,22 @@ function Test-IsAdmin {
     return (New-Object Security.Principal.WindowsPrincipal $identity).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
-# Is Python $pythonVersion available? Use the py launcher if there is one ("python"
-# may be the Microsoft Store alias that only tells you how to install Python).
+# Is a Python between $pythonVersionMin and $pythonVersion available? Use the py launcher
+# if there is one ("python" may be the Microsoft Store alias that only tells you how to
+# install Python).
 function Test-Python {
     if (Test-Command "py") {
-        & py "-$pythonVersion" --version *> $null
-        if ($LASTEXITCODE -eq 0) { return $true }
+        foreach ($v in @($pythonVersion, $pythonVersionMin)) {
+            & py "-$v" --version *> $null
+            if ($LASTEXITCODE -eq 0) { return $true }
+        }
     }
     if (Test-Command "python") {
         $v = (& python --version 2>&1) -join ""
-        if ($v -match "^Python $([regex]::Escape($pythonVersion))\.") { return $true }
+        if ($v -match "^Python (\d+\.\d+)\.") {
+            $found = [version]$Matches[1]
+            if ($found -ge [version]$pythonVersionMin -and $found -le [version]$pythonVersion) { return $true }
+        }
     }
     return $false
 }

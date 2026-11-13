@@ -14,8 +14,9 @@
 #   -NoPython       Don't create the venv or install the Python modules.
 #   -Launchers      Copy the Python launchers (cwipc.exe, cwipc_view.exe, ...) into
 #                   <prefix>\bin, listed in <prefix>\libexec\cwipc\launchers.
-#   -Python PY      Python to create the venv with. Default: "py -<PYTHON_VERSION>" if the
-#                   py launcher has it, else "python".
+#   -Python PY      Python to create the venv with, between PYTHON_VERSION_MIN and
+#                   PYTHON_VERSION (versions.env). Default: "py -<PYTHON_VERSION>" or
+#                   "py -<PYTHON_VERSION_MIN>" if the py launcher has it, else "python".
 #   -PauseOnError   Wait for Enter before closing if something failed (used when this
 #                   runs in its own elevated window).
 #
@@ -86,20 +87,26 @@ try {
         if ($Python -ne "") {
             $pythonCmd = @($Python)
         } else {
-            $pyVersion = $versions["PYTHON_VERSION"]
-            $havePy = $false
+            # The preferred version first, then the oldest accepted (versions.env).
+            $pythonCmd = @("python")
             if (Get-Command py -ErrorAction SilentlyContinue) {
-                & py "-$pyVersion" --version *> $null
-                $havePy = ($LASTEXITCODE -eq 0)
+                foreach ($pyVersion in @($versions["PYTHON_VERSION"], $versions["PYTHON_VERSION_MIN"])) {
+                    & py "-$pyVersion" --version *> $null
+                    if ($LASTEXITCODE -eq 0) { $pythonCmd = @("py", "-$pyVersion"); break }
+                }
             }
-            if ($havePy) { $pythonCmd = @("py", "-$pyVersion") } else { $pythonCmd = @("python") }
         }
         $pyExe = $pythonCmd[0]
         $pyArgs = @($pythonCmd | Select-Object -Skip 1)
-        if (-not (Get-Command $pyExe -ErrorAction SilentlyContinue)) { Fail "Python $($versions['PYTHON_VERSION']) not found (use -Deps to install it, or -Python)" }
-        # cwipc is built and tested with exactly this version (pinned, cwi-dis/cwipc#355).
+        # Accepted: PYTHON_VERSION_MIN up to and including PYTHON_VERSION (versions.env, cwi-dis/cwipc#355).
+        $pyMin = [version]$versions["PYTHON_VERSION_MIN"]
+        $pyMax = [version]$versions["PYTHON_VERSION"]
+        $pyRange = if ($pyMin -eq $pyMax) { "$pyMax" } else { "$pyMin to $pyMax" }
+        if (-not (Get-Command $pyExe -ErrorAction SilentlyContinue)) { Fail "no Python $pyRange found (use -Deps to install it, or -Python)" }
         $pyFound = (& $pyExe @pyArgs -c "import sys; print('%d.%d' % sys.version_info[:2])" 2>$null) -join ""
-        if ($pyFound -ne $versions["PYTHON_VERSION"]) { Fail "Python $($versions['PYTHON_VERSION']) needed, but $($pythonCmd -join ' ') is $pyFound (use -Deps to install it, or -Python)" }
+        $pyOk = $false
+        try { $pyOk = ([version]$pyFound -ge $pyMin) -and ([version]$pyFound -le $pyMax) } catch { }
+        if (-not $pyOk) { Fail "Python $pyRange needed, but $($pythonCmd -join ' ') is $pyFound (use -Deps to install it, or -Python)" }
         Write-Output "${progname}: creating venv $venv with $(& $pyExe @pyArgs --version 2>&1)"
         & $pyExe @pyArgs -m venv --clear $venv
         if ($LASTEXITCODE -ne 0) { Fail "creating the venv failed" }

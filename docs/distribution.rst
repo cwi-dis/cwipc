@@ -14,9 +14,8 @@ When creating a new release, ensure the following have been done:
     - Especially watch out for ``opencv`` and ``open3d`` which can some times lag 2 Python versions
 
 	- Add the Python package dependency specifiers again for the currently selected versions.
-	- Update the Python version range in the toplevel ``CMakeLists.txt``.
-	- Update ``PYTHON_VERSION`` and ``PYTHON_WINDOWS_INSTALLER_VERSION`` in ``scripts/versions.env``.
-	- Ubuntu uses its system Python (3.12 on 24.04): check that it still fits.
+	- Update ``PYTHON_VERSION`` (preferred: installed, built and tested with), ``PYTHON_VERSION_MIN`` (that version or the one before it, accepted if already there) and ``PYTHON_WINDOWS_INSTALLER_VERSION`` in ``scripts/versions.env``. ``CMakeLists.txt`` reads them from there.
+	- Ubuntu uses its system Python (3.12 on 24.04): check that it is still within the range.
 	- Check ``.github/workflows/build.yml`` for the Python versions used.
 - Check whether ``nlohman_json`` can be updated (``CMakeLists.txt``)
 - Check whether ``nsis`` can be updated (``.github/workflows/build.yml``)

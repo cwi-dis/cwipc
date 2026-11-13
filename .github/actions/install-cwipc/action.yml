@@ -30,7 +30,7 @@ inputs:
     required: false
     default: 'true'
   python:
-    description: 'Python to create the venv with. Default: python3.12 (or python3) on Linux/macOS, python on Windows.'
+    description: 'Python to create the venv with. Must be within PYTHON_VERSION_MIN to PYTHON_VERSION of scripts/versions.env. Default: python3.12 (or python3) on Linux/macOS, python on Windows.'
     required: false
     default: ''
 
