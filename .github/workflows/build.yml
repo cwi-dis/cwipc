@@ -25,7 +25,7 @@ jobs:
           USERNAME: cwi-dis
           VCPKG_EXE: ${{ github.workspace }}/vcpkg/vcpkg
           FEED_URL: https://nuget.pkg.github.com/cwi-dis/index.json
-          VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/cwi-dis/index.json,readwrite"
+          VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/cwi-dis/index.json,readwrite;nugettimeout,1200"
           VCPKG_DEFAULT_TRIPLET: x64-windows-release
           VCPKG_INSTALL_OPTIONS: --x-abi-tools-use-exact-versions --debug
           GITHUB_REF_NAME: ${{ github.ref_name }}
@@ -360,7 +360,7 @@ jobs:
           USERNAME: cwi-dis
           VCPKG_EXE: ${{ github.workspace }}/vcpkg/vcpkg
           FEED_URL: https://nuget.pkg.github.com/cwi-dis/index.json
-          VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/cwi-dis/index.json,readwrite"
+          VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/cwi-dis/index.json,readwrite;nugettimeout,1200"
           GITHUB_REF_NAME: ${{ github.ref_name }}
           GITHUB_REF_NAME_SAFE: ${{ github.ref_name }}
         steps:
