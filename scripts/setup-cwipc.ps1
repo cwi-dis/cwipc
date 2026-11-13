@@ -96,6 +96,10 @@ try {
         }
         $pyExe = $pythonCmd[0]
         $pyArgs = @($pythonCmd | Select-Object -Skip 1)
+        if (-not (Get-Command $pyExe -ErrorAction SilentlyContinue)) { Fail "Python $($versions['PYTHON_VERSION']) not found (use -Deps to install it, or -Python)" }
+        # cwipc is built and tested with exactly this version (pinned, cwi-dis/cwipc#355).
+        $pyFound = (& $pyExe @pyArgs -c "import sys; print('%d.%d' % sys.version_info[:2])" 2>$null) -join ""
+        if ($pyFound -ne $versions["PYTHON_VERSION"]) { Fail "Python $($versions['PYTHON_VERSION']) needed, but $($pythonCmd -join ' ') is $pyFound (use -Deps to install it, or -Python)" }
         Write-Output "${progname}: creating venv $venv with $(& $pyExe @pyArgs --version 2>&1)"
         & $pyExe @pyArgs -m venv --clear $venv
         if ($LASTEXITCODE -ne 0) { Fail "creating the venv failed" }

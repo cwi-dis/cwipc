@@ -21,9 +21,9 @@
 #                  <prefix>/share/cwipc/python (default in an installed tree).
 #   --config CFG   Windows source tree: use build/bin/CFG. Default: the first of
 #                  Debug, RelWithDebInfo, Release that exists.
-#   --python PY    Python to create the venv with. Default: python3.12 (or python3)
-#                  on Linux/macOS, python on Windows. (3.12 is PYTHON_VERSION in
-#                  versions.env.)
+#   --python PY    Python to create the venv with. Must be PYTHON_VERSION from
+#                  versions.env (3.12). Default: python3.12 (or python3) on
+#                  Linux/macOS, python on Windows.
 #   --launchers    Also put the Python launchers (cwipc, cwipc_view, ...) in
 #                  <prefix>/bin: copies on Windows, symlinks elsewhere. For system
 #                  installations (Windows installer, Debian package), so cwipc works
@@ -232,7 +232,10 @@ elif $python_modules; then
                 python=python3
             fi
         fi
-        command -v "$python" >/dev/null 2>&1 || die "Python not found: $python (use --python)"
+        command -v "$python" >/dev/null 2>&1 || die "Python $PYTHON_VERSION not found (use --deps to install it, or --python)"
+        # cwipc is built and tested with exactly this version (pinned, cwi-dis/cwipc#355).
+        pyver=$("$python" -c 'import sys; print("%d.%d" % sys.version_info[:2])' 2>/dev/null) || pyver="unknown"
+        [ "$pyver" = "$PYTHON_VERSION" ] || die "Python $PYTHON_VERSION needed, but $python is $pyver (use --deps to install it, or --python)"
         echo "$progname: creating venv $venv with $("$python" --version 2>&1)"
         mkdir -p "$(dirname "$venv")"
         "$python" -m venv --clear "$(native "$venv")"
