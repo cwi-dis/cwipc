@@ -29,6 +29,8 @@ target_link_libraries(cwipc_orbbec PUBLIC cwipc_util)
 target_link_libraries(cwipc_orbbec PRIVATE ${PCL_LIBRARIES})
 target_link_libraries(cwipc_orbbec PRIVATE ob::OrbbecSDK)
 target_link_libraries(cwipc_orbbec PRIVATE opencv_core opencv_imgproc)
+# ZLIB used to be found as a side effect of PCL's io component, which cwipc no longer uses (#357).
+find_package(ZLIB REQUIRED)
 target_link_libraries(cwipc_orbbec PRIVATE ZLIB::ZLIB)
 target_link_libraries(cwipc_orbbec PRIVATE libjpeg-turbo::turbojpeg)
 target_link_libraries(cwipc_orbbec PRIVATE nlohmann_json::nlohmann_json)

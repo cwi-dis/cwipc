@@ -100,8 +100,6 @@ _CWIPC_DEBUG_DLL_SEARCH_PATH=os.getenv("_CWIPC_DEBUG_DLL_SEARCH_PATH")
 
 _WINDOWS_NEEDED_DLLS=[
     "pcl_common",
-    "vtkCommonCore-8.2",
-    "OpenNI2",
 ]
 
 class _cwipc_dll_search_path_collection:

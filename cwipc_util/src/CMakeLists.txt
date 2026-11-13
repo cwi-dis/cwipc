@@ -52,12 +52,6 @@ target_include_directories(
 #endif()
 
 target_link_libraries(cwipc_util PUBLIC ${PCL_LIBRARIES})
-# There is an issue with pcl (or maybe with vcpkg?) that if you build pcl with static libraries
-# the library libpcl_io.a will depend on libpcl_io_ply.a but this is not reflected in the definitions.
-# So we manually add that library.
-if (VCPKG_TARGET_TRIPLET STREQUAL "arm64-android")
-	target_link_libraries(cwipc_util PUBLIC ${PCL_IO_PLY_LIBRARY})
-endif()
 target_link_libraries(cwipc_util PRIVATE nlohmann_json::nlohmann_json)
 if(WIN32)
 	target_link_libraries(cwipc_util PRIVATE wsock32 ws2_32)

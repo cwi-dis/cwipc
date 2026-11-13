@@ -37,8 +37,6 @@
 #define POINT_CLOUD_CODECV2_H
 
 // from PCL library
-#include <pcl/io/pcd_io.h>
-#include <pcl/io/ply_io.h>
 #include <pcl/console/print.h>
 #include <pcl/console/parse.h>
 #include <pcl/console/time.h>
