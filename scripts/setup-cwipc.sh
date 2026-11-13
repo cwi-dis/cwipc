@@ -8,7 +8,10 @@
 #   --prefix DIR   The tree to set up. Default: found from this script's location:
 #                  <prefix>/libexec/cwipc/scripts/setup-cwipc.sh (installed tree), or
 #                  <repo>/scripts/setup-cwipc.sh (source tree, prefix <repo>/build).
-#   --deps         Also install dependencies (system-wide: uses sudo/brew).
+#   --deps         Also install dependencies (system-wide: uses sudo/brew), with
+#                  install-deps-<platform>: the build level in a source tree, the
+#                  runtime level in an installed tree.
+#   --deps-level L Level for --deps: runtime or build.
 #   --no-python    Don't create the venv or install the Python modules.
 #   --existing-venv  The tree already has its venv with the cwipc modules (a brew
 #                  install): use it as it is.
@@ -40,7 +43,7 @@ set -euo pipefail
 
 progname=$(basename "$0")
 usage() {
-    sed -n '3,38p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '3,41p' "$0" | sed 's/^# \{0,1\}//'
 }
 die() {
     echo "$progname: $*" >&2
@@ -49,6 +52,7 @@ die() {
 
 prefix=""
 deps=false
+deps_level=""
 python_modules=true
 existing_venv=false
 modules=""      # editable or wheels; default from the context
@@ -58,6 +62,7 @@ while [ $# -gt 0 ]; do
     case "$1" in
     --prefix) prefix="$2"; shift 2 ;;
     --deps) deps=true; shift ;;
+    --deps-level) deps=true; deps_level="$2"; shift 2 ;;
     --no-python) python_modules=false; shift ;;
     --existing-venv) existing_venv=true; shift ;;
     --editable) modules=editable; shift ;;
@@ -152,13 +157,20 @@ native() {
 }
 
 #
-# Dependencies. Phase 0 uses the existing install-3rdparty scripts, preferring
-# the copy in the tree (matching its version) over our own.
+# Dependencies, with install-deps-<platform> (cwi-dis/cwipc#355). Prefer the copy in
+# the tree (matching its version) over our own; trees from before 8.3.0 don't have one.
 #
 if $deps; then
+    if [ -z "$deps_level" ]; then
+        if [ "$context" = source ]; then deps_level=build; else deps_level=runtime; fi
+    fi
+    case "$deps_level" in
+    runtime|build) ;;
+    *) die "--deps-level must be runtime or build, not $deps_level" ;;
+    esac
     case "$platform" in
-    linux) depscript=install-3rdparty-ubuntu2404.sh ;;
-    macos) depscript=install-3rdparty-macos.sh ;;
+    linux) depscript=install-deps-ubuntu2404.sh ;;
+    macos) depscript=install-deps-macos.sh ;;
     windows) depscript="" ;;  # the Windows archive carries its DLLs in bin/
     esac
     if [ -n "$depscript" ]; then
@@ -167,8 +179,8 @@ if $deps; then
         else
             depscript="$scriptdir/$depscript"
         fi
-        echo "$progname: installing dependencies with $depscript"
-        bash "$depscript"
+        echo "$progname: installing dependencies ($deps_level level) with $depscript"
+        bash "$depscript" "--$deps_level"
     fi
 fi
 
