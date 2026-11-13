@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cwipc_check` tells a broken installation from a PATH problem, and `cwipc_check install` repairs installations on all platforms (#355)
 - The Debian package installs on a clean Ubuntu 24.04 and sets up the Python modules itself (#355)
 - The Windows uninstaller removes everything (#355)
+- Windows and Android: dependencies updated to vcpkg 2026.10.16 (OpenCV 4.14, librealsense 2.58.4, glfw 3.5.1) (#348)
 
 ## [8.1.0] - 2026-08-24
 
