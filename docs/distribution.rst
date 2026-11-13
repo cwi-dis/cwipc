@@ -54,16 +54,23 @@ When creating a new release, ensure the following have been done:
 
 - The OrbbecSDK version and its per-platform archive names are in ``scripts/versions.env``.
 
-- For Windows and Android, the ``vcpkg`` dependent packages should all be updated to the most recent version::
+- For Windows and Android, the ``vcpkg`` dependent packages should all be updated to the most recent
+  vcpkg **release** (a tag such as ``2026.10.16``, not ``master``: the vcpkg tool and the ports of a
+  release belong together). Move the submodule to it and set the baseline in
+  ``vcpkg-configuration.json`` to the same commit, on any platform::
 
-    cd .\vcpkg
-    git checkout master
-    git pull
-    .\bootstrap-vcpkg.bat
-    cd ..
-    .\vcpkg\vcpkg x-update-baseline
-    .\vcpkg\vcpkg.exe install
-    git commit -a -m "Vcpkg packages updated to most recent version"
+    git -C vcpkg fetch --tags origin
+    git -C vcpkg tag --sort=-creatordate | head -1          # the most recent release
+    git -C vcpkg checkout <tag>
+    git -C vcpkg rev-parse HEAD                             # put this in "baseline"
+
+  Set the baseline by hand rather than with ``vcpkg x-update-baseline``: our default registry is a
+  ``git`` registry, for which that probably takes the newest commit of vcpkg's GitHub repository
+  rather than that of the submodule (not verified). To see
+  which port versions change, compare ``versions/baseline.json`` in the old and the new commit.
+  Then, on Windows, ``scripts\install-deps-windows.ps1 -Build`` bootstraps the new vcpkg tool, and
+  ``cmake --preset windows-production`` builds all vcpkg packages (this takes long). CI rebuilds
+  them too, for Windows and Android (cwi-dis/cwipc#348).
 
 - The toplevel ``vcpkg.json`` has a version string.
 - ``setup.py`` in ``cwipc_util/python`` and every other package has a default version string that is only used when installing with ``pip install -e`` (because usually it is dynamically determined at build time. For good measure update these default version strings when doing a major release.
