@@ -34,21 +34,21 @@ Building from the command line
        cd cwipc
        git clone https://github.com/microsoft/vcpkg.git
 
-2. Install third‑party packages:
+2. Install the third‑party packages needed to build (the *build level*; the
+   pinned versions are in ``scripts/versions.env``):
 
-   * macOS: ``scripts/install-3rdparty-macos.sh``
-   * Ubuntu: ``scripts/install-3rdparty-ubuntu2404.sh``
-   * Windows: ``scripts/install-3rdparty-windows.ps1`` (run as Administrator), then
-     ``scripts/install-3rdparty-windows.sh`` (updates pip/setuptools/build/wheel in
-     whichever Python this puts on your ``PATH``).
+   * macOS: ``scripts/install-deps-macos.sh --build`` (Homebrew)
+   * Ubuntu 24.04: ``scripts/install-deps-ubuntu2404.sh --build`` (apt, uses
+     ``sudo``; also adds the RealSense apt repository)
+   * Windows: ``scripts\install-deps-windows.ps1 -Build`` (PowerShell). This
+     *checks* for Visual Studio with C++, CMake, git, git-lfs, Python and NSIS
+     and tells you how to install what is missing; installing those needs
+     administrator rights and takes long, so it doesn't do that itself.
 
-   If you want Orbbec camera support, also run the matching
-   ``scripts/install-orbbecsdk-{macos,ubuntu2404}.sh`` or
-   ``scripts/install-orbbecsdk-windows.ps1``. This installs the SDK into
-   ``3rdparty_installed/orbbecsdk``, where CMake expects to find it. Without
-   this step CMake silently configures without Orbbec support (a
-   ``find_package(OrbbecSDK)`` warning, no error) and ``cwipc_orbbec`` is
-   skipped.
+   On all platforms this also installs the OrbbecSDK into
+   ``3rdparty_installed/orbbecsdk``, where CMake expects it (without it CMake
+   silently configures without Orbbec support), and on Windows it bootstraps
+   vcpkg.
 
 3. Configure and build with CMake presets::
 
@@ -72,10 +72,21 @@ Building from the command line
    The default prefix is ``/usr/local`` on Unix and ``C:\Program Files\cwipc`` on
    Windows; override with ``-DCMAKE_INSTALL_PREFIX`` when invoking ``cmake``.
 
-7. Try it:
+7. Try it, from the source tree::
 
-   On Windows you have to add the installed ``bin`` directory to your ``PATH`` environment variable.
-   On Mac and Linux this is optional (because the programs use *rpath* to find the shared libraries).
+       source scripts/activate        # Mac, Linux
+       & scripts\activate.ps1         # Windows (needs Git Bash on PATH)
+       cwipc view --synthetic
+
+   The first time, this runs ``scripts/setup-cwipc.sh``, which installs the
+   Python modules editable into the build's venv
+   (``build/libexec/cwipc/venv``) and writes ``build/libexec/cwipc/activate``.
+   Run ``scripts/setup-cwipc.sh`` again yourself after building another
+   configuration (Windows: ``--config Release``) or to redo the setup.
+
+   For an installed tree (step 6) run its own
+   ``<prefix>/libexec/cwipc/scripts/setup-cwipc.sh``, then
+   ``source <prefix>/libexec/cwipc/activate``.
 
 Building from vscode
 --------------------
@@ -105,7 +116,7 @@ Debugging
 
 The cmake presets have a `develop` option for each platform. When you build these the `vscode` debuggers will work (both the native C/C++ debuggers and of course also the Python debugger).
 
-After you have built cwipc, you should run (Mac, Linux)::
+After you have built cwipc, you should run (Mac, Linux; see step 7 above)::
 
        source scripts/activate
 

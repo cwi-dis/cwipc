@@ -45,8 +45,16 @@ Install the Debian package::
 
     sudo apt install ./cwipc-<version>.deb
 
-Realsense drivers are not included; inspect
-``/usr/share/cwipc/scripts/install-3rdparty-ubuntu2404.sh`` for instructions.
+This also creates the Python venv in ``/usr/libexec/cwipc/venv`` (downloading
+the Python dependencies from PyPI) and puts the ``cwipc`` commands in
+``/usr/bin``. If that part fails, for example without network access, the
+native libraries are still installed; run ``sudo cwipc_check install`` later.
+
+RealSense support needs ``librealsense2`` from the RealSense apt repository,
+which is not in Ubuntu. To add the repository and install it, together with the
+other runtime dependencies::
+
+    /usr/libexec/cwipc/scripts/install-deps-ubuntu2404.sh
 
 Android
 -------

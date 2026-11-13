@@ -36,7 +36,6 @@ elseif(WIN32)
 	set(_hide "")
 	#set(_hide "-WindowStyle Hidden")
     string(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "nsExec::ExecToLog '\\\"$INSTDIR\\\\bin\\\\cwipc_check\\\" install'\\nPop $0\\nDetailPrint \\\"cwipc_check returned $0\\\"")
-    #string(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait 'powershell -ExecutionPolicy Bypass ${_hide} -File \\\"$INSTDIR\\\\bin\\\\cwipc_pymodules_install.ps1\\\"'\\n")
     set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "")
     # Remove what setup-cwipc.ps1 created (cwi-dis/cwipc#355): the launchers it copied into bin
     # (cwipc*.exe, so including cwipc.exe, which cwipc_*.exe missed and left the install
