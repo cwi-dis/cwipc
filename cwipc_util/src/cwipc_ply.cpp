@@ -27,6 +27,8 @@
 #include <cstdio>
 #include <cstring>
 #include <cmath>
+#include <cstdlib>
+#include <clocale>
 #include <charconv>
 #include <fstream>
 #include <string>
@@ -227,7 +229,12 @@ enum class PlyFormat { Ascii, BinaryLittleEndian, BinaryBigEndian };
 class PlyDataReader {
 public:
     PlyDataReader(const char* begin, const char* end, PlyFormat format)
-    :   m_pos(begin), m_end(end), m_format(format) {}
+    :   m_pos(begin), m_end(end), m_format(format)
+    {
+        // strtof/strtod use the C locale's decimal point; PLY always uses '.'.
+        const char* dp = localeconv()->decimal_point;
+        m_decimal_point = (dp && dp[0]) ? dp[0] : '.';
+    }
 
     // Read one value of type t. Returns false on truncated or malformed data.
     bool read(PlyType t, double& value) {
@@ -286,20 +293,32 @@ private:
             m_pos++;
         }
 
-        if (start == m_pos) return false;
+        size_t len = m_pos - start;
+        if (len == 0 || len >= sizeof(m_token)) return false;
+
+        // Not std::from_chars: floating-point from_chars is missing from the libc++
+        // of current Xcode and the Android NDK (deleted function), see #361.
+        // strtof/strtod need a NUL-terminated string and the locale's decimal point.
+        memcpy(m_token, start, len);
+        m_token[len] = '\0';
+
+        if (m_decimal_point != '.') {
+            for (size_t i = 0; i < len; i++) {
+                if (m_token[i] == '.') m_token[i] = m_decimal_point;
+            }
+        }
+
+        char* end = NULL;
 
         // Parse floats as float, so the result is the float nearest to the text
         // (parsing as double and then converting could round twice).
         if (t == PlyType::Float32) {
-            float f;
-            auto r = std::from_chars(start, m_pos, f);
-            if (r.ec != std::errc() || r.ptr != m_pos) return false;
-            value = f;
-            return true;
+            value = strtof(m_token, &end);
+        } else {
+            value = strtod(m_token, &end);
         }
 
-        auto r = std::from_chars(start, m_pos, value);
-        return r.ec == std::errc() && r.ptr == m_pos;
+        return end == m_token + len;
     }
 
     bool _read_binary(PlyType t, double& value) {
@@ -334,6 +353,8 @@ private:
     const char* m_pos;
     const char* m_end;
     PlyFormat m_format;
+    char m_decimal_point;
+    char m_token[128];
 };
 
 static bool _read_file(const char* filename, std::vector<char>& data) {

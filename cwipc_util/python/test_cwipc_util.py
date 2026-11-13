@@ -727,6 +727,25 @@ class TestPly(unittest.TestCase):
     def test_read_binary_le_double_xyz(self):
         self._check_variant("binary_le_double_xyz.ply")
 
+    def test_read_ascii_decimal_comma_locale(self):
+        """ASCII PLY uses '.', also when the host program has set a locale with a decimal comma"""
+        import locale
+        old = locale.setlocale(locale.LC_NUMERIC)
+        for name in ["nl_NL.UTF-8", "de_DE.UTF-8", "nl_NL", "de_DE", "German_Germany.1252"]:
+            try:
+                locale.setlocale(locale.LC_NUMERIC, name)
+                break
+            except locale.Error:
+                continue
+        else:
+            self.skipTest("no locale with a decimal comma available")
+        try:
+            self.assertEqual(locale.localeconv()["decimal_point"], ",")
+            self._check_variant("ascii_double_xyz.ply")
+            self._check_variant("ascii_extra_props.ply")
+        finally:
+            locale.setlocale(locale.LC_NUMERIC, old)
+
     def test_read_legacy_ascii(self):
         """ASCII file written by the PCL-based cwipc_write (alpha, element camera)"""
         ref = cwipc.cwipc_read_debugdump(os.path.join(PLY_VARIANTS_DIR, "legacy.cwipcdump"))
