@@ -233,7 +233,8 @@ if(OrbbecSDK_FOUND)
 endif()
 if(CWIPC_WITH_APPS)
 # Install scripts to help installing prerequisites
-	install(DIRECTORY scripts DESTINATION ${CMAKE_SCRIPTS_INSTALL_DIRECTORY})
+	# USE_SOURCE_PERMISSIONS: the .sh scripts keep their execute bit (cwi-dis/cwipc#355).
+	install(DIRECTORY scripts DESTINATION ${CMAKE_SCRIPTS_INSTALL_DIRECTORY} USE_SOURCE_PERMISSIONS)
 endif()
 if(CWIPC_WITH_INSTALLER)
 	# Creating installers

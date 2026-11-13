@@ -8,7 +8,8 @@ set -e
 
 case "$1" in
 configure)
-    if ! /usr/libexec/cwipc/scripts/setup-cwipc.sh --prefix /usr --launchers; then
+    # With bash explicitly, so this doesn't depend on the execute bit surviving packaging.
+    if ! bash /usr/libexec/cwipc/scripts/setup-cwipc.sh --prefix /usr --launchers; then
         echo "" >&2
         echo "WARNING: setting up the cwipc Python modules failed (see above)." >&2
         echo "WARNING: the native cwipc libraries and programs are installed and work." >&2
