@@ -2,7 +2,6 @@
 #include <fstream>
 
 #include <pcl/point_cloud.h>
-#include <pcl/io/ply_io.h>
 
 #include "cwipc_util/api.h"
 

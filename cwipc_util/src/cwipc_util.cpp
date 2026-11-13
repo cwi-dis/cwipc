@@ -6,7 +6,6 @@
 #include <mutex>
 
 #include <pcl/point_cloud.h>
-#include <pcl/io/ply_io.h>
 #include <pcl/common/geometry.h>
 
 
@@ -18,6 +17,7 @@
 #include "cwipc_util/api_pcl.h"
 #include "cwipc_util/api.h"
 #include "cwipc_util/internal/logging.hpp"
+#include "cwipc_util/internal/ply.hpp"
 #define stringify(x) _stringify(x)
 #define _stringify(x) #x
 
@@ -420,7 +420,7 @@ const char *cwipc_get_version() {
 int cwipc_dangling_allocations(bool log) {
     int n_dangling = n_cwipc_pointcloud_alloc - n_cwipc_pointcloud_dealloc;
     int n_dangling_uncompressed = n_cwipc_uncompressed_pointcloud_alloc - n_cwipc_uncompressed_pointcloud_dealloc;
-    if (log && n_dangling != 0 || n_dangling_uncompressed != 0) {
+    if (log && (n_dangling != 0 || n_dangling_uncompressed != 0)) {
         std::string msg = std::to_string(n_dangling) + " free() mismatch. nAlloc=" + std::to_string(n_cwipc_pointcloud_alloc) + ", nFree=" + std::to_string(n_cwipc_pointcloud_dealloc);
         _cwipc_log_emit(CWIPC_LOG_LEVEL_WARNING, "cwipc_pointcloud", msg.c_str());
         msg = std::to_string(n_dangling_uncompressed) + " free() mismatch. nAlloc=" + std::to_string(n_cwipc_uncompressed_pointcloud_alloc) + ", nFree=" + std::to_string(n_cwipc_uncompressed_pointcloud_dealloc);
@@ -440,19 +440,9 @@ cwipc_pointcloud *cwipc_read(const char *filename, uint64_t timestamp, char **er
         return NULL;
     }
     cwipc_log_set_errorbuf(errorMessage);
-    cwipc_pcl_pointcloud pc = new_cwipc_pcl_pointcloud();
-    pcl::PLYReader ply_reader;
-
-    if (ply_reader.read(filename, *pc) < 0) {
-        cwipc_log(CWIPC_LOG_LEVEL_ERROR, "cwipc_read", std::string("Loading of PLY file failed: ") + filename);
-        cwipc_log_set_errorbuf(nullptr);
-
-        return NULL;
-    }
-
-    cwipc_pointcloud *rv = new cwipc_impl(pc, timestamp);
+    cwipc_pointcloud *rv = _cwipc_ply_read(filename, timestamp, errorMessage);
     if (rv == nullptr && errorMessage && *errorMessage == NULL) {
-        cwipc_log(CWIPC_LOG_LEVEL_ERROR, "cwipc_read", "unspecified error creating point cloud");
+        cwipc_log(CWIPC_LOG_LEVEL_ERROR, "cwipc_read", "unspecified error reading point cloud");
     }
     cwipc_log_set_errorbuf(nullptr);
     return rv;
@@ -467,12 +457,7 @@ int cwipc_write(const char *filename, cwipc_pointcloud *pointcloud, char **error
         return -1;
     }
 
-    pcl::PLYWriter writer;
-    int status = writer.write(filename, *pc);
-
-    if (status < 0) {
-        cwipc_log(CWIPC_LOG_LEVEL_ERROR, "cwipc_write", std::string("Saving of PLY file failed: ") + filename);
-    }
+    int status = _cwipc_ply_write(filename, pointcloud, false);
     cwipc_log_set_errorbuf(nullptr);
     return status;
 }
@@ -486,12 +471,7 @@ int cwipc_write_ext(const char* filename, cwipc_pointcloud* pointcloud, int flag
         return -1;
     }
 
-    pcl::PLYWriter writer;
-    int status = writer.write(filename, *pc, flag&CWIPC_FLAG_BINARY);
-
-    if (status < 0) {
-        cwipc_log(CWIPC_LOG_LEVEL_ERROR, "cwipc_write_ext", std::string("Saving of PLY file failed: ") + filename);
-    }
+    int status = _cwipc_ply_write(filename, pointcloud, (flag & CWIPC_FLAG_BINARY) != 0);
     cwipc_log_set_errorbuf(nullptr);
     return status;
 }

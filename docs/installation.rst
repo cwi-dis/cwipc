@@ -16,8 +16,13 @@ macOS
 
 Use Homebrew::
 
-    brew tap cwi-dis/cwipc
-    brew install cwipc
+    brew install cwi-dis/cwipc/cwipc
+
+Use the full name ``cwi-dis/cwipc/cwipc``: since Homebrew 6, formulae from
+third-party taps are ignored unless they are trusted, and installing by the full
+name taps ``cwi-dis/cwipc`` and trusts only the ``cwipc`` formula (see
+`Tap Trust <https://docs.brew.sh/Tap-Trust>`_). If you prefer the short name
+``brew install cwipc``, first run ``brew trust --formula cwi-dis/cwipc/cwipc``.
 
 
 Windows

@@ -214,7 +214,9 @@ class TestApi(unittest.TestCase):
         pc = cwipc.cwipc_read(PLY_FILENAME, 1234)
         new_pc = pc.clone()
         int_count = cwipc.cwipc_dangling_allocations(False)
-        self.assertEqual(old_count+2, int_count)
+        # At least one allocation each; how many depends on the representation
+        # (an uncompressed point cloud also allocates its PCL form when cloned).
+        self.assertGreaterEqual(int_count, old_count+2)
         self.assertEqual(pc.count(), new_pc.count())
         self.assertEqual(pc.timestamp(), new_pc.timestamp())
         pc = None
@@ -654,6 +656,252 @@ class TestApi(unittest.TestCase):
     def _build_pointcloud(self):
          points = cwipc.cwipc_point_array(values=[(1, 2, 3, 0x10, 0x20, 0x30, 1), (4, 5, 6, 0x40, 0x50, 0x60, 2)])
          return cwipc.cwipc_from_points(points, 0)
-   
+
+#
+# PLY reading and writing (#66). The fixtures in tests/fixtures/input/ply are made by
+# tests/fixtures/make_ply_fixtures.py; see there for what they contain.
+#
+PLY_VARIANTS_DIR = os.path.join(PLY_DIRNAME, "ply")
+# The two points in every hand-made variant: x, y, z, r, g, b, tile
+PLY_VARIANT_POINTS = [(1.0, 2.0, 3.0, 255, 128, 0, 5), (-1.5, 0.25, 9.0, 10, 20, 30, 2)]
+PLY_VARIANT_TIMESTAMP_MS = 1731490000123
+PLY_VARIANT_CELLSIZE = 0.0025
+
+def _point_tuples(pc : cwipc.cwipc_pointcloud_wrapper) -> list[tuple]:
+    return [(p.x, p.y, p.z, p.r, p.g, p.b, p.tile) for p in pc.get_points()]
+
+class TestPly(unittest.TestCase):
+
+    def _read_variant(self, name : str, timestamp : int=1234) -> cwipc.cwipc_pointcloud_wrapper:
+        return cwipc.cwipc_read(os.path.join(PLY_VARIANTS_DIR, name), timestamp)
+
+    def _check_variant(self, name : str, notile : bool=False, nocolor : bool=False) -> cwipc.cwipc_pointcloud_wrapper:
+        pc = self._read_variant(name)
+        expected = PLY_VARIANT_POINTS
+        if notile:
+            expected = [p[:6] + (0,) for p in expected]
+        if nocolor:
+            expected = [p[:3] + (0, 0, 0, 0) for p in expected]
+        self.assertEqual(_point_tuples(pc), expected, name)
+        self.assertEqual(pc.timestamp(), 1234)
+        return pc
+
+    # Layouts the PCL-based reader already handles; the new reader must give the same result.
+
+    def test_read_ascii_alpha(self):
+        """alpha is read as the fourth byte (tile)"""
+        self._check_variant("ascii_alpha.ply")
+
+    def test_read_ascii_noalpha(self):
+        self._check_variant("ascii_noalpha.ply", notile=True)
+
+    def test_read_ascii_nocolor(self):
+        self._check_variant("ascii_nocolor.ply", nocolor=True)
+
+    def test_read_ascii_double_xyz(self):
+        self._check_variant("ascii_double_xyz.ply")
+
+    def test_read_ascii_reordered(self):
+        self._check_variant("ascii_reordered.ply")
+
+    def test_read_ascii_extra_props(self):
+        self._check_variant("ascii_extra_props.ply")
+
+    def test_read_ascii_typenames(self):
+        """float32/uint8 type names"""
+        self._check_variant("ascii_typenames.ply")
+
+    def test_read_ascii_face_element(self):
+        self._check_variant("ascii_face_element.ply")
+
+    def test_read_ascii_crlf(self):
+        """Windows line endings"""
+        self._check_variant("ascii_crlf.ply")
+
+    def test_read_binary_le_alpha(self):
+        self._check_variant("binary_le_alpha.ply")
+
+    def test_read_binary_be_alpha(self):
+        self._check_variant("binary_be_alpha.ply")
+
+    def test_read_binary_le_double_xyz(self):
+        self._check_variant("binary_le_double_xyz.ply")
+
+    def test_read_ascii_decimal_comma_locale(self):
+        """ASCII PLY uses '.', also when the host program has set a locale with a decimal comma"""
+        import locale
+        old = locale.setlocale(locale.LC_NUMERIC)
+        for name in ["nl_NL.UTF-8", "de_DE.UTF-8", "nl_NL", "de_DE", "German_Germany.1252"]:
+            try:
+                locale.setlocale(locale.LC_NUMERIC, name)
+                break
+            except locale.Error:
+                continue
+        else:
+            self.skipTest("no locale with a decimal comma available")
+        try:
+            self.assertEqual(locale.localeconv()["decimal_point"], ",")
+            self._check_variant("ascii_double_xyz.ply")
+            self._check_variant("ascii_extra_props.ply")
+        finally:
+            locale.setlocale(locale.LC_NUMERIC, old)
+
+    def test_read_legacy_ascii(self):
+        """ASCII file written by the PCL-based cwipc_write (alpha, element camera)"""
+        ref = cwipc.cwipc_read_debugdump(os.path.join(PLY_VARIANTS_DIR, "legacy.cwipcdump"))
+        pc = self._read_variant("legacy_pcl_ascii.ply")
+        self.assertEqual(_point_tuples(pc), _point_tuples(ref))
+
+    def test_read_legacy_binary(self):
+        """Binary file written by the PCL-based cwipc_write_ext (alpha, element face 0, element camera)"""
+        ref = cwipc.cwipc_read_debugdump(os.path.join(PLY_VARIANTS_DIR, "legacy.cwipcdump"))
+        pc = self._read_variant("legacy_pcl_binary.ply")
+        self.assertEqual(_point_tuples(pc), _point_tuples(ref))
+
+    def test_read_pcl_frame1(self):
+        """Large real-world ASCII file gives the same points as its cwipcdump"""
+        ref = cwipc.cwipc_read_debugdump(os.path.join(PLY_DIRNAME, "pcl_frame1.cwipcdump"))
+        pc = cwipc.cwipc_read(PLY_FILENAME, 0)
+        self.assertEqual(_point_tuples(pc), _point_tuples(ref))
+
+    def test_read_bad_magic(self):
+        with self.assertRaises(cwipc.CwipcError):
+            self._read_variant("bad_magic.ply")
+
+    def test_read_bad_truncated(self):
+        with self.assertRaises(cwipc.CwipcError):
+            self._read_variant("bad_truncated.ply")
+
+    # Layouts whose result changes with the new reader.
+
+    def test_read_ascii_tile(self):
+        self._check_variant("ascii_tile.ply")
+
+    def test_read_binary_le_tile(self):
+        self._check_variant("binary_le_tile.ply")
+
+    # Colours cwipc_read can't use: the points are read, colours black, with a log warning
+    # (not an error, and not in the error buffer: see #360).
+
+    def _check_unusable_colors(self, name : str) -> None:
+        log_messages = []
+        def log_callback(level : int, message : bytes) -> None:
+            log_messages.append((level, message.decode('utf8')))
+        cwipc.cwipc_log_configure(cwipc.CWIPC_LOG_LEVEL_WARNING, log_callback)
+        try:
+            pc = self._read_variant(name)
+        finally:
+            cwipc.cwipc_log_configure(cwipc.CWIPC_LOG_LEVEL_WARNING, None)
+        expected = [p[:3] + (0, 0, 0, 0) for p in PLY_VARIANT_POINTS]
+        self.assertEqual(_point_tuples(pc), expected, name)
+        warnings = [m for level, m in log_messages if level == cwipc.CWIPC_LOG_LEVEL_WARNING and "cwipc_read" in m]
+        self.assertEqual(len(warnings), 1, f"{name}: expected one cwipc_read warning, got {log_messages}")
+
+    def test_read_float_colors(self):
+        self._check_unusable_colors("ascii_float_colors.ply")
+
+    def test_read_ushort_colors(self):
+        self._check_unusable_colors("ascii_ushort_colors.ply")
+
+    def test_read_splat(self):
+        """Gaussian splat colours (f_dc_*): for cwipc_import(), #359"""
+        self._check_unusable_colors("binary_le_splat.ply")
+
+    def test_read_bad_noxyz(self):
+        with self.assertRaises(cwipc.CwipcError):
+            self._read_variant("bad_noxyz.ply")
+
+    def test_read_metadata(self):
+        """With timestamp 0 the file's timestamp (seconds) is used, in milliseconds; cellsize from the file"""
+        for name in ["ascii_metadata_after.ply", "binary_le_metadata_after.ply", "binary_le_metadata_before.ply"]:
+            pc = self._read_variant(name, 0)
+            self.assertEqual(_point_tuples(pc), PLY_VARIANT_POINTS, name)
+            self.assertEqual(pc.timestamp(), PLY_VARIANT_TIMESTAMP_MS, name)
+            self.assertAlmostEqual(pc.cellsize(), PLY_VARIANT_CELLSIZE, msg=name)
+
+    def test_read_metadata_timestamp_argument(self):
+        """A non-zero timestamp argument wins over the file's timestamp"""
+        pc = self._read_variant("binary_le_metadata_after.ply", 1234)
+        self.assertEqual(_point_tuples(pc)[0][:6], PLY_VARIANT_POINTS[0][:6])
+        self.assertEqual(pc.timestamp(), 1234)
+
+    # The fast path for binary files with the cwipc_point layout (#338).
+
+    def _read_with_debug_log(self, filename : str) -> tuple[cwipc.cwipc_pointcloud_wrapper, list[str]]:
+        log_messages = []
+        def log_callback(level : int, message : bytes) -> None:
+            log_messages.append(message.decode('utf8'))
+        cwipc.cwipc_log_configure(cwipc.CWIPC_LOG_LEVEL_DEBUG, log_callback)
+        try:
+            pc = cwipc.cwipc_read(filename, 1234)
+        finally:
+            cwipc.cwipc_log_configure(cwipc.CWIPC_LOG_LEVEL_WARNING, None)
+        return pc, [m for m in log_messages if "fast path" in m]
+
+    def test_read_fast_path(self):
+        """Binary little-endian files with the cwipc_point layout (tile or alpha) take the fast path"""
+        for name in ["binary_le_tile.ply", "binary_le_alpha.ply", "binary_le_metadata_after.ply", "binary_le_metadata_before.ply"]:
+            pc, fast = self._read_with_debug_log(os.path.join(PLY_VARIANTS_DIR, name))
+            self.assertEqual(len(fast), 1, name)
+            self.assertEqual(_point_tuples(pc), PLY_VARIANT_POINTS, name)
+        ref = cwipc.cwipc_read_debugdump(os.path.join(PLY_VARIANTS_DIR, "legacy.cwipcdump"))
+        pc, fast = self._read_with_debug_log(os.path.join(PLY_VARIANTS_DIR, "legacy_pcl_binary.ply"))
+        self.assertEqual(len(fast), 1)
+        self.assertEqual(_point_tuples(pc), _point_tuples(ref))
+
+    def test_read_no_fast_path(self):
+        """Other layouts take the general path"""
+        for name in ["ascii_tile.ply", "binary_be_alpha.ply", "binary_le_double_xyz.ply", "binary_le_splat.ply"]:
+            _, fast = self._read_with_debug_log(os.path.join(PLY_VARIANTS_DIR, name))
+            self.assertEqual(len(fast), 0, name)
+
+    # The new writer.
+
+    def _write_and_read(self, flags : int, timestamp : int=0, cellsize : float=0) -> tuple[str, cwipc.cwipc_pointcloud_wrapper]:
+        pc = cwipc.cwipc_from_points(PLY_VARIANT_POINTS, timestamp)
+        if cellsize:
+            pc._set_cellsize(cellsize) # type: ignore
+        filename = os.path.join(TEST_OUTPUT_DIR, "test_ply_write_%d.ply" % flags)
+        cwipc.cwipc_write(filename, pc, flags)
+        return filename, cwipc.cwipc_read(filename, 0)
+
+    def _header(self, filename : str) -> bytes:
+        with open(filename, "rb") as f:
+            data = f.read()
+        return data[:data.index(b"end_header\n") + len(b"end_header\n")]
+
+    def test_write_roundtrip(self):
+        for flags in [0, cwipc.CWIPC_FLAGS_BINARY]:
+            _, pc = self._write_and_read(flags)
+            self.assertEqual(_point_tuples(pc), PLY_VARIANT_POINTS)
+
+    def test_write_metadata_roundtrip(self):
+        """Timestamp (milliseconds) and cellsize survive writing and reading"""
+        for flags in [0, cwipc.CWIPC_FLAGS_BINARY]:
+            _, pc = self._write_and_read(flags, PLY_VARIANT_TIMESTAMP_MS, PLY_VARIANT_CELLSIZE)
+            self.assertEqual(pc.timestamp(), PLY_VARIANT_TIMESTAMP_MS)
+            self.assertAlmostEqual(pc.cellsize(), PLY_VARIANT_CELLSIZE)
+
+    def test_write_header(self):
+        """The fourth byte is written as tile, with cwipc_metadata after the vertices and no camera element"""
+        for flags in [0, cwipc.CWIPC_FLAGS_BINARY]:
+            filename, _ = self._write_and_read(flags)
+            header = self._header(filename)
+            self.assertIn(b"property uchar tile\n", header)
+            self.assertNotIn(b"alpha", header)
+            self.assertNotIn(b"element camera", header)
+            self.assertGreater(header.index(b"element cwipc_metadata"), header.index(b"element vertex"))
+
+    def test_write_binary_layout(self):
+        """Binary: header padded to 16 bytes, followed by the points in struct cwipc_point layout"""
+        filename, _ = self._write_and_read(cwipc.CWIPC_FLAGS_BINARY)
+        header = self._header(filename)
+        self.assertEqual(len(header) % 16, 0)
+        with open(filename, "rb") as f:
+            f.seek(len(header))
+            data = f.read(16 * len(PLY_VARIANT_POINTS))
+        points = [struct.unpack("<fffBBBB", data[i:i+16]) for i in range(0, len(data), 16)]
+        self.assertEqual(points, PLY_VARIANT_POINTS)
+
 if __name__ == '__main__':
     unittest.main()

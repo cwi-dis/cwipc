@@ -631,31 +631,41 @@ extern "C" {
 
     /** \brief Read pointcloud from .ply file.
      * \param filename The ply file to read.
-     * \param timestamp The timestamp to record in the cwipc object.
+     * \param timestamp The timestamp to record in the cwipc object. If 0, the timestamp
+     *   stored in the file (if any) is used.
      * \param errorMessage Address of a char* where any error message is saved (or NULL).
      * \param apiVersion Pass in CWIPC_API_VERSION to ensure dll compatibility.
      * \return the abstract point cloud, or NULL in case of errors.
      *
      * If an error occurs and errorMessage is non-NULL it will receive a pointer to
      * a string with the message.
+     *
+     * Reads ASCII or binary PLY with x, y, z and optionally uchar red, green, blue and
+     * tile (or alpha). Other properties and elements are skipped; colours of other types
+     * give a log warning and black points. See the "Point cloud files" documentation page.
      */
     _CWIPC_UTIL_EXPORT cwipc_pointcloud* cwipc_read(const char* filename, uint64_t timestamp, char** errorMessage, uint64_t apiVersion);
 
-    /** \brief Write pointcloud to .ply file.
-     * \param filename The ply file to frite.
+    /** \brief Write pointcloud to an ASCII .ply file.
+     * \param filename The ply file to write.
      * \param pc The pointcloud to write.
      * \param errorMessage Address of a char* where any error message is saved (or NULL).
      * \return 0 on success, -1 on failure.
      *
      * If an error occurs and errorMessage is non-NULL it will receive a pointer to
      * a string with the message.
+     *
+     * The file contains the points (x, y, z, red, green, blue, tile) and an element
+     * cwipc_metadata with the timestamp (in seconds) and cellsize. See the
+     * "Point cloud files" documentation page.
      */
     _CWIPC_UTIL_EXPORT int cwipc_write(const char* filename, cwipc_pointcloud* pc, char** errorMessage);
 
-    /** \brief Write pointcloud to .ply file.
-     * \param filename The ply file to frite.
+    /** \brief Write pointcloud to an ASCII or binary .ply file.
+     * \param filename The ply file to write.
      * \param pc The pointcloud to write.
-     * \param flag Pass CWIPC_FLAG_BINARY to write a binary file
+     * \param flag Pass CWIPC_FLAG_BINARY to write a binary (little-endian) file, which
+     *   is smaller and much faster to read back. Otherwise like cwipc_write().
      * \param errorMessage Address of a char* where any error message is saved (or NULL).
      * \return 0 on success, -1 on failure.
      *
