@@ -122,13 +122,23 @@ if ($Build) {
 
     $repo = Split-Path -Parent $PSScriptRoot
     $bootstrap = Join-Path $repo "vcpkg\bootstrap-vcpkg.bat"
-    if (Test-Path (Join-Path $repo "vcpkg\vcpkg.exe")) {
-        Write-Output "${progname}: vcpkg: already bootstrapped"
-    } elseif (Test-Path $bootstrap) {
-        Write-Output "${progname}: vcpkg: bootstrapping"
-        & $bootstrap -disableMetrics
-    } else {
+    $vcpkgExe = Join-Path $repo "vcpkg\vcpkg.exe"
+    $toolMetadata = Join-Path $repo "vcpkg\scripts\vcpkg-tool-metadata.txt"
+    if (-not (Test-Path $bootstrap)) {
         $missing += "vcpkg submodule (git submodule update --init vcpkg)"
+    } else {
+        # Bootstrap again when the submodule moved to another vcpkg release: an existing
+        # vcpkg.exe is then the old tool. vcpkg.exe reports the date of its release
+        # ("... version 2026-09-26-..."), the submodule says which one it wants.
+        $wanted = (ConvertFrom-StringData (Get-Content $toolMetadata -Raw)).VCPKG_TOOL_RELEASE_TAG
+        $have = ""
+        if (Test-Path $vcpkgExe) { $have = (& $vcpkgExe version 2>$null | Select-Object -First 1) -join "" }
+        if ($wanted -and $have -match [regex]::Escape($wanted)) {
+            Write-Output "${progname}: vcpkg: already bootstrapped ($wanted)"
+        } else {
+            Write-Output "${progname}: vcpkg: bootstrapping ($wanted)"
+            & $bootstrap -disableMetrics
+        }
     }
 }
 
