@@ -34,8 +34,14 @@ elseif(WIN32)
     string(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "nsExec::ExecToLog '\\\"$INSTDIR\\\\bin\\\\cwipc_check\\\" install'\\nPop $0\\nDetailPrint \\\"cwipc_check returned $0\\\"")
     #string(APPEND CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait 'powershell -ExecutionPolicy Bypass ${_hide} -File \\\"$INSTDIR\\\\bin\\\\cwipc_pymodules_install.ps1\\\"'\\n")
     set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "")
-    string(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "Delete $INSTDIR\\\\bin\\\\cwipc_*.exe\\n")
+    # Remove what setup-cwipc.ps1 created (cwi-dis/cwipc#355): the launchers it copied into bin
+    # (cwipc*.exe, so including cwipc.exe, which cwipc_*.exe missed and left the install
+    # directory behind), the venv and the other per-tree files.
+    string(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "Delete $INSTDIR\\\\bin\\\\cwipc*.exe\\n")
     string(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "RMDir /r $INSTDIR\\\\libexec\\\\cwipc\\\\venv\\n")
+    foreach(_f activate activate.ps1 environment launchers)
+        string(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "Delete $INSTDIR\\\\libexec\\\\cwipc\\\\${_f}\\n")
+    endforeach()
 	set(CPACK_NSIS_MENU_LINKS
         "libexec/cwipc/scripts/run-cwipc-view-synthetic.bat" "View a sample dynamic pointcloud"
         "libexec/cwipc/scripts/run-cwipc-check-fix.bat" "Attempt to fix cwipc installation"
