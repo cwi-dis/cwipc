@@ -34,6 +34,11 @@
 #include <string>
 #include <vector>
 
+#ifdef WIN32
+#define _CWIPC_UTIL_EXPORT __declspec(dllexport)
+#else
+#define _CWIPC_UTIL_EXPORT
+#endif
 #include "cwipc_util/api.h"
 #include "cwipc_util/internal/logging.hpp"
 #include "cwipc_util/internal/ply.hpp"
