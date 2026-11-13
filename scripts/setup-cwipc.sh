@@ -157,8 +157,11 @@ native() {
 }
 
 #
-# Dependencies, with install-deps-<platform> (cwi-dis/cwipc#355). Prefer the copy in
-# the tree (matching its version) over our own; trees from before 8.3.0 don't have one.
+# Dependencies, with install-deps-<platform> (cwi-dis/cwipc#355). Use the tree's own
+# script, because it matches the tree's version: a tree from before 8.3.0 has no
+# install-deps-*, but its install-3rdparty-* installs what that tree needs (for
+# example libpcl_io, which cwipc no longer links since 8.3.0, cwi-dis/cwipc#357).
+# Only without either do we use our own copy.
 #
 if $deps; then
     if [ -z "$deps_level" ]; then
@@ -169,20 +172,28 @@ if $deps; then
     *) die "--deps-level must be runtime or build, not $deps_level" ;;
     esac
     case "$platform" in
-    linux) depscript=install-deps-ubuntu2404.sh ;;
-    macos) depscript=install-deps-macos.sh ;;
-    windows) depscript=install-deps-windows.ps1 ;;  # the native DLLs come with the tree; this checks Python (and the build tools)
+    linux) depscript=install-deps-ubuntu2404.sh; legacyscript=install-3rdparty-ubuntu2404.sh ;;
+    macos) depscript=install-deps-macos.sh; legacyscript=install-3rdparty-macos.sh ;;
+    windows) depscript=install-deps-windows.ps1; legacyscript="" ;;  # the native DLLs come with the tree; this checks Python (and the build tools)
     esac
-    if [ -f "$prefix/libexec/cwipc/scripts/$depscript" ]; then
-        depscript="$prefix/libexec/cwipc/scripts/$depscript"
+    treescripts="$prefix/libexec/cwipc/scripts"
+    if [ -f "$treescripts/$depscript" ]; then
+        depscript="$treescripts/$depscript"
+    elif [ -n "$legacyscript" ] && [ -f "$treescripts/$legacyscript" ]; then
+        echo "$progname: tree from before 8.3.0: installing its dependencies with $treescripts/$legacyscript"
+        bash "$treescripts/$legacyscript"
+        depscript=""
     else
         depscript="$scriptdir/$depscript"
     fi
-    echo "$progname: installing dependencies ($deps_level level) with $depscript"
-    if [ "$platform" = windows ]; then
+    if [ -z "$depscript" ]; then
+        :
+    elif [ "$platform" = windows ]; then
+        echo "$progname: installing dependencies ($deps_level level) with $depscript"
         if [ "$deps_level" = build ]; then level_arg=-Build; else level_arg=-Runtime; fi
         powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$(native "$depscript")" "$level_arg"
     else
+        echo "$progname: installing dependencies ($deps_level level) with $depscript"
         bash "$depscript" "--$deps_level"
     fi
 fi
