@@ -1,0 +1,16 @@
+#!/bin/sh
+# cwipc Debian package: remove what postinst (setup-cwipc.sh) created (cwi-dis/cwipc#355):
+# the launcher symlinks in /usr/bin, the venv and the other per-tree files.
+set -e
+
+libexec=/usr/libexec/cwipc
+if [ -f "$libexec/launchers" ]; then
+    while read -r name; do
+        if [ -n "$name" ] && [ -L "/usr/bin/$name" ]; then
+            rm -f "/usr/bin/$name"
+        fi
+    done < "$libexec/launchers"
+fi
+rm -rf "$libexec/venv"
+rm -f "$libexec/activate" "$libexec/activate.ps1" "$libexec/environment" "$libexec/launchers"
+exit 0

@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PLY files are read and written by cwipc itself, no longer by PCL (#66)
 - PLY files store the tile number as `tile` (was `alpha`); cwipc before 8.3.0 reads it as 0 (#66)
 - PLY files store timestamp and cellsize, and binary ones load much faster (#66, #338)
+- One set of setup and dependency scripts for source trees and installations; `install-3rdparty-*` and `activate-win.sh` are gone (#354, #355)
+- `cwipc_check` tells a broken installation from a PATH problem, and `cwipc_check install` repairs installations on all platforms (#355)
+- The Debian package installs on a clean Ubuntu 24.04 and sets up the Python modules itself (#355)
+- The Windows uninstaller removes everything (#355)
 
 ## [8.1.0] - 2026-08-24
 

@@ -9,7 +9,13 @@ all of the runtime libraries, command‑line tools and language bindings.
    After installing, running ``cwipc view --synthetic`` should open a window
    showing a synthetic point cloud stream (a rotating paraboloid with blinking eyes).
    You can also run ``cwipc_check`` to verify the installation and dependencies, it will
-   print any warnings or errors it finds.  
+   print any warnings or errors it finds. It checks whether cwipc works *from the
+   terminal you run it in*; if not, it tells you whether the installation itself is
+   broken (``cwipc_check install`` may fix that) or whether your environment leads
+   elsewhere: ``bin`` not on ``PATH`` (open a new terminal after installing), or
+   another cwipc installation found first. A camera module whose SDK isn't installed (for
+   example ``librealsense2``, which the Debian package only recommends) is reported as not
+   available; that is not an error.
    
 macOS
 -----
@@ -45,8 +51,16 @@ Install the Debian package::
 
     sudo apt install ./cwipc-<version>.deb
 
-Realsense drivers are not included; inspect
-``/usr/share/cwipc/scripts/install-3rdparty-ubuntu2404.sh`` for instructions.
+This also creates the Python venv in ``/usr/libexec/cwipc/venv`` (downloading
+the Python dependencies from PyPI) and puts the ``cwipc`` commands in
+``/usr/bin``. If that part fails, for example without network access, the
+native libraries are still installed; run ``sudo cwipc_check install`` later.
+
+RealSense support needs ``librealsense2`` from the RealSense apt repository,
+which is not in Ubuntu. To add the repository and install it, together with the
+other runtime dependencies::
+
+    /usr/libexec/cwipc/scripts/install-deps-ubuntu2404.sh
 
 Android
 -------
@@ -62,7 +76,7 @@ Git Bash). It gets cwipc onto the machine and sets it up::
 
     curl -sSfL -o get-cwipc.sh https://raw.githubusercontent.com/cwi-dis/cwipc/<tag or commit>/scripts/get-cwipc.sh
     bash get-cwipc.sh v8.1.0 /opt/cwipc
-    source /opt/cwipc/activate
+    source /opt/cwipc/libexec/cwipc/activate
 
 - On Linux and Windows it downloads the ``-built-`` archive of that release for
   this machine and unpacks it into the given directory. ``--archive FILE`` uses a
@@ -79,9 +93,9 @@ Git Bash). It gets cwipc onto the machine and sets it up::
 Afterwards ``setup-cwipc.sh`` (run by ``get-cwipc.sh``) has created a Python venv
 in ``<prefix>/libexec/cwipc/venv`` with the cwipc modules, and written:
 
-- ``<prefix>/activate``: ``source`` it to get ``PATH``, the library path,
-  ``CWIPC_LIBRARY_DIR`` and the venv (on Windows also ``activate.ps1`` for
-  PowerShell);
+- ``<prefix>/libexec/cwipc/activate``: ``source`` it to get ``PATH``, the
+  library path, ``CWIPC_LIBRARY_DIR`` and the venv (on Windows also
+  ``activate.ps1`` for PowerShell);
 - ``<prefix>/libexec/cwipc/environment``: the same settings in a simple
   machine-readable form, one per line: ``path DIR`` (prepend to ``PATH``),
   ``env NAME=VALUE`` and ``libpath NAME DIR`` (prepend to the library path
