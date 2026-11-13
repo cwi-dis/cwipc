@@ -19,7 +19,8 @@
 #   --config CFG   Windows source tree: use build/bin/CFG. Default: the first of
 #                  Debug, RelWithDebInfo, Release that exists.
 #   --python PY    Python to create the venv with. Default: python3.12 (or python3)
-#                  on Linux/macOS, python on Windows.
+#                  on Linux/macOS, python on Windows. (3.12 is PYTHON_VERSION in
+#                  versions.env.)
 #   --help         Show this help.
 #
 # Afterwards:
@@ -39,7 +40,7 @@ set -euo pipefail
 
 progname=$(basename "$0")
 usage() {
-    sed -n '3,37p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '3,38p' "$0" | sed 's/^# \{0,1\}//'
 }
 die() {
     echo "$progname: $*" >&2
@@ -69,6 +70,8 @@ while [ $# -gt 0 ]; do
 done
 
 scriptdir=$(cd "$(dirname "$0")" && pwd)
+# Pinned versions (PYTHON_VERSION, ...), cwi-dis/cwipc#355
+source "$scriptdir/versions.env"
 
 #
 # Platform
@@ -190,8 +193,8 @@ elif $python_modules; then
         if [ -z "$python" ]; then
             if [ "$platform" = windows ]; then
                 python=python
-            elif command -v python3.12 >/dev/null 2>&1; then
-                python=python3.12
+            elif command -v "python$PYTHON_VERSION" >/dev/null 2>&1; then
+                python="python$PYTHON_VERSION"
             else
                 python=python3
             fi

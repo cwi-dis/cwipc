@@ -1,7 +1,13 @@
-#!/bin/bash
-$ORBBECSDK = "OrbbecSDK_v2.6.3_202512232226_4e448f9_win_x64"
+# Install OrbbecSDK into 3rdparty_installed/orbbecsdk (PowerShell).
+# Versions: see versions.env (cwi-dis/cwipc#355).
+$versions = @{}
+Get-Content (Join-Path $PSScriptRoot "versions.env") | Where-Object { $_ -match '^\s*[A-Z_]+=' } | ForEach-Object {
+    $key, $value = $_ -split '=', 2
+    $versions[$key.Trim()] = $value.Trim()
+}
+$ORBBECSDK = $versions["ORBBECSDK_ARCHIVE_WINDOWS"]
 $ZIPFILE = $ORBBECSDK + ".zip"
-$URL = "https://github.com/orbbec/OrbbecSDK_v2/releases/download/v2.6.3/" + $ZIPFILE
+$URL = "https://github.com/orbbec/OrbbecSDK_v2/releases/download/v" + $versions["ORBBECSDK_VERSION"] + "/" + $ZIPFILE
 
 $scriptdir = $PSScriptRoot
 $CWIPCPATH = Split-Path -Parent $scriptdir
