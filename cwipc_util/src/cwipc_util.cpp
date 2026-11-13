@@ -420,7 +420,7 @@ const char *cwipc_get_version() {
 int cwipc_dangling_allocations(bool log) {
     int n_dangling = n_cwipc_pointcloud_alloc - n_cwipc_pointcloud_dealloc;
     int n_dangling_uncompressed = n_cwipc_uncompressed_pointcloud_alloc - n_cwipc_uncompressed_pointcloud_dealloc;
-    if (log && n_dangling != 0 || n_dangling_uncompressed != 0) {
+    if (log && (n_dangling != 0 || n_dangling_uncompressed != 0)) {
         std::string msg = std::to_string(n_dangling) + " free() mismatch. nAlloc=" + std::to_string(n_cwipc_pointcloud_alloc) + ", nFree=" + std::to_string(n_cwipc_pointcloud_dealloc);
         _cwipc_log_emit(CWIPC_LOG_LEVEL_WARNING, "cwipc_pointcloud", msg.c_str());
         msg = std::to_string(n_dangling_uncompressed) + " free() mismatch. nAlloc=" + std::to_string(n_cwipc_uncompressed_pointcloud_alloc) + ", nFree=" + std::to_string(n_cwipc_uncompressed_pointcloud_dealloc);
