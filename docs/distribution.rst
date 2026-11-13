@@ -34,9 +34,23 @@ When creating a new release, ensure the following have been done:
   ``python3-venv`` (for the postinst), with ``librealsense2`` moved to
   ``CPACK_DEBIAN_PACKAGE_RECOMMENDS`` (it comes from the RealSense apt repository). Ubuntu links with
   ``--as-needed``, so the list is short (of PCL only ``libpcl-common``). Keep the runtime level of
-  ``scripts/install-deps-ubuntu2404.sh`` the same. The CI's Ubuntu job installs and removes the
-  package (``.github/scripts/test-deb-package.sh``), but on a runner that already has everything,
-  so only a clean machine shows a missing dependency.
+  ``scripts/install-deps-ubuntu2404.sh`` the same.
+
+  ``dpkg-shlibdeps`` only sees cwipc's own binaries, not the pip wheels the postinst installs into
+  the venv (open3d, PySide6, opencv-python, ...), which need system libraries too. To find those:
+  in a scratch venv, install the dependencies from ``cwipc_util/python/pyproject.toml``, import
+  the modules cwipc uses (with ``QT_QPA_PLATFORM=offscreen`` without a display) and list the
+  libraries loaded from ``/proc/self/maps``; add ``ldd`` of Qt's X11 and Wayland plugins
+  (``PySide6/Qt/plugins/platforms/libqxcb.so``, ``libqwayland*.so`` and
+  ``xcbglintegrations/*.so``), which only load with a display. Map the libraries outside the
+  venv to packages with ``dpkg -S``, and keep only those not already pulled in by the other
+  dependencies (``apt-cache depends --recurse``). That list is the second line of
+  ``CPACK_DEBIAN_PACKAGE_DEPENDS``. Don't take everything the wheels could load: PySide6 also
+  ships WebEngine, multimedia and SQL drivers cwipc doesn't use.
+
+  CI tests the package on a fresh runner without the build dependencies
+  (``test-package-ubuntu2404-intel``, ``.github/scripts/test-deb-package.sh``), so a missing
+  dependency shows there; it has no display, so the X11 plugin isn't exercised.
 
 - The OrbbecSDK version and its per-platform archive names are in ``scripts/versions.env``.
 

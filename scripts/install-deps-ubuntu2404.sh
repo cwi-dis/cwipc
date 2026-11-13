@@ -39,13 +39,18 @@ if [ ! -f "$realsense_key" ] || [ ! -f "$realsense_list" ]; then
     echo "deb [signed-by=$realsense_key] https://librealsense.realsenseai.com/Debian/apt-repo $(lsb_release -cs) main" | sudo tee "$realsense_list" > /dev/null
 fi
 
-# The same as the Debian package's dependencies (dpkg-shlibdeps; Ubuntu links with
-# --as-needed, so of PCL only libpcl-common is needed at runtime), plus librealsense2.
+# The same as the Debian package's dependencies (CMakeFiles/CwipcInstallers.cmake), plus
+# librealsense2: what cwipc's own libraries need (dpkg-shlibdeps; Ubuntu links with
+# --as-needed, so of PCL only libpcl-common is needed at runtime), and what the pip
+# wheels in the venv need (open3d, PySide6/Qt, ...; procedure: docs/distribution.rst).
 runtime_packages=(
     python3-venv
     libglfw3 libglu1-mesa libopengl0 libgomp1 libjpeg8 liblz4-1
     libpcl-common1.14
     librealsense2
+    libdbus-1-3 libegl1 libfontconfig1 libglib2.0-0t64 libidn2-0 libusb-1.0-0
+    libwayland-cursor0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1
+    libxcb-render-util0 libxcb-shape0 libxkbcommon-x11-0
 )
 build_packages=(
     build-essential cmake git git-lfs pkg-config curl unzip

@@ -18,7 +18,11 @@ elseif(UNIX)
     # python3-venv for the postinst. Ubuntu links with --as-needed, so of PCL only
     # libpcl-common is needed at runtime. librealsense2 comes from the RealSense apt
     # repository, so it's a recommendation; without it only cwipc_realsense2 doesn't load.
+    # The second line: what the pip wheels the postinst installs into the venv (open3d,
+    # PySide6 with Qt's X11 and Wayland plugins, opencv-python, ...) need from the system,
+    # which dpkg-shlibdeps can't see (procedure: docs/distribution.rst, cwi-dis/cwipc#355).
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "python3-venv, libc6 (>= 2.38), libgcc-s1 (>= 3.0), libglfw3 (>= 3.0), libglu1-mesa | libglu1, libgomp1 (>= 4.9), libjpeg8 (>= 8c), liblz4-1 (>= 0.0~r130), libopengl0, libpcl-common1.14 (>= 1.14.0+dfsg), libstdc++6 (>= 13.1)")
+    string(APPEND CPACK_DEBIAN_PACKAGE_DEPENDS ", libdbus-1-3, libegl1, libfontconfig1, libglib2.0-0t64, libidn2-0, libusb-1.0-0, libwayland-cursor0, libxcb-cursor0, libxcb-icccm4, libxcb-image0, libxcb-keysyms1, libxcb-render-util0, libxcb-shape0, libxkbcommon-x11-0")
     set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "librealsense2 (>= 2.59.1)")
     set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${_debdir}/postinst;${_debdir}/prerm")
     set(CPACK_DEBIAN_FILE_NAME DEB-DEFAULT)
