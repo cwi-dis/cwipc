@@ -1,15 +1,17 @@
 #
 # install-deps-windows.ps1 - install or check cwipc's dependencies on Windows.
 #
-# Usage: install-deps-windows.ps1 [-Runtime | -Build]
+# Usage: install-deps-windows.ps1 [-Runtime | -Build] [-NoOrbbecViewer]
 #   -Runtime   What an installed cwipc tree needs to run (default): Python. The native
 #              DLLs come with the installer or archive. Installs Python if missing
 #              and running as administrator; otherwise reports what to do.
 #   -Build     Also what is needed to build cwipc from source. Checks and reports
 #              Visual Studio (C++), CMake, git, git-lfs and NSIS (installing those
 #              needs admin rights and takes long, so this script doesn't), and does
-#              what needs no admin rights: OrbbecSDK into <repo>\3rdparty_installed,
-#              and bootstrapping vcpkg.
+#              what needs no admin rights: OrbbecSDK and OrbbecViewer into
+#              <repo>\3rdparty_installed (install-orbbecsdk-windows.ps1), and
+#              bootstrapping vcpkg.
+#   -NoOrbbecViewer  With -Build: without OrbbecViewer.
 #
 # Exit status: 0 if everything needed is there, 1 if something is missing.
 # Python packages are not installed here: the setup script installs them into the venv.
@@ -18,7 +20,8 @@
 #
 param(
     [switch]$Runtime,
-    [switch]$Build
+    [switch]$Build,
+    [switch]$NoOrbbecViewer
 )
 $ErrorActionPreference = "Stop"
 $progname = "install-deps-windows.ps1"
@@ -118,7 +121,8 @@ if ($Build) {
         Write-Output "${progname}: NSIS: not found (only needed to build the installer: winget install NSIS.NSIS)"
     }
 
-    & (Join-Path $PSScriptRoot "install-orbbecsdk-windows.ps1")
+    & (Join-Path $PSScriptRoot "install-orbbecsdk-windows.ps1") -Viewer:(-not $NoOrbbecViewer)
+    if ($LASTEXITCODE -ne 0) { $missing += "OrbbecSDK (install-orbbecsdk-windows.ps1 failed, see above)" }
 
     $repo = Split-Path -Parent $PSScriptRoot
     $bootstrap = Join-Path $repo "vcpkg\bootstrap-vcpkg.bat"

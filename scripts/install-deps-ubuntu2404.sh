@@ -2,10 +2,12 @@
 #
 # install-deps-ubuntu2404.sh - install cwipc's dependencies on Ubuntu 24.04 with apt.
 #
-# Usage: install-deps-ubuntu2404.sh [--runtime | --build]
+# Usage: install-deps-ubuntu2404.sh [--runtime | --build] [--no-orbbec-viewer]
 #   --runtime   What an installed cwipc tree needs to run (default).
 #   --build     Also what is needed to build cwipc from source, including OrbbecSDK
-#               (into <repo>/3rdparty_installed; only meaningful in a source tree).
+#               and OrbbecViewer (into <repo>/3rdparty_installed, with
+#               install-orbbecsdk.sh; only meaningful in a source tree).
+#   --no-orbbec-viewer  With --build: without OrbbecViewer.
 #
 # Uses sudo. Adds the RealSense apt repository (librealsense.realsenseai.com) if it
 # isn't there yet. No "apt-get upgrade": that made CI slow and unpredictable.
@@ -18,12 +20,17 @@ scriptdir=$(cd "$(dirname "$0")" && pwd)
 source "$scriptdir/versions.env"
 
 level=runtime
-case "${1:-}" in
-"" | --runtime) level=runtime ;;
---build) level=build ;;
---help | -h) sed -n '3,15p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
-*) echo "$(basename "$0"): unknown argument: $1 (try --help)" >&2; exit 1 ;;
-esac
+orbbec_viewer=--viewer
+while [ $# -gt 0 ]; do
+    case "$1" in
+    --runtime) level=runtime ;;
+    --build) level=build ;;
+    --no-orbbec-viewer) orbbec_viewer="" ;;
+    --help | -h) sed -n '3,17p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    *) echo "$(basename "$0"): unknown argument: $1 (try --help)" >&2; exit 1 ;;
+    esac
+    shift
+done
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -67,5 +74,34 @@ sudo apt-get update
 sudo apt-get install -y "${packages[@]}"
 
 if [ "$level" = build ]; then
-    bash "$scriptdir/install-orbbecsdk-ubuntu2404.sh"
+    bash "$scriptdir/install-orbbecsdk.sh" $orbbec_viewer
+fi
+
+# The udev rules a USB Orbbec camera needs to be usable by non-root users
+# (cwi-dis/cwipc#351), into /etc/udev/rules.d. From an installed tree
+# (<prefix>/lib/udev/rules.d, not needed for the Debian package, which has them in
+# /usr/lib/udev/rules.d already) or a source tree (the OrbbecSDK in 3rdparty_installed).
+rules=99-obsensor-libusb.rules
+tree=$(cd "$scriptdir/../../.." 2>/dev/null && pwd || true)
+repo=$(dirname "$scriptdir")
+rulesfile=""
+for candidate in "$tree/lib/udev/rules.d/$rules" "$repo/3rdparty_installed/orbbecsdk/shared/$rules"; do
+    if [ -f "$candidate" ]; then
+        rulesfile="$candidate"
+        break
+    fi
+done
+if [ "$rulesfile" = "/usr/lib/udev/rules.d/$rules" ]; then
+    : # the Debian package's own
+elif [ -n "$rulesfile" ]; then
+    if ! cmp -s "$rulesfile" "/etc/udev/rules.d/$rules"; then
+        echo "$(basename "$0"): installing the udev rules for Orbbec cameras: /etc/udev/rules.d/$rules"
+        sudo install -m 644 "$rulesfile" "/etc/udev/rules.d/$rules"
+        if command -v udevadm >/dev/null 2>&1 && [ -d /run/udev ]; then
+            sudo udevadm control --reload-rules || true
+            sudo udevadm trigger --subsystem-match=usb || true
+        fi
+    fi
+else
+    echo "$(basename "$0"): no udev rules for Orbbec cameras found in this tree; USB Orbbec cameras will need root"
 fi

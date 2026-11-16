@@ -2,10 +2,12 @@
 #
 # install-deps-macos.sh - install cwipc's dependencies on macOS with Homebrew.
 #
-# Usage: install-deps-macos.sh [--runtime | --build]
+# Usage: install-deps-macos.sh [--runtime | --build] [--no-orbbec-viewer]
 #   --runtime   What an installed cwipc tree needs to run (default).
 #   --build     Also what is needed to build cwipc from source, including OrbbecSDK
-#               (into <repo>/3rdparty_installed; only meaningful in a source tree).
+#               and OrbbecViewer (into <repo>/3rdparty_installed, with
+#               install-orbbecsdk.sh; only meaningful in a source tree).
+#   --no-orbbec-viewer  With --build: without OrbbecViewer.
 #
 # Python packages are not installed here: setup-cwipc.sh installs them into the venv.
 # What goes in which level, and why: cwi-dis/cwipc#355 (decision of 2026-11-13).
@@ -16,12 +18,17 @@ scriptdir=$(cd "$(dirname "$0")" && pwd)
 source "$scriptdir/versions.env"
 
 level=runtime
-case "${1:-}" in
-"" | --runtime) level=runtime ;;
---build) level=build ;;
---help | -h) sed -n '3,13p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
-*) echo "$(basename "$0"): unknown argument: $1 (try --help)" >&2; exit 1 ;;
-esac
+orbbec_viewer=--viewer
+while [ $# -gt 0 ]; do
+    case "$1" in
+    --runtime) level=runtime ;;
+    --build) level=build ;;
+    --no-orbbec-viewer) orbbec_viewer="" ;;
+    --help | -h) sed -n '3,15p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    *) echo "$(basename "$0"): unknown argument: $1 (try --help)" >&2; exit 1 ;;
+    esac
+    shift
+done
 
 command -v brew >/dev/null 2>&1 || { echo "$(basename "$0"): Homebrew not found, see https://brew.sh" >&2; exit 1; }
 
@@ -53,5 +60,5 @@ echo "$(basename "$0"): installing ($level level): ${packages[*]}"
 brew install "${packages[@]}"
 
 if [ "$level" = build ]; then
-    bash "$scriptdir/install-orbbecsdk-macos.sh"
+    bash "$scriptdir/install-orbbecsdk.sh" $orbbec_viewer
 fi

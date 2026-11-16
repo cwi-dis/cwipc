@@ -8,7 +8,7 @@ dependency tree.
 Prerequisites
 -------------
 
-* A recent CMake (3.31+).
+* CMake 3.28 or newer (what the presets need; Ubuntu 24.04's apt has 3.28).
 * A C++17 compiler (clang, gcc, MSVC).
 * Git toolchain.
 * Python 3.12 (``PYTHON_VERSION_MIN`` up to ``PYTHON_VERSION`` in ``scripts/versions.env``).
@@ -47,8 +47,12 @@ Building from the command line
 
    On all platforms this also installs the OrbbecSDK into
    ``3rdparty_installed/orbbecsdk``, where CMake expects it (without it CMake
-   silently configures without Orbbec support), and on Windows it bootstraps
-   vcpkg.
+   silently configures without Orbbec support), and OrbbecViewer into
+   ``3rdparty_installed/orbbecviewer``, to see what an Orbbec camera does without
+   cwipc (there is no viewer for Intel Macs; ``--no-orbbec-viewer`` or
+   ``-NoOrbbecViewer`` leaves it out). On Windows it also bootstraps vcpkg. The SDK
+   and viewer alone: ``scripts/install-orbbecsdk.sh [--viewer]`` or
+   ``scripts\install-orbbecsdk-windows.ps1 [-Viewer]``.
 
 3. Configure and build with CMake presets::
 

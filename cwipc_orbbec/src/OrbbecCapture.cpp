@@ -6,6 +6,7 @@ OrbbecCapture::OrbbecCapture()
 }
 
 int OrbbecCapture::countDevices() {
+    _disable_orbbec_file_logging();
     ob::Context context;
     auto deviceList = context.queryDeviceList();
 
@@ -13,6 +14,7 @@ int OrbbecCapture::countDevices() {
 }
 
 bool OrbbecCapture::_apply_auto_config() {
+    _disable_orbbec_file_logging();
     ob::Context context;
     auto deviceList = context.queryDeviceList();
     int nDevice = deviceList->getCount();
@@ -43,6 +45,7 @@ bool OrbbecCapture::_init_hardware_for_all_cameras() {
 }
 
 bool OrbbecCapture::_create_cameras() {
+    _disable_orbbec_file_logging();
     ob::Context context;
 #ifdef CWIPC_ORBBEC_LOGGING
     context.setLoggerToConsole(OB_LOG_SEVERITY_DEBUG); // xxxjack

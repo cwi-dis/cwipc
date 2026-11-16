@@ -52,7 +52,7 @@ When creating a new release, ensure the following have been done:
   (``test-package-ubuntu2404-intel``, ``.github/scripts/test-deb-package.sh``), so a missing
   dependency shows there; it has no display, so the X11 plugin isn't exercised.
 
-- The OrbbecSDK version and its per-platform archive names are in ``scripts/versions.env``.
+- The OrbbecSDK version and the per-platform archive names of the SDK and of OrbbecViewer (file names with extension, from the release's assets) are in ``scripts/versions.env``.
 
 - For Windows and Android, the ``vcpkg`` dependent packages should all be updated to the most recent
   vcpkg **release** (a tag such as ``2026.10.16``, not ``master``: the vcpkg tool and the ports of a

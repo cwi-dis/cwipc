@@ -46,11 +46,30 @@ public:
         cwipc_log(cwipc_level, "orbbec_sdk",msg );
     }
 
+    // Since OrbbecSDK 2.10 the SDK writes a log file into ./Log, in the current directory,
+    // by default (FileLogLevel 1 in its built-in configuration; 2.6.3 had file logging
+    // off). Every program using cwipc_orbbec would leave Log/OrbbecSDK.log.txt wherever
+    // it runs. So switch file logging off, once, before the first use of the SDK
+    // (cwi-dis/cwipc#351). Messages still reach cwipc's log through the callback when
+    // apiDebug is set.
+    static void _disable_orbbec_file_logging() {
+        static bool done = false;
+        if (done) return;
+        done = true;
+        try {
+            ob::Context::setLoggerToFile(OB_LOG_SEVERITY_OFF, "");
+        } catch (...) {
+            // Not fatal: at worst the SDK writes its log file.
+        }
+    }
+
     static void _install_orbbec_logger() {
+        _disable_orbbec_file_logging();
         ob::Context::setLoggerToCallback(OB_LOG_SEVERITY_INFO, _orbbec_message_cb);
     }
 
     static void _uninstall_orbbec_logger() {
+        _disable_orbbec_file_logging();
         ob::Context::setLoggerToConsole(OB_LOG_SEVERITY_ERROR);
     }
 

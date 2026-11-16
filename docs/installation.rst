@@ -62,6 +62,14 @@ other runtime dependencies::
 
     /usr/libexec/cwipc/scripts/install-deps-ubuntu2404.sh
 
+The package also installs the udev rules that let non-root users use Orbbec
+cameras over USB (``/usr/lib/udev/rules.d/99-obsensor-libusb.rules``, from the
+OrbbecSDK). Cameras over Ethernet don't need them. When cwipc runs in a container,
+the rules must be on the *host*, which owns the USB devices: copy that file to the
+host's ``/etc/udev/rules.d/`` and run ``sudo udevadm control --reload-rules`` and
+``sudo udevadm trigger`` there. For an unpacked ``-built-`` archive or a source
+tree, ``install-deps-ubuntu2404.sh`` installs the rules into ``/etc/udev/rules.d``.
+
 Android
 -------
 
