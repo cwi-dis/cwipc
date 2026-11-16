@@ -137,7 +137,8 @@ class BaseMulticamAlignmentAlgorithm(MulticamAlignmentAlgorithm, BaseMulticamAlg
         in the appropriate direction of the source camera.
         """
         assert self.original_pointcloud
-        assert self.camera_count() > 1
+        # Comparing each camera to the others needs at least two; to itself or a reference (the floor) one is enough (#266).
+        assert self.camera_count() > 1 or toSelf or toReference is not None
         self.pre_analysis_results = []
         for camnum in range(self.camera_count()):
             tilemask = self.tilemask_for_camera_index(camnum)
