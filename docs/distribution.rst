@@ -19,6 +19,17 @@ When creating a new release, ensure the following have been done:
 	- Check ``.github/workflows/build.yml`` for the Python versions used.
 - Check whether ``nlohman_json`` can be updated (``CMakeLists.txt``)
 - Check whether ``nsis`` can be updated (``.github/workflows/build.yml``)
+- Check whether the GitHub runner images can be moved to newer ones (``runs-on:`` in
+  ``.github/workflows/*.yml``; GitHub announces new images and the retirement of old ones). They
+  are pinned on purpose: a ``-latest`` label changes under us, and a new image brings new
+  compilers and tools (cwi-dis/cwipc#242). So move them early in a release cycle, on a branch with
+  CI, not just before tagging, and expect:
+
+  - Windows and Android rebuild all their vcpkg packages once (Windows about an hour).
+  - Android on Ubuntu 26.04: mono's NuGet couldn't verify GitHub's certificate (November 2026);
+    needs fixing (for example ``cert-sync``) before Android can move.
+  - macOS: a newer image means newer Homebrew bottles; check that Intel Mac images are still
+    available (``macos-15-intel``).
 - Check whether the slurped and modified ``cpack`` config files for ``nsis`` (in ``CMakeFiles``) need to be updated.
 - Dependencies for the ``.deb`` installer for apt/Ubuntu need to be updated. On the targeted Ubuntu,
   after a build, let ``dpkg-shlibdeps`` compute them (it needs a dummy ``debian/control`` in its
