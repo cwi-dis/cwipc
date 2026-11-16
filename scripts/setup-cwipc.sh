@@ -25,11 +25,12 @@
 #                  and PYTHON_VERSION from versions.env. Default: the first suitable
 #                  of python<PYTHON_VERSION>, python<PYTHON_VERSION_MIN>, python3
 #                  on Linux/macOS; python on Windows.
-#   --launchers    Also put the Python launchers (cwipc, cwipc_view, ...) in
-#                  <prefix>/bin: copies on Windows, symlinks elsewhere. For system
-#                  installations (Windows installer, Debian package), so cwipc works
-#                  without activating anything. The list is kept in
-#                  <prefix>/libexec/cwipc/launchers, for uninstalling.
+#   --launchers    Also put the Python launchers (cwipc, and the deprecated
+#                  cwipc_view etc., #376) in <prefix>/bin: copies on Windows,
+#                  symlinks elsewhere. For system installations (Windows
+#                  installer, Debian package), so cwipc works without activating
+#                  anything. The list is kept in <prefix>/libexec/cwipc/launchers,
+#                  for uninstalling.
 #   --help         Show this help.
 #
 # Writes these per-tree files in <prefix>/libexec/cwipc/ (cwi-dis/cwipc#355):
@@ -49,7 +50,8 @@ set -euo pipefail
 
 progname=$(basename "$0")
 usage() {
-    sed -n '3,50p' "$0" | sed 's/^# \{0,1\}//'
+    # The comment block at the top, from line 3 up to the first line that isn't a comment.
+    awk 'NR < 3 { next } !/^#/ { exit } { sub(/^# ?/, ""); print }' "$0"
 }
 die() {
     echo "$progname: $*" >&2

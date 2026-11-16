@@ -42,7 +42,7 @@ e             Edit cameraconfig
 q,ESC         Quit
     """
 
-    def __init__(self, verbose=False, nodrop=False, args : Optional[argparse.Namespace]=None, title="cwipc_view", **kwargs):
+    def __init__(self, verbose=False, nodrop=False, args : Optional[argparse.Namespace]=None, title="cwipc view", **kwargs):
         self.title : str = title
         self.visualiser : Optional[cwipc_sink_wrapper] = None
         self.producer : Optional[cwipc_producer_abstract] = None
@@ -308,7 +308,7 @@ q,ESC         Quit
             self.select_tile(increment=True)
             self.recompute_display_pc = True
         elif cmd == 'r':
-            pass # toggle skeleton rendering (managed on cwipc_view)
+            pass # toggle skeleton rendering (managed by cwipc view)
         elif cmd in '0123456789':
             self.select_tile(number=int(cmd))
             self.recompute_display_pc = True

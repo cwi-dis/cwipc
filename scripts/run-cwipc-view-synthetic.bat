@@ -1,2 +1,2 @@
-cwipc_view --synthetic
+cwipc view --synthetic
 pause

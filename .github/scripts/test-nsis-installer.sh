@@ -46,7 +46,7 @@ echo | cmd //c run-cwipc-check-fix.bat
 # run-cwipc-view-synthetic.bat opens a viewer without a frame limit; run its command
 # with limits instead.
 echo "=== Start menu (equivalent): View a sample dynamic pointcloud"
-cwipc_view --synthetic --count 3 --nodisplay
+cwipc view --synthetic --count 3 --nodisplay
 cd /
 
 echo "=== uninstall"

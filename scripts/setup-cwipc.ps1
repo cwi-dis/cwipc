@@ -12,8 +12,9 @@
 #                   (<prefix>\libexec\cwipc\scripts\setup-cwipc.ps1).
 #   -Deps           Also install the runtime dependencies (install-deps-windows.ps1 -Runtime).
 #   -NoPython       Don't create the venv or install the Python modules.
-#   -Launchers      Copy the Python launchers (cwipc.exe, cwipc_view.exe, ...) into
-#                   <prefix>\bin, listed in <prefix>\libexec\cwipc\launchers.
+#   -Launchers      Copy the Python launchers (cwipc.exe, and the deprecated
+#                   cwipc_view.exe etc., #376) into <prefix>\bin, listed in
+#                   <prefix>\libexec\cwipc\launchers.
 #   -Python PY      Python to create the venv with, between PYTHON_VERSION_MIN and
 #                   PYTHON_VERSION (versions.env). Default: "py -<PYTHON_VERSION>" or
 #                   "py -<PYTHON_VERSION_MIN>" if the py launcher has it, else "python".

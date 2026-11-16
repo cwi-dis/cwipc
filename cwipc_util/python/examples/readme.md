@@ -42,7 +42,7 @@ Create a stream of pointclouds with the synthetic generator and show them in a w
 
 ### viewcamera.py
 
-Capture pointclouds from an attached camera and show them in a window. You probably need to configure the camera beforehand with `cwipc_register`.
+Capture pointclouds from an attached camera and show them in a window. You probably need to configure the camera beforehand with `cwipc register`.
 
 ### record.py
 

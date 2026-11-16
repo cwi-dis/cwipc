@@ -261,7 +261,7 @@ static std::vector<Check> all_checks() {
     std::error_code ec;
     if (fs::exists(python, ec)) {
         rv.push_back({"python modules", quote(python) + " -c \"import cwipc; print('cwipc', cwipc.cwipc_get_version())\""});
-        rv.push_back({"command line utilities", quote(venv_bin() / (std::string("cwipc_view") + EXE_SUFFIX)) + " --version"});
+        rv.push_back({"command line utilities", quote(venv_bin() / (std::string("cwipc") + EXE_SUFFIX)) + " view --version"});
     }
     return rv;
 }

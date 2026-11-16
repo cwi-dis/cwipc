@@ -80,7 +80,7 @@ Checking your camera position and orientation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. note::
-   Usually ``cwipc_register --guided`` will take you through this process just as easily.
+   Usually ``cwipc register --guided`` will take you through this process just as easily.
    This section left here for reference.
 
 Put your origin marker on the floor and ensure all cameras can see it in RGB and Depth. The latter may be
@@ -99,7 +99,7 @@ Finding your cameras
 --------------------
 
 .. note::
-   Usually ``cwipc_register --guided`` will take you through this process just as easily.
+   Usually ``cwipc register --guided`` will take you through this process just as easily.
    This section left here for reference.
 
 The first step is to use ``cwipc register --noregister`` to create a ``cameraconfig.json`` file that
@@ -113,7 +113,7 @@ Coarse registration
 -------------------
 
 .. note::
-   Usually ``cwipc_register --guided`` will take you through this process just as easily.
+   Usually ``cwipc register --guided`` will take you through this process just as easily.
    This section left here for reference.
 
 The easiest way to do coarse calibration is to put the origin marker on the floor (the picture above
@@ -178,7 +178,7 @@ Fine registration
 -----------------
 
 .. note::
-   Usually ``cwipc_register --guided`` will take you through this process just as easily.
+   Usually ``cwipc register --guided`` will take you through this process just as easily.
    This section left here for reference.
 
 If you have only a single RGBD camera there is no point in doing fine calibration, but if you have multiple
