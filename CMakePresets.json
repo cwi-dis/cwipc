@@ -18,7 +18,8 @@
   		"displayName" : "Build with vcpkg",
   		"binaryDir": "${sourceDir}/build",
       	"cacheVariables": {
-        	"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+        	"CMAKE_TOOLCHAIN_FILE": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        	"VCPKG_INSTALL_OPTIONS": "--x-abi-tools-use-exact-versions"
       	},
   		"hidden": true
   	},
