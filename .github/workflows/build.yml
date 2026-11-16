@@ -607,6 +607,66 @@ jobs:
                 sudo apt-get update
                 ./.github/scripts/test-deb-package.sh package/*.deb
 
+    #
+    # The -built- archives of this run, installed on a fresh runner with our own install
+    # action, as downstream CI (cwipc_unity, VR2Gather, lldash) uses them
+    # (cwi-dis/cwipc#352). Linux and Windows only: macOS has no archives (#356).
+    #
+    test-built-archives:
+        name: test-built-archives-${{ matrix.platform }}
+        needs:
+            - build-ubuntu2404-intel
+            - build-windows-intel
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - platform: ubuntu2404-amd64
+                      os: ubuntu-24.04
+                      ext: tar.gz
+                    - platform: windows-intel
+                      os: windows-2025-vs2026
+                      ext: zip
+        runs-on: ${{ matrix.os }}
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_REF_NAME_SAFE: unknown
+        steps:
+        - name: Santize ref name
+          shell: bash
+          run: |
+                echo "GITHUB_REF_NAME_SAFE=${GITHUB_REF_NAME//\//-}" >> $GITHUB_ENV
+        - name: Checkout the install action and the scripts
+          uses: actions/checkout@v7
+          with:
+                sparse-checkout: |
+                    .github
+                    scripts
+        - name: Download the archive
+          uses: actions/download-artifact@v4
+          with:
+                name: cwipc-${{ matrix.platform }}-built-${{ env.GITHUB_REF_NAME_SAFE }}.${{ matrix.ext }}
+                path: archive
+        - name: Install correct Python version
+          if: runner.os == 'Windows'
+          uses: actions/setup-python@v7
+          with:
+            python-version: '3.12'
+        - name: Install with the install action
+          id: cwipc
+          uses: ./.github/actions/install-cwipc
+          with:
+                version: ${{ env.GITHUB_REF_NAME_SAFE }}
+                method: archive
+                archive: archive/cwipc-${{ matrix.platform }}-built-${{ env.GITHUB_REF_NAME_SAFE }}.${{ matrix.ext }}
+        - name: cwipc_check and smoke test
+          shell: bash
+          run: |
+                echo "prefix: ${{ steps.cwipc.outputs.prefix }}"
+                echo "cwipc version: ${{ steps.cwipc.outputs.cwipc-version }}"
+                cwipc_check
+                cwipc view --synthetic --count 3 --nodisplay
+
     create-release:
         if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
         name: create-release
@@ -619,6 +679,7 @@ jobs:
             - build-android-arm64
             - test-installer-windows-intel
             - test-package-ubuntu2404-intel
+            - test-built-archives
         env:
           GITHUB_REF_NAME: ${{ github.ref_name }}
           GITHUB_REF_NAME_SAFE: ${{ github.ref_name }}
