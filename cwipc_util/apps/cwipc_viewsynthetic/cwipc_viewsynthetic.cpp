@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
 
     char *error;
 
-    cwipc_source *generator = cwipc_synthetic(fps, npoints, &error, CWIPC_API_VERSION);
+    cwipc_activesource *generator = cwipc_synthetic(fps, npoints, &error, CWIPC_API_VERSION);
     if (generator == NULL) {
         std::cerr << "Error: " << error << std::endl;
         return 1;
@@ -32,6 +32,11 @@ int main(int argc, char** argv) {
     cwipc_sink *window = cwipc_window("cwipc_viewsynthetic", &error, CWIPC_API_VERSION);
     if (window == NULL) {
         std::cerr << "Error: " << error << std::endl;
+        return 1;
+    }
+
+    if (!generator->start()) {
+        std::cerr << "Error: generator->start() failed" << std::endl;
         return 1;
     }
 
@@ -58,6 +63,7 @@ int main(int argc, char** argv) {
     }
 
     window->free();
+    generator->stop();
     generator->free();
     if (cwipc_dangling_allocations(true)) return 1;
 
