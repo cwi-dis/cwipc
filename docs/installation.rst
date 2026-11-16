@@ -75,6 +75,43 @@ Android
 
 The Android build is API‑only and used primarily from Unity on Quest devices.
 
+.. _own-python:
+
+Using cwipc from your own Python
+--------------------------------
+
+Every cwipc installation has its own Python, with the cwipc modules: the ``cwipc``
+command uses it, and ``cwipc python`` runs it. To use cwipc from *your own* Python
+instead (a virtual environment of your project, a notebook kernel, your IDE's
+interpreter), install the cwipc modules there with ``cwipc pipinstall``::
+
+    source myproject/venv/bin/activate      # or: & myproject\venv\Scripts\Activate.ps1
+    cwipc pipinstall
+
+This installs the modules of the cwipc that the ``cwipc`` command belongs to into the
+``python`` on your ``PATH`` (or the Python given with ``--python PYTHON``), with their
+dependencies (numpy, open3d, ...), and *binds* that Python to that cwipc: a file
+``cwipc.pth`` in its ``site-packages`` sets ``CWIPC_LIBRARY_DIR`` to the directory with
+that cwipc's native libraries, every time that Python starts. That Python needs to be one
+cwipc supports (``PYTHON_VERSION_MIN`` up to ``PYTHON_VERSION`` in
+``scripts/versions.env``; 3.12 for this release).
+
+- It only installs into a virtual environment (a venv or a conda environment), so a
+  Python used for other things isn't bound to cwipc by accident. ``--force`` installs
+  into any Python, and into a Python version cwipc doesn't support; a Python marked as
+  externally managed (Homebrew's, Ubuntu's ``/usr/bin/python3``) still refuses.
+- To bind it to another cwipc (a newer installation, or a build of your own), run
+  ``cwipc pipinstall`` of that cwipc.
+- ``cwipc pipinstall --uninstall`` removes the cwipc modules and the binding again.
+- In a source tree, ``cwipc pipinstall --editable`` installs the modules editable, so
+  changes to the Python sources take effect without reinstalling.
+- Setting ``CWIPC_LIBRARY_DIR`` yourself overrides the binding.
+
+If the Python modules and the native libraries they load come from different cwipc
+installations or builds, importing cwipc warns about it, naming both versions and the
+library it loaded. In a source tree that also happens after a CMake configure without a
+build.
+
 Scripted installs and CI
 ------------------------
 

@@ -207,13 +207,15 @@ if(CWIPC_WITH_ORBBEC)
 	find_package(OrbbecSDK)
 endif()
 
+# Every package editable: pip's --editable applies only to the argument that follows it.
 add_test(NAME cwipc_setup_venv_with_cwipc
-	COMMAND ${Python3_EXECUTABLE} -m pip install --editable
-	${CMAKE_CURRENT_SOURCE_DIR}/cwipc_util/python
-	${CMAKE_CURRENT_SOURCE_DIR}/cwipc_codec/python
-	$<$<BOOL:${CWIPC_WITH_REALSENSE}>:${CMAKE_CURRENT_SOURCE_DIR}/cwipc_realsense2/python>
-	$<$<BOOL:${CWIPC_WITH_KINECT}>:${CMAKE_CURRENT_SOURCE_DIR}/cwipc_kinect/python>
-	$<$<BOOL:${CWIPC_WITH_ORBBEC}>:${CMAKE_CURRENT_SOURCE_DIR}/cwipc_orbbec/python>
+	COMMAND ${Python3_EXECUTABLE} -m pip install
+	--editable ${CMAKE_CURRENT_SOURCE_DIR}/cwipc_util/python
+	--editable ${CMAKE_CURRENT_SOURCE_DIR}/cwipc_codec/python
+	"$<$<BOOL:${CWIPC_WITH_REALSENSE}>:--editable;${CMAKE_CURRENT_SOURCE_DIR}/cwipc_realsense2/python>"
+	"$<$<BOOL:${CWIPC_WITH_KINECT}>:--editable;${CMAKE_CURRENT_SOURCE_DIR}/cwipc_kinect/python>"
+	"$<$<BOOL:${CWIPC_WITH_ORBBEC}>:--editable;${CMAKE_CURRENT_SOURCE_DIR}/cwipc_orbbec/python>"
+	COMMAND_EXPAND_LISTS
 	WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
 
 )

@@ -46,7 +46,7 @@ Bindings are available for the following languages:
 
 * **C++ and C** – main header ``cwipc_util/api.h`` (includes both C and C++ interfaces)
   and the ``cwipc_util`` library.
-* **Python** – package installed as ``cwipc`` (see ``cwipc_pymodules_install.sh``).
+* **Python** – package installed as ``cwipc``; to use it from your own Python, see ``cwipc pipinstall`` in :ref:`own-python`.
 * **C#** – used primarily from Unity via the companion
   `cwipc_unity <https://github.com/cwi-dis/cwipc_unity>`_ repository.
 

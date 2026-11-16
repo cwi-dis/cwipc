@@ -163,7 +163,8 @@ Notes
 -----
 
 * Python bindings are built as part of the main build, and the wheels are saved in `share/cwipc/python`.
-  The ``cwipc_pymodules_install.sh`` (or ``cwipc_pymodules_install.ps1``) script can be used to install them.
+  ``cwipc pipinstall`` installs them into another Python (see :ref:`own-python`; ``--editable`` for the
+  sources themselves).
 * To build Android targets, use the corresponding preset ``android-release``.
 
 Environment variables

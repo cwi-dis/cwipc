@@ -5,7 +5,7 @@ import warnings
 from typing import Optional, Union
 from cwipc.util import CwipcError, CWIPC_API_VERSION, cwipc_activesource_wrapper
 from cwipc.util import cwipc_activesource_p
-from cwipc.util import _cwipc_dll_search_path_collection
+from cwipc.util import _cwipc_load_library # type: ignore
 
 __all__ = [
     "RS2_FORMAT_RGB8",
@@ -17,21 +17,6 @@ __all__ = [
 ]
 
 cwipc_image_buffer_type = Union[bytearray, bytes, ctypes.Array[ctypes.c_char]]
-#
-# This is a workaround for the change in DLL loading semantics on Windows since Python 3.8
-# Python no longer uses the PATH environment variable to load dependent dlls but only
-# its own set. For that reason we list here a set of dependencies that we know are needed,
-# find those on PATH, and add the directories where those DLLs are located while loading our
-# DLL.
-# The list does not have to be complete, as long as at least one DLL from each directory needed
-# is listed.
-# Dependencies of cwipc_util are automatically added.
-# NOTE: this list must be kept up-to-date otherwise loading DLLs will fail with
-# an obscure message "Python could not find module .... or one of its dependencies"
-#
-_WINDOWS_NEEDED_DLLS=[ # NOT USED AT THE TIME. CAUSING DLL Loading problems
-    "realsense2",
-]
 
 _cwipc_realsense2_dll_reference = None
 
@@ -47,20 +32,7 @@ def cwipc_realsense2_dll_load(libname : Optional[str]=None):
     global _cwipc_realsense2_dll_reference
     if _cwipc_realsense2_dll_reference: return _cwipc_realsense2_dll_reference
     
-    with _cwipc_dll_search_path_collection(None) as loader:
-        if libname == None:
-            libname = 'cwipc_realsense2'
-        if not os.path.isabs(libname):
-            libname = loader.find_library(libname)
-            if not libname:
-                raise RuntimeError('Dynamic library realsense2 not found')
-        assert libname
-        _cwipc_realsense2_dll_reference = ctypes.CDLL(libname)
-        if not _cwipc_realsense2_dll_reference:
-            raise RuntimeError(f'Dynamic library {libname} cannot be loaded')
-    
-    _cwipc_realsense2_dll_reference.cwipc_get_version_realsense2.argtypes = []
-    _cwipc_realsense2_dll_reference.cwipc_get_version_realsense2.restype = ctypes.c_char_p
+    _cwipc_realsense2_dll_reference = _cwipc_load_library('cwipc_realsense2', libname, 'cwipc_realsense2', 'cwipc_get_version_realsense2', __file__)
     _cwipc_realsense2_dll_reference.cwipc_realsense2.argtypes = [ctypes.c_char_p, ctypes.POINTER(ctypes.c_char_p), ctypes.c_ulong]
     _cwipc_realsense2_dll_reference.cwipc_realsense2.restype = cwipc_activesource_p
     _cwipc_realsense2_dll_reference.cwipc_realsense2_playback.argtypes = [ctypes.c_char_p, ctypes.POINTER(ctypes.c_char_p), ctypes.c_ulong]

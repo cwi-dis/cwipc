@@ -5,7 +5,7 @@ import warnings
 from typing import Optional
 from cwipc.util import CwipcError, CWIPC_API_VERSION, cwipc_activesource_wrapper
 from cwipc.util import cwipc_activesource_p
-from cwipc.util import _cwipc_dll_search_path_collection # type: ignore
+from cwipc.util import _cwipc_load_library # type: ignore
 
 __all__ = [
     "cwipc_get_version_module",
@@ -28,20 +28,7 @@ def cwipc_orbbec_dll_load(libname : Optional[str]=None) -> ctypes.CDLL:
     global _cwipc_orbbec_dll_reference
     if _cwipc_orbbec_dll_reference: return _cwipc_orbbec_dll_reference
     
-    with _cwipc_dll_search_path_collection(None) as loader:
-        if libname == None:
-            libname = 'cwipc_orbbec'
-        if not os.path.isabs(libname):
-            libname = loader.find_library(libname)
-            if not libname:
-                raise RuntimeError('Dynamic library cwipc_orbbec not found')
-        assert libname
-        _cwipc_orbbec_dll_reference = ctypes.CDLL(libname)
-        if not _cwipc_orbbec_dll_reference:
-            raise RuntimeError(f'Dynamic library {libname} cannot be loaded')
-    
-    _cwipc_orbbec_dll_reference.cwipc_get_version_orbbec.argtypes = []
-    _cwipc_orbbec_dll_reference.cwipc_get_version_orbbec.restype = ctypes.c_char_p
+    _cwipc_orbbec_dll_reference = _cwipc_load_library('cwipc_orbbec', libname, 'cwipc_orbbec', 'cwipc_get_version_orbbec', __file__)
 
     _cwipc_orbbec_dll_reference.cwipc_orbbec.argtypes = [ctypes.c_char_p, ctypes.POINTER(ctypes.c_char_p), ctypes.c_ulong]
     _cwipc_orbbec_dll_reference.cwipc_orbbec.restype = cwipc_activesource_p

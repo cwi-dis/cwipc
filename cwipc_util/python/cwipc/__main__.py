@@ -1,7 +1,7 @@
 import sys
 import os
 import subprocess
-from typing import List, Tuple
+from typing import Dict, List, Optional, Tuple
 import pkgutil
 from . import scripts, cwipc_get_version
 
@@ -54,6 +54,7 @@ def help():
     print("  check                - check if cwipc is correctly installed, or fix installation", file=sys.stderr)
     print("  python               - run python that has cwipc package installed", file=sys.stderr)
     print("  parallel             - run multiple commands in parallel (for testing)", file=sys.stderr)
+    print("  pipinstall           - install the cwipc Python modules into another Python (such as your own venv)", file=sys.stderr)
     print("\nUse 'cwipc <command> -h' for help on a specific command.", file=sys.stderr)
     print("See http://github.com/cwi-dis/cwipc for more information.", file=sys.stderr)
 
@@ -179,6 +180,123 @@ def run_parallel() -> int:
             return e.status
     return 1 if killed else 0
     
+PIPINSTALL_PACKAGES = ['cwipc_util', 'cwipc_codec', 'cwipc_realsense2', 'cwipc_kinect', 'cwipc_orbbec']
+
+def run_pipinstall() -> int:
+    """Install this cwipc's Python modules into another Python and bind it to this cwipc
+    (cwi-dis/cwipc#377): cwipc pipinstall [--python PYTHON] [--editable] [--force] [--uninstall]"""
+    import argparse
+    import shutil
+    parser = argparse.ArgumentParser(prog="cwipc pipinstall", description="Install the Python modules of this cwipc into another Python (by default the python on PATH, such as your own activated venv), and bind that Python to this cwipc's native libraries (with a cwipc.pth file in its site-packages).")
+    parser.add_argument("--python", metavar="PYTHON", help="The Python to install into (default: python, or python3, on PATH)")
+    parser.add_argument("--editable", action="store_true", help="Source tree only: install the modules editable from the source tree, instead of the wheels")
+    parser.add_argument("--force", action="store_true", help="Also install into a Python that is not a virtual environment (venv or conda), or of a version this cwipc doesn't support")
+    parser.add_argument("--uninstall", action="store_true", help="Remove the cwipc modules and the binding from that Python")
+    args = parser.parse_args(sys.argv[2:])
+    me = "cwipc pipinstall"
+
+    target = args.python or shutil.which("python") or shutil.which("python3")
+    if not target:
+        print(f"{me}: no python or python3 on PATH; use --python", file=sys.stderr)
+        return 1
+    def target_run(*cmd : str, check : bool = True, env : Optional[Dict[str, str]] = None) -> str:
+        r = subprocess.run([target, *cmd], capture_output=True, text=True, env=env)
+        if check and r.returncode != 0:
+            raise RuntimeError(f"{target} {' '.join(cmd)}: {(r.stderr or r.stdout).strip()}")
+        return r.stdout.strip()
+    try:
+        target_prefix = target_run("-c", "import sys; print(sys.prefix)")
+        target_version = target_run("-c", "import sys; print('%d.%d' % sys.version_info[:2])")
+        target_is_env = target_run("-c", "import os, sys; print(sys.prefix != sys.base_prefix or os.path.isdir(os.path.join(sys.prefix, 'conda-meta')))") == "True"
+    except (OSError, RuntimeError) as e:
+        print(f"{me}: cannot run {target}: {e}", file=sys.stderr)
+        return 1
+    if os.path.realpath(target_prefix) == os.path.realpath(sys.prefix):
+        print(f"{me}: {target} is the Python of this cwipc itself, nothing to do. Activate your own Python first, or use --python.", file=sys.stderr)
+        return 1
+    binding = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_binding.py")
+    if not target_is_env and not args.uninstall:
+        if not args.force:
+            print(f"{me}: {target} is not a virtual environment (venv or conda). Create one (python -m venv ...) and activate it, or use --force to install into this Python as a whole.", file=sys.stderr)
+            return 1
+        print(f"{me}: warning: {target} is not a virtual environment; installing into it as a whole (--force)", file=sys.stderr)
+
+    if args.uninstall:
+        target_run("-m", "pip", "uninstall", "--yes", *PIPINSTALL_PACKAGES, check=False)
+        target_run(binding, "remove")
+        print(f"{me}: removed the cwipc modules and the binding from {target}")
+        return 0
+
+    # This cwipc: the directory of the native library this command uses, and the wheels
+    # in share/cwipc/python of the tree it is in (a few levels up on Windows: bin/<config>).
+    from .util import cwipc_util_dll_load, cwipc_get_version
+    libdir = os.path.dirname(os.path.abspath(cwipc_util_dll_load()._name))
+    tree = libdir
+    for _ in range(3):
+        tree = os.path.dirname(tree)
+        if os.path.isdir(os.path.join(tree, "share", "cwipc", "python")):
+            break
+    else:
+        print(f"{me}: no share/cwipc/python found above {libdir}: is this a cwipc installation or build?", file=sys.stderr)
+        return 1
+    wheeldir = os.path.join(tree, "share", "cwipc", "python")
+    srcdir = os.path.dirname(tree)
+    is_source_tree = os.path.isfile(os.path.join(srcdir, "CMakeLists.txt")) and os.path.isdir(os.path.join(srcdir, "cwipc_util", "python"))
+
+    # The Python versions cwipc supports (versions.env of the tree, or of the source tree).
+    for candidate in (os.path.join(tree, "libexec", "cwipc", "scripts", "versions.env"), os.path.join(srcdir, "scripts", "versions.env")):
+        if os.path.isfile(candidate):
+            versions = {}
+            with open(candidate) as fp:
+                for line in fp:
+                    if "=" in line and not line.lstrip().startswith("#"):
+                        k, v = line.strip().split("=", 1)
+                        versions[k] = v
+            vmin, vmax = versions.get("PYTHON_VERSION_MIN"), versions.get("PYTHON_VERSION")
+            as_tuple = lambda v: tuple(int(x) for x in v.split("."))
+            if vmin and vmax and not (as_tuple(vmin) <= as_tuple(target_version) <= as_tuple(vmax)):
+                if not args.force:
+                    print(f"{me}: {target} is Python {target_version}, but this cwipc needs Python {vmin} up to {vmax} (--force to try anyway)", file=sys.stderr)
+                    return 1
+                print(f"{me}: warning: {target} is Python {target_version}, this cwipc supports {vmin} up to {vmax}; trying anyway (--force)", file=sys.stderr)
+            break
+
+    if args.editable:
+        if not is_source_tree:
+            print(f"{me}: --editable needs a source tree; this cwipc is installed in {tree}", file=sys.stderr)
+            return 1
+        packages = []
+        for p in PIPINSTALL_PACKAGES:
+            d = os.path.join(srcdir, p, "python")
+            if os.path.isdir(d) and any(f.startswith(p + "-") for f in os.listdir(wheeldir)):
+                packages += ["--editable", d]
+        pip_args = ["-m", "pip", "install", *packages]
+    else:
+        wheels = sorted(os.path.join(wheeldir, f) for f in os.listdir(wheeldir) if f.startswith("cwipc_") and f.endswith(".whl"))
+        if not wheels:
+            print(f"{me}: no cwipc wheels in {wheeldir}", file=sys.stderr)
+            return 1
+        pip_args = ["-m", "pip", "install", "--upgrade", f"--find-links={wheeldir}", *wheels]
+    print(f"{me}: installing the cwipc Python modules of {tree} into {target} (Python {target_version})", flush=True)
+    r = subprocess.run([target, *pip_args])
+    if r.returncode != 0:
+        print(f"{me}: pip failed, see its messages above", file=sys.stderr)
+        return 1
+    try:
+        target_run(binding, "write", libdir)
+    except RuntimeError as e:
+        print(f"{me}: installed the modules, but could not bind {target} to this cwipc: {e}", file=sys.stderr)
+        return 1
+
+    # Check, without CWIPC_LIBRARY_DIR from this environment, that the binding works.
+    env = {k: v for k, v in os.environ.items() if k not in ("CWIPC_LIBRARY_DIR", "DYLD_LIBRARY_PATH", "LD_LIBRARY_PATH")}
+    check = subprocess.run([target, "-W", "error::UserWarning", "-c", "import cwipc; print(cwipc.cwipc_get_version())"], capture_output=True, text=True, env=env)
+    if check.returncode != 0:
+        print(f"{me}: installed, but importing cwipc in {target} fails:\n{check.stderr.strip()}", file=sys.stderr)
+        return 1
+    print(f"{me}: done: {target} now uses cwipc {check.stdout.strip()} from {libdir}")
+    return 0
+
 def main():
     if len(sys.argv) < 2 or sys.argv[1] in ('-h', '--help', 'help'):
         help()
@@ -192,6 +310,8 @@ def main():
         sys.exit(run_python())
     if command == "parallel":
         sys.exit(run_parallel())
+    if command == "pipinstall":
+        sys.exit(run_pipinstall())
     try:
         mod = __import__(f'cwipc.scripts.cwipc_{command}', fromlist=[''])
     except ModuleNotFoundError:

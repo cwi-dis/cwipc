@@ -31,12 +31,6 @@ install(DIRECTORY examples DESTINATION  ${CMAKE_PYWHEELS_INSTALL_DIRECTORY})
 cwipc_install_wheel(NAME "cwipc_util" WHEELDIR ${CMAKE_PYWHEELS_OUTPUT_DIRECTORY})
 
 # Install shell and bat scripts
-
-install(PROGRAMS cwipc_pymodules_install.sh DESTINATION bin)
-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-	install(PROGRAMS cwipc_pymodules_install.bat DESTINATION bin)
-	install(PROGRAMS cwipc_pymodules_install.ps1 DESTINATION bin)
-endif()
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	install(PROGRAMS cwipc_macos_clearquarantine.sh DESTINATION bin)
 endif()

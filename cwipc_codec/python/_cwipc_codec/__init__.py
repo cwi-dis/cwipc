@@ -5,25 +5,9 @@ import warnings
 from typing import Optional, Any,Union
 from cwipc.util import CwipcError, CWIPC_API_VERSION, cwipc_pointcloud_wrapper, cwipc_source_wrapper
 from cwipc.util import cwipc_pointcloud_p, cwipc_source_p
-from cwipc.util import _cwipc_dll_search_path_collection # type: ignore
+from cwipc.util import _cwipc_load_library # type: ignore
 from cwipc.util import cwipc_log_default_callback, CWIPC_LOG_LEVEL_WARNING
 
-#
-# This is a workaround for the change in DLL loading semantics on Windows since Python 3.8
-# Python no longer uses the PATH environment variable to load dependent dlls but only
-# its own set. For that reason we list here a set of dependencies that we know are needed,
-# find those on PATH, and add the directories where those DLLs are located while loading our
-# DLL.
-# The list does not have to be complete, as long as at least one DLL from each directory needed
-# is listed.
-# Dependencies of cwipc_util are automatically added.
-# NOTE: this list must be kept up-to-date otherwise loading DLLs will fail with
-# an obscure message "Python could not find module .... or one of its dependencies"
-#
-_WINDOWS_NEEDED_DLLS=[ # NOT USED AT THE TIME. CAUSING DLL Loading problems
-    "turbojpeg",
-    "jpeg62"
-]
 
 class cwipc_encoder_p(ctypes.c_void_p):
     pass
@@ -48,20 +32,7 @@ def cwipc_codec_dll_load(libname : Optional[str]=None) -> ctypes.CDLL:
     global _cwipc_codec_dll_reference
     if _cwipc_codec_dll_reference: return _cwipc_codec_dll_reference
     
-    with _cwipc_dll_search_path_collection(None) as loader:
-        if libname == None:
-            libname = 'cwipc_codec'
-        if not os.path.isabs(libname):
-            libname = loader.find_library(libname)
-            if not libname:
-                raise RuntimeError('Dynamic library cwipc_codec not found')
-        assert libname
-        _cwipc_codec_dll_reference = ctypes.CDLL(libname)
-        if not _cwipc_codec_dll_reference:
-            raise RuntimeError(f'Dynamic library {libname} cannot be loaded')
-    
-    _cwipc_codec_dll_reference.cwipc_get_version_codec.argtypes = []
-    _cwipc_codec_dll_reference.cwipc_get_version_codec.restype = ctypes.c_char_p
+    _cwipc_codec_dll_reference = _cwipc_load_library('cwipc_codec', libname, 'cwipc_codec', 'cwipc_get_version_codec', __file__)
 
     _cwipc_codec_dll_reference.cwipc_new_encoder.argtypes = [ctypes.c_int, ctypes.POINTER(cwipc_encoder_params), ctypes.POINTER(ctypes.c_char_p), ctypes.c_ulong]
     _cwipc_codec_dll_reference.cwipc_new_encoder.restype = cwipc_encoder_p

@@ -2,16 +2,10 @@
 
 Here are some very simple examples of how to use the `cwipc` modules from Python. They are mainly modeled after the C and C++ programs from the `apps` directories in the source tree.
 
-The `cwipc` module should be installed already. If not you can run the command
+Run them with `cwipc python`, the Python of your cwipc installation, which has the `cwipc` modules. To use them from your own Python (an activated venv, for example), install the modules there first:
 
 ```
-% cwipc_pymodules_install.sh
-```
-
-or (on Windows)
-
-```
-C:/> cwipc_pymodules_install.bat
+cwipc pipinstall
 ```
 
 The Python package is documented and type-hinted, so if you use an IDE like `vscode` you should get popup hints as you type.

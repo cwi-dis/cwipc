@@ -279,6 +279,15 @@ elif $python_modules; then
         done
         "$venvpython" -m pip install --quiet --upgrade --find-links="$(native "$wheeldir")" "${wheels[@]}"
     fi
+    # Bind the venv to this tree's native libraries with cwipc.pth (cwi-dis/cwipc#377). Only
+    # needed for editable installs: the modules then live in the source tree, not below
+    # the tree, so the loader can't find the libraries by looking upward. Installed trees
+    # get no cwipc.pth, so they stay relocatable.
+    if [ "$modules" = editable ]; then
+        "$venvpython" "$(native "$srcdir/cwipc_util/python/cwipc/_binding.py")" write "$(native "$libdir")"
+    else
+        rm -f "$("$venvpython" -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')/cwipc.pth"
+    fi
 fi
 
 #

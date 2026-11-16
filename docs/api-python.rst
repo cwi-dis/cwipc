@@ -6,7 +6,7 @@ installation via the macOS Homebrew formula or the Windows/Ubuntu installer
 will generally **not** install the Python bindings into the system Python.
 
 This is because nowadays Python packages are typically installed into virtual environments, and installing into the system Python can cause conflicts, or may not work at all. 
-Instead, you should create a virtual environment and install the bindings there. Once you have activated your virtual environment, you can install the bindings using the `cwipc_pymodules_install.sh`, `cwipc_pymodules_install.bat` or `cwipc_pymodules_install.ps1` script.
+Instead, you should create a virtual environment and install the bindings there: once you have activated it, run ``cwipc pipinstall`` (see :ref:`own-python` in the installation instructions).
 
 Alternatively, from the command line you can use the ``cwipc python`` command, which will run the Python from the virtual environment that is bundled with the installation. This is a convenient way to run Python scripts that use the bindings without having to set up your own virtual environment.
 

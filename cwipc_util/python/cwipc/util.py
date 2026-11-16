@@ -32,7 +32,7 @@ __all__ = [
     'CWIPC_POINT_PACKETHEADER_MAGIC',
     'CWIPC_FLAGS_BINARY',
     'CwipcError',
-    '_cwipc_dll_search_path_collection',
+    '_cwipc_load_library',
 
     'CWIPC_LOG_LEVEL_NONE',
     'CWIPC_LOG_LEVEL_ERROR',
@@ -86,147 +86,114 @@ __all__ = [
 CWIPC_API_VERSION = 0x20260129
 
 #
-# This is a workaround for the change in DLL loading semantics on Windows since Python 3.8
-# Python no longer uses the PATH environment variable to load dependent dlls but only
-# its own set. For that reason we list here a set of dependencies that we know are needed,
-# find those on PATH, and add the directories where those DLLs are located while loading our
-# DLL.
-# The list does not have to be complete, as long as at least one DLL from each directory needed
-# is listed.
-# NOTE: this list must be kept up-to-date otherwise loading DLLs will fail with
-# an obscure message "Python could not find module .... or one of its dependencies"
+# Finding and loading cwipc's native libraries (cwi-dis/cwipc#377).
+#
+# A Python is bound to one cwipc tree (an installation, or a source tree's build directory)
+# by CWIPC_LIBRARY_DIR. For the user's own Pythons it is set by cwipc.pth, which
+# `cwipc pipinstall` writes (see _binding.py); for a source tree's own venv by setup-cwipc;
+# it can also be set by hand. A tree's own venv in an installed tree needs no binding: it
+# is below the tree, so the tree's library directory is found by looking upward.
+# After loading, the native library's version is compared with the Python package's, so
+# loading another installation's libraries doesn't go unnoticed.
+#
+# Set _CWIPC_DEBUG_DLL_SEARCH_PATH to see where libraries are looked for.
 #
 _CWIPC_DEBUG_DLL_SEARCH_PATH=os.getenv("_CWIPC_DEBUG_DLL_SEARCH_PATH")
 
-_WINDOWS_NEEDED_DLLS=[
-    "pcl_common",
-]
+def _cwipc_debug(msg : str) -> None:
+    if _CWIPC_DEBUG_DLL_SEARCH_PATH:
+        print(f"cwipc library search: {msg}", file=sys.stderr)
 
-class _cwipc_dll_search_path_collection:
+def _cwipc_library_directories() -> List[str]:
+    """The directories with this cwipc's native libraries, in the order they are tried:
+    CWIPC_LIBRARY_DIR (the binding), then the library directory of a tree this module is
+    installed in (lib, or bin on Windows, in a directory above this file)."""
+    rv : List[str] = []
+    bound = os.environ.get('CWIPC_LIBRARY_DIR')
+    if bound:
+        rv.append(bound)
+    subdir = 'bin' if sys.platform == 'win32' else 'lib'
+    basepath = os.path.dirname(os.path.abspath(__file__))
+    while True:
+        candidate = os.path.join(basepath, subdir)
+        if os.path.isdir(candidate):
+            rv.append(candidate)
+        parent = os.path.dirname(basepath)
+        if parent == basepath:
+            break
+        basepath = parent
+    return rv
 
-    open_dll_dirs : List[Any]
+def _cwipc_library_filename(name : str) -> str:
+    if sys.platform == 'win32':
+        return f'{name}.dll'
+    if sys.platform == 'darwin':
+        return f'lib{name}.dylib'
+    return f'lib{name}.so'
 
-    """Hack to ensure the correct DLL search path is used when loading a DLL on Windows"""
-    def __init__(self, dlls : Optional[List[str]]=None):
-        # On Darwin we need to add directories to the find_library() search path
-        if os.name == "posix" and sys.platform == "darwin":
-            self._darwin_add_dylib_search_path()
-        if os.name == "posix" and sys.platform == "linux":
-            self._linux_add_so_search_path()
+def _cwipc_find_library(name : str) -> Optional[str]:
+    """Find native library name (such as cwipc_util): in this cwipc's directories, else
+    wherever the system finds it (the Debian package's /usr/lib, Homebrew, PATH on Windows)."""
+    filename = _cwipc_library_filename(name)
+    for d in _cwipc_library_directories():
+        candidate = os.path.join(d, filename)
+        _cwipc_debug(f"try {candidate}")
+        if os.path.isfile(candidate):
+            return candidate
+    rv = ctypes.util.find_library(name)
+    _cwipc_debug(f"system search for {name}: {rv}")
+    return rv
 
-        additional_path_entries = []
-        if 'CWIPC_LIBRARY_DIR' in os.environ:
-            libpath = os.environ['CWIPC_LIBRARY_DIR']
-            additional_path_entries.append(libpath)
-            if _CWIPC_DEBUG_DLL_SEARCH_PATH: print(f"_cwipc_dll_search_path_collection: add {libpath} from CWIPC_LIBRARY_DIR", file=sys.stderr)
+def _cwipc_python_version(dist : str, module_file : str) -> Optional[str]:
+    """The version of cwipc Python package dist (such as cwipc_util), of which module_file is
+    part. In an editable install in a source tree that is the version CMake wrote at its last
+    configure (.cachedgitversion.txt), which is also the one compiled into that tree's native
+    libraries; the installed metadata of an editable install is fixed at install time."""
+    path = os.path.abspath(module_file)
+    root = path
+    for _ in range(4):  # <root>/<module>/python/<package>/<file>
+        root = os.path.dirname(root)
+    cached = os.path.join(root, '.cachedgitversion.txt')
+    if os.path.isfile(cached) and os.path.isfile(os.path.join(root, 'CMakeLists.txt')):
+        with open(cached) as fp:
+            return fp.read().strip()
+    try:
+        import importlib.metadata
+        return importlib.metadata.version(dist)
+    except Exception:
+        return None
 
-        # On Windows we may need to add directories with add_dll_directory() so we can find dependent DLLs
-        self.open_dll_dirs = []
-        if not hasattr(os, 'add_dll_directory'):
-            # Apparently we don't need to do this...
-            if _CWIPC_DEBUG_DLL_SEARCH_PATH: print(f"_cwipc_dll_search_path_collection: not needed", file=sys.stderr)
-            return
-        if dlls:
-            # We implicitly add DLLs needed by cwipc_util
-            path_entries = self._get_dll_directories(dlls + _WINDOWS_NEEDED_DLLS)
-        else:
-            path_string = os.environ.get('PATH')
-            assert path_string
-            path_entries = additional_path_entries + path_string.split(os.pathsep)
-        if _CWIPC_DEBUG_DLL_SEARCH_PATH: print(f"_cwipc_dll_search_path_collection: {len(path_entries)} on PATH", file=sys.stderr)
-        for p in path_entries:
-            if not os.path.exists(p):
-                if _CWIPC_DEBUG_DLL_SEARCH_PATH: print(f"_cwipc_dll_search_path_collection: not found: {p}", file=sys.stderr)
-                continue
-            try:
-                self.open_dll_dirs.append(os.add_dll_directory(p)) # type: ignore
-                if _CWIPC_DEBUG_DLL_SEARCH_PATH: print(f"_cwipc_dll_search_path_collection: add_dll_directory {p}", file=sys.stderr)
-            except FileNotFoundError as e:
-                warnings.warn(f'cwipc_dll_search_path_collection: {e}')
-
-    def find_library(self, libname : str) -> Optional[str]:
-        rv = ctypes.util.find_library(libname)
-        if rv and not os.path.isabs(rv):
-            # Assume we are on Linux (which returns non-absolute paths from find_library)
-            # Attempt to find it on LD_LIBRARY_PATH, which ld.so does not honour changes to during runtime.
-            paths = os.environ.get('LD_LIBRARY_PATH', '')
-            for p in paths.split(':'):
-                if p:
-                    attempt = os.path.join(p, rv)
-                    if os.path.exists(attempt):
-                        rv = attempt
-                        break
-        return rv
-        
-    def _darwin_add_dylib_search_path(self) -> None:
-        """Add lib directories in our ancestors to DYLD_LIBRARY_PATH so _our_ dylibs are found by find_library"""
-        if 'DYLD_LIBRARY_PATH' in os.environ:
-            return
-        candidates : List[str] = []
-        # Add any override directory from the environment (mainly for use from within vscode, for development)
-        if 'CWIPC_LIBRARY_DIR' in os.environ:
-            libpath = os.environ['CWIPC_LIBRARY_DIR']
-            candidates.append(libpath)
-            if _CWIPC_DEBUG_DLL_SEARCH_PATH: print(f"_cwipc_dll_search_path_collection: add_dylib_search_directory {libpath} from CWIPC_LIBRARY_DIR", file=sys.stderr)
-        # Add all "lib" directories found in our ancestors
-        basepath = os.path.dirname(__file__)
-        while basepath:
-            libpath = os.path.join(basepath, 'lib')
-            if os.path.isdir(libpath):
-                if _CWIPC_DEBUG_DLL_SEARCH_PATH: print(f"_cwipc_dll_search_path_collection: add_dylib_search_directory {libpath}", file=sys.stderr)
-                candidates.append(libpath)
-            nextbasepath = os.path.dirname(basepath)
-            if nextbasepath == basepath:
-                break
-            basepath = nextbasepath
-        os.environ['DYLD_LIBRARY_PATH'] = ':'.join(candidates)
-        
-    def _linux_add_so_search_path(self) -> None:
-        """Add lib directories in our ancestors to LD_LIBRARY_PATH so _our_ shared objects are found by find_library"""
-        if 'LD_LIBRARY_PATH' in os.environ:
-            return
-        candidates : List[str] = []
-        # Add any override directory from the environment (mainly for use from within vscode, for development)
-        if 'CWIPC_LIBRARY_DIR' in os.environ:
-            libpath = os.environ['CWIPC_LIBRARY_DIR']
-            candidates.append(libpath)
-            if _CWIPC_DEBUG_DLL_SEARCH_PATH: print(f"_cwipc_dll_search_path_collection: add_so_search_directory {libpath} from CWIPC_LIBRARY_DIR", file=sys.stderr)
-        # Add all "lib" directories found in our ancestors
-        basepath = os.path.dirname(__file__)
-        while basepath:
-            libpath = os.path.join(basepath, 'lib')
-            if os.path.isdir(libpath):
-                if _CWIPC_DEBUG_DLL_SEARCH_PATH: print(f"_cwipc_dll_search_path_collection: add_so_search_directory {libpath}", file=sys.stderr)
-                candidates.append(libpath)
-            nextbasepath = os.path.dirname(basepath)
-            if nextbasepath == basepath:
-                break
-            basepath = nextbasepath
-        os.environ['LD_LIBRARY_PATH'] = ':'.join(candidates)
-        
-    def _get_dll_directories(self, dlls : List[str]) -> List[str]:
-        """Return a list of directory names that contain all DLLs pased ar argument"""
-        done : List[str] = []
-        rv : List[str] = []
-        for dll in dlls:
-            if dll in done:
-                continue
-            path = ctypes.util.find_library(dll)
-            if not path:
-                warnings.warn(f'_cwipc_dll_search_path_collection: DLL {dll} not found')
-                continue
-            dirname = os.path.dirname(path)
-            rv.append(dirname)
-            done.append(dll)
-        return rv
-    
-    def __enter__(self):
-        return self
-        
-    def __exit__(self, type: Optional[Type[BaseException]], value: Optional[BaseException], traceback: Optional[Any]) -> Optional[bool]:
-        for d in self.open_dll_dirs:
+def _cwipc_load_library(name : str, libname : Optional[str], dist : str, version_function : str, module_file : str) -> ctypes.CDLL:
+    """Find and load native library name (or libname, if given: a path or another name),
+    and warn if its version doesn't match that of Python package dist."""
+    if libname and os.path.isabs(libname):
+        path : Optional[str] = libname
+    else:
+        path = _cwipc_find_library(libname or name)
+    if not path:
+        raise RuntimeError(f'Dynamic library {name} not found. Is cwipc installed? Bind this Python to a cwipc installation with "cwipc pipinstall", or set CWIPC_LIBRARY_DIR')
+    # On Windows, Python doesn't use PATH for the DLLs our DLL depends on: they are next to it.
+    dll_dirs : List[Any] = []
+    if hasattr(os, 'add_dll_directory') and os.path.isabs(path):
+        for d in dict.fromkeys([os.path.dirname(path), os.environ.get('CWIPC_LIBRARY_DIR', '')]):
+            if d and os.path.isdir(d):
+                _cwipc_debug(f"add_dll_directory {d}")
+                dll_dirs.append(os.add_dll_directory(d)) # type: ignore
+    try:
+        _cwipc_debug(f"load {path}")
+        dll = ctypes.CDLL(path)
+    finally:
+        for d in dll_dirs:
             d.close()
-            
+    get_version = getattr(dll, version_function)
+    get_version.argtypes = []
+    get_version.restype = ctypes.c_char_p
+    native_version = get_version().decode('utf8')
+    python_version = _cwipc_python_version(dist, module_file)
+    if python_version and native_version != python_version:
+        warnings.warn(f'{dist}: the native library {getattr(dll, "_name", path)} is version {native_version}, but the Python module is version {python_version}: they come from different cwipc installations or builds. Bind this Python to the right one with "cwipc pipinstall", or set CWIPC_LIBRARY_DIR. In a source tree, this also happens after a CMake configure without a build.', stacklevel=3)
+    return dll
+
 class CwipcError(RuntimeError):
     pass
     
@@ -372,18 +339,7 @@ def cwipc_util_dll_load(libname : Optional[str]=None) -> ctypes.CDLL:
     global _cwipc_util_dll_reference
     if _cwipc_util_dll_reference: return _cwipc_util_dll_reference
     
-    with _cwipc_dll_search_path_collection(None) as loader:
-        if libname == None:
-            libname = 'cwipc_util'
-        if not os.path.isabs(libname):
-            libname = loader.find_library(libname)
-            if not libname:
-                raise RuntimeError('Dynamic library cwipc_util not found')
-        assert libname
-        _cwipc_util_dll_reference = ctypes.CDLL(libname)
-    
-    _cwipc_util_dll_reference.cwipc_get_version.argtypes = []
-    _cwipc_util_dll_reference.cwipc_get_version.restype = ctypes.c_char_p
+    _cwipc_util_dll_reference = _cwipc_load_library('cwipc_util', libname, 'cwipc_util', 'cwipc_get_version', __file__)
 
     _cwipc_util_dll_reference.cwipc_log_configure.argtypes = [ctypes.c_int, _cwipc_log_callback_t]
     _cwipc_util_dll_reference.cwipc_log_configure.restype = None
@@ -1092,13 +1048,9 @@ def cwipc_get_version() -> str:
     """Return version information"""
     c_version = cwipc_util_dll_load().cwipc_get_version()
     version = c_version.decode('utf8')
-    try:
-        import importlib.metadata
-        py_version = importlib.metadata.version("cwipc_util")
-        if py_version and py_version != version:
-            version = f'{version} (python wrapper: {py_version})'
-    except ImportError:
-        pass
+    py_version = _cwipc_python_version("cwipc_util", __file__)
+    if py_version and py_version != version:
+        version = f'{version} (python wrapper: {py_version})'
     return version
 
 def cwipc_check_module(name : str) -> bool:
