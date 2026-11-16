@@ -51,6 +51,3 @@ def main():
         print(f"Unknown output file format {args.output}, expected .ply or .cwipc")
         return 1
     return 0
-
-if __name__ == '__main__':
-    sys.exit(main())

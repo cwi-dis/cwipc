@@ -145,9 +145,3 @@ def main():
     del forwarder
     del sourceServer
     endOfRun(args)
-    
-if __name__ == '__main__':
-    main()
-    
-    
-    

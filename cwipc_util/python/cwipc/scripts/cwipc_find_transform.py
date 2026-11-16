@@ -121,9 +121,3 @@ def main():
     finder.run()
     if args.output:
         finder.save_output(args.output)
-    
-if __name__ == '__main__':
-    main()
-    
-    
-    

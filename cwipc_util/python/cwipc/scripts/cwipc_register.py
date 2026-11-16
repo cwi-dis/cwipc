@@ -679,7 +679,3 @@ class Registrator:
                     gotframes += 1
         if self.verbose:
             print(f"cwipc_register: captured {gotframes} frames to ensure config stability")
-
-if __name__ == '__main__':
-    main()
-    

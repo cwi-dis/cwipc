@@ -272,7 +272,3 @@ def main():
 
     finally:
         print(f"{sys.argv[0]}: Shutting down", file=sys.stderr)
-
-
-if __name__ == "__main__":
-    main()

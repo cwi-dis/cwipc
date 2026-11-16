@@ -363,10 +363,3 @@ def main():
     if not ok:
         return 1
     return 0
-    
-if __name__ == '__main__':
-    sts = main()
-    sys.exit(sts)
-    
-    
-    

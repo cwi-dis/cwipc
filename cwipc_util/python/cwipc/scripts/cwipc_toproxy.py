@@ -98,9 +98,3 @@ def main():
     sourceServer.stop()
     sourceThread.join()
     sourceServer.statistics()
-    
-if __name__ == '__main__':
-    main()
-    
-    
-    

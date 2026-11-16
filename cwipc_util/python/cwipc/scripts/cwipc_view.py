@@ -90,9 +90,3 @@ def main():
     del visualizer
     del sourceServer
     endOfRun(args)
-    
-if __name__ == '__main__':
-    main()
-    
-    
-    

@@ -115,9 +115,3 @@ def main():
     finder.load_input(args.input)
     finder.run()
     finder.save_output(args.output)
-    
-if __name__ == '__main__':
-    main()
-    
-    
-    

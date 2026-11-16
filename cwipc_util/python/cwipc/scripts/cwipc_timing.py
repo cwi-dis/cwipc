@@ -206,9 +206,3 @@ def main():
     endOfRun(args)
     if not ok:
         sys.exit(1)
-    
-if __name__ == '__main__':
-    main()
-    
-    
-    

@@ -160,9 +160,3 @@ def main():
     creator.load_input(args.input)
     creator.run()
     creator.save_output(args.output)
-    
-if __name__ == '__main__':
-    main()
-    
-    
-    

@@ -152,9 +152,3 @@ def main():
         finder.load_target(args.togroundtruth)
     finder.load_source(args.source)
     finder.run()
-    
-if __name__ == '__main__':
-    main()
-    
-    
-    
