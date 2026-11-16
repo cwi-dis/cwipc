@@ -506,7 +506,15 @@ cwipc_pointcloud* cwipc_read_debugdump(const char *filename, char **errorMessage
     }
 
     if (hdr.hdr[0] != CWIPC_CWIPCDUMP_HEADER[0] || hdr.hdr[1] != CWIPC_CWIPCDUMP_HEADER[1] || hdr.hdr[2] != CWIPC_CWIPCDUMP_HEADER[2] || hdr.hdr[3] != CWIPC_CWIPCDUMP_HEADER[3]) {
-        cwipc_log(CWIPC_LOG_LEVEL_ERROR, "cwipc_read_debugdump", std::string("Pointcloud dumpfile header incorrect: ") + filename);
+        // The header is shorter than the git-lfs prefix: look at the start of the file again.
+        char start[64];
+        rewind(fp);
+        size_t start_size = fread(start, 1, sizeof(start), fp);
+        if (_cwipc_is_git_lfs_pointer(start, start_size)) {
+            cwipc_log(CWIPC_LOG_LEVEL_ERROR, "cwipc_read_debugdump", _cwipc_git_lfs_pointer_message(filename));
+        } else {
+            cwipc_log(CWIPC_LOG_LEVEL_ERROR, "cwipc_read_debugdump", std::string("Pointcloud dumpfile header incorrect: ") + filename);
+        }
         cwipc_log_set_errorbuf(nullptr);
 
         fclose(fp);

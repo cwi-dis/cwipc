@@ -1,6 +1,8 @@
 #ifndef _cwipc_util_internal_ply_hpp_
 #define _cwipc_util_internal_ply_hpp_
 
+#include <cstddef>
+#include <string>
 #include "cwipc_util/api.h"
 
 /** \brief Write a point cloud as a PLY file (#66).
@@ -32,5 +34,17 @@ int _cwipc_ply_write(const char* filename, cwipc_pointcloud* pc, bool binary);
  * \return The point cloud, or NULL on failure (after logging an error with cwipc_log).
  */
 cwipc_pointcloud* _cwipc_ply_read(const char* filename, uint64_t timestamp, char** errorMessage);
+
+/** \brief Does this file content look like a git-lfs pointer, rather than the file itself? (#164)
+ *
+ * Point cloud files in git repositories are often stored with git-lfs; in a checkout
+ * without git-lfs they are small text files that start with
+ * "version https://git-lfs.github.com/spec/". Readers use this to give a clearer error
+ * than "not a PLY file".
+ */
+bool _cwipc_is_git_lfs_pointer(const char* data, size_t size);
+
+/** \brief The error message for a file that is a git-lfs pointer (#164). */
+std::string _cwipc_git_lfs_pointer_message(const char* filename);
 
 #endif // _cwipc_util_internal_ply_hpp_

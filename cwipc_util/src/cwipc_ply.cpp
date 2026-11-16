@@ -503,11 +503,26 @@ static uint8_t _to_uchar(double v) {
     return (uint8_t)v;
 }
 
+bool _cwipc_is_git_lfs_pointer(const char* data, size_t size) {
+    static const char prefix[] = "version https://git-lfs.github.com/spec/";
+    const size_t prefix_len = sizeof(prefix) - 1;
+    return size >= prefix_len && memcmp(data, prefix, prefix_len) == 0;
+}
+
+std::string _cwipc_git_lfs_pointer_message(const char* filename) {
+    return std::string("File is a git-lfs pointer, not the file itself (run \"git lfs pull\" in its repository): ") + filename;
+}
+
 cwipc_pointcloud* _cwipc_ply_read(const char* filename, uint64_t timestamp, char** errorMessage) {
     std::vector<char> data;
 
     if (!_read_file(filename, data)) {
         cwipc_log(CWIPC_LOG_LEVEL_ERROR, PLY_READ_MODULE, std::string("Cannot read file: ") + filename);
+        return NULL;
+    }
+
+    if (_cwipc_is_git_lfs_pointer(data.data(), data.size())) {
+        cwipc_log(CWIPC_LOG_LEVEL_ERROR, PLY_READ_MODULE, _cwipc_git_lfs_pointer_message(filename));
         return NULL;
     }
 
