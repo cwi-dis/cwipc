@@ -11,10 +11,12 @@
 #   --method M      "archive": download and unpack the -built- release archive
 #                   for this machine (default on Linux and Windows).
 #                   "brew": build through the brew formula cwi-dis/cwipc/cwipc
-#                   (default on macOS, because the macOS archives break when
-#                   Homebrew moves on, see cwi-dis/cwipc#356).
+#                   (default on macOS). Releases have no macOS archives: they
+#                   break when Homebrew moves on (cwi-dis/cwipc#356).
 #   --archive FILE  Archive method: use this archive instead of downloading it
-#                   (for example one just built by CI).
+#                   (for example one just built by CI; on macOS the only way to
+#                   use the archive method, and only on a machine whose Homebrew
+#                   has the versions it was built against).
 #   --prefix-file F Write the prefix of the result to file F.
 #   Other options (--deps, --no-python, --python PY) are passed to setup-cwipc.sh.
 #
@@ -94,6 +96,9 @@ find_setup() {
 case "$method" in
 archive)
     [ -n "$prefix" ] || die "the archive method needs a PREFIX"
+    case "$platform" in
+    macos-*) [ -n "$archive" ] || die "releases have no macOS archives (cwi-dis/cwipc#356): use --method brew, or --archive FILE for an archive built on this machine or earlier in the same CI run" ;;
+    esac
     asset="cwipc-$platform-built-$version.$ext"
     tmpdir=$(mktemp -d)
     trap 'rm -rf "$tmpdir"' EXIT

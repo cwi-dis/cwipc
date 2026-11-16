@@ -82,10 +82,11 @@ Git Bash). It gets cwipc onto the machine and sets it up::
   this machine and unpacks it into the given directory. ``--archive FILE`` uses a
   local archive instead.
 - On macOS it builds cwipc through the Homebrew formula (``--method brew``, the
-  default; the directory argument is then ignored), because the macOS ``-built-``
-  archives only work as long as Homebrew still has the exact library versions
-  they were built against (cwi-dis/cwipc#356). ``--method archive`` forces the
-  archive. ``master`` as the version builds the current master branch
+  default; the directory argument is then ignored). Releases from 8.3.0 on have no
+  macOS ``-built-`` archives: they only worked as long as Homebrew still had the
+  exact library versions they were built against (cwi-dis/cwipc#356).
+  ``--method archive --archive FILE`` still works with an archive built on the same
+  machine, or earlier in the same CI run. ``master`` as the version builds the current master branch
   (``brew install --HEAD``).
 - ``--deps`` also installs the runtime dependencies (Linux: ``apt``, needs
   ``sudo``). Without it, they must already be there.
