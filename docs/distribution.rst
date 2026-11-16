@@ -87,6 +87,12 @@ Version numbers for the release no longer need to be updated manually, but note 
 
 After making all these changes push to github. Ensure the CI/CD build passes (easiest is by running ``./scripts/nightly.sh`` which does a nightly build). This build will take a looooong time, most likely, because the ``vcpkg`` dependencies have been updated and the Windows runner will have to rebuild the world.
 
+The CI build also tests what it built, each on a fresh runner: the Windows installer, the Debian
+package, and the Linux and Windows ``-built-`` archives installed with cwipc's own install action
+(``.github/actions/install-cwipc``), as downstream CI uses them (cwi-dis/cwipc#352). The release is
+only created when those pass. As a second check, once the release exists: bump lldash's
+``cwipc_version_tag`` to it and see lldash's CI pass.
+
 After that tag with *v_X_._Y_._Z_*.
 
 If one of the next steps fails just fix the issue and do another micro-release. Has happened to me every single release, I think:-)
