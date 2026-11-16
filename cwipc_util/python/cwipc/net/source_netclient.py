@@ -19,6 +19,8 @@ from .abstract import *
 class _NetClientSource(threading.Thread, cwipc_activerawsource_abstract):
     
     QUEUE_WAIT_TIMEOUT=1
+    CONNECT_RETRY_TIME=10.0     # seconds to keep trying while the server isn't there yet (#333)
+    CONNECT_RETRY_INTERVAL=0.25
     hostname : str
     port : int
     switch_to_port : Optional[int]
@@ -45,6 +47,7 @@ class _NetClientSource(threading.Thread, cwipc_activerawsource_abstract):
         self.switch_to_port = None
         self.running = False
         self._conn_refused = False
+        self._failure : Optional[str] = None
         self.verbose = verbose
         self.output_queue = peek_queue.PeekQueue(maxsize=2)
         self.times_receive = []
@@ -116,18 +119,10 @@ class _NetClientSource(threading.Thread, cwipc_activerawsource_abstract):
                 self.port = self.switch_to_port
                 self.switch_to_port = None
             if s == None:
-                if self.verbose: print(f'netclient: connecting to {self.hostname}:{self.port}')
-                s = socket.socket()
-                try:
-                    other = s.connect((self.hostname, self.port))
-                except ConnectionRefusedError:
-                    if self.verbose: print(f"netclient: connection refused by {self.hostname}:{self.port}")
+                s = self._connect()
+                if s == None:
                     self._conn_refused = True
                     break
-                except socket.error as err:
-                    print(f'netclient: connecting to {self.hostname}:{self.port}: {err}')
-                    raise
-                if self.verbose: print(f'netclient: connected to {self.hostname}:{self.port}')
             t1 = time.time()
             hdr = s.recv(16, socket.MSG_WAITALL)
             if len(hdr) == 0:
@@ -177,6 +172,37 @@ class _NetClientSource(threading.Thread, cwipc_activerawsource_abstract):
         except queue.Full:
             pass
         if self.verbose: print(f"netclient: {self.port}: thread exiting")
+
+    def _connect(self) -> Optional[socket.socket]:
+        """Connect to the server. While it refuses (it may not be up yet), keep trying for
+        CONNECT_RETRY_TIME seconds. On failure, record why and return None."""
+        deadline = time.monotonic() + self.CONNECT_RETRY_TIME
+        if self.verbose: print(f'netclient: connecting to {self.hostname}:{self.port}')
+        while self.running:
+            s = socket.socket()
+            try:
+                s.connect((self.hostname, self.port))
+            except ConnectionRefusedError:
+                s.close()
+                if time.monotonic() >= deadline:
+                    self._failure = f"connection refused by {self.hostname}:{self.port} (tried for {self.CONNECT_RETRY_TIME:g} s)"
+                    print(f"netclient: {self._failure}")
+                    return None
+                if self.verbose: print(f"netclient: connection refused by {self.hostname}:{self.port}, retrying")
+                time.sleep(self.CONNECT_RETRY_INTERVAL)
+                continue
+            except socket.error as err:
+                s.close()
+                self._failure = f"connecting to {self.hostname}:{self.port}: {err}"
+                print(f"netclient: {self._failure}")
+                return None
+            if self.verbose: print(f'netclient: connected to {self.hostname}:{self.port}')
+            return s
+        return None
+
+    @override
+    def failure(self) -> Optional[str]:
+        return self._failure
 
     @override
     def statistics(self):

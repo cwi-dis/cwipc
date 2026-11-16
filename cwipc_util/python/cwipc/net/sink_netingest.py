@@ -13,6 +13,8 @@ class _Sink_NetIngest(threading.Thread, cwipc_rawsink_abstract):
     SELECT_TIMEOUT=0.1
     SELECT_LONG_TIMEOUT=5.0
     QUEUE_FULL_TIMEOUT=0.001
+    CONNECT_RETRY_TIME=10.0     # seconds to keep trying while the server isn't there yet (#333)
+    CONNECT_RETRY_INTERVAL=0.25
     
     producer : Optional[cwipc_producer_abstract]
     input_queue : queue.Queue[Optional[bytes]]
@@ -31,6 +33,7 @@ class _Sink_NetIngest(threading.Thread, cwipc_rawsink_abstract):
         self.nodrop = nodrop
         self.stopped = False
         self.started = False
+        self._failure : Optional[str] = None
         self.fourcc = None
         self.times_forward = []
         self.sizes_forward = []
@@ -78,13 +81,30 @@ class _Sink_NetIngest(threading.Thread, cwipc_rawsink_abstract):
         return not self.stopped  
         
     def _open(self) -> None:
-        self.socket = socket.socket()
-        try:
-            self.socket.connect(self.address)
-        except socket.error as e:
-            print(f"netingest: connection failed: {e}")
+        """Connect to the server. While it refuses (it may not be up yet), keep trying for
+        CONNECT_RETRY_TIME seconds; after that, or on another error, raise."""
+        deadline = time.monotonic() + self.CONNECT_RETRY_TIME
+        while True:
+            self.socket = socket.socket()
+            try:
+                self.socket.connect(self.address)
+                return
+            except ConnectionRefusedError as e:
+                self.socket.close()
+                if time.monotonic() < deadline:
+                    if self.verbose: print(f"netingest: connection refused by {self.address[0]}:{self.address[1]}, retrying")
+                    time.sleep(self.CONNECT_RETRY_INTERVAL)
+                    continue
+                self._failure = f"connection refused by {self.address[0]}:{self.address[1]} (tried for {self.CONNECT_RETRY_TIME:g} s)"
+            except socket.error as e:
+                self.socket.close()
+                self._failure = f"connecting to {self.address[0]}:{self.address[1]}: {e}"
+            print(f"netingest: {self._failure}")
             self.stopped = True
-            raise
+            raise ConnectionError(self._failure)
+
+    def failure(self) -> Optional[str]:
+        return self._failure
 
     def run(self):
         if self.verbose: print(f"netingest: thread started")
@@ -104,9 +124,9 @@ class _Sink_NetIngest(threading.Thread, cwipc_rawsink_abstract):
                 
                     try:
                         self.socket.sendall(packet)
-                    except socket.error:
-                        if self.verbose:
-                            print(f"netingest: error on send to {self.socket.getpeername()}")
+                    except socket.error as e:
+                        self._failure = f"sending to {self.address[0]}:{self.address[1]}: {e}"
+                        print(f"netingest: {self._failure}")
                         break
                     t2 = time.time()
                     if self.verbose:

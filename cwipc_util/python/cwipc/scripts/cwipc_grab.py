@@ -271,22 +271,22 @@ def main():
             params[k] = eval(v)
         writer.setup_encoder(params)
     sourceServer = SourceServer(source, writer, args)
-    sourceThread = threading.Thread(target=sourceServer.run, args=(), name="cwipc_grab.SourceServer")
+    pipeline = SourcePipeline("cwipc grab", sourceServer, verbose=(args.verbose > 1))
+    sourceThread = pipeline.source_thread
     writer.set_producer(sourceThread)
 
     #
-    # Run everything
+    # Run everything, until whatever happens first (#333). The writer runs on the main
+    # thread; with --incore only after everything has been grabbed.
     #
     ok = False
     try:
-        sourceThread.start()
-
         if not args.incore:
-            ok = writer.run()
-            
-        sourceThread.join()
-        if args.incore:
-            ok = writer.run()
+            ok = pipeline.run(main=writer.run, main_stop=writer.stop, main_name="writer") == 0
+        else:
+            ok = pipeline.run() == 0
+            if ok:
+                ok = writer.run()
     except KeyboardInterrupt:
         print("Interrupted.")
         sourceServer.stop()

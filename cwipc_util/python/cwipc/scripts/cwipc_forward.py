@@ -112,20 +112,22 @@ def main():
         forwarder.set_encoder_params(octree_bits=args.octree_bits, jpeg_quality=args.jpeg_quality, tiles=tiledescriptions) # type: ignore
 
     sourceServer = SourceServer(source, forwarder, args)
-    sourceThread = threading.Thread(target=sourceServer.run, args=(), name="cwipc_forward.SourceServer")
+    pipeline = SourcePipeline("cwipc forward", sourceServer, verbose=(args.verbose > 1))
+    sourceThread = pipeline.source_thread
     if forwarder:
         forwarder.set_producer(sourceThread)
+        pipeline.watch("forwarder", forwarder)
 
     #
-    # Run everything
+    # Run everything, until whatever happens first: the source ends, or the forwarder
+    # stops or loses its connection (#206, #333).
     #
+    status = 1
     try:
-        sourceThread.start()
-
+        pipeline.start_source()
         if forwarder and hasattr(forwarder, 'start'):
             forwarder.start()
-            
-        sourceThread.join()
+        status = pipeline.run()
     except KeyboardInterrupt:
         print("Interrupted.")
         sourceServer.stop()
@@ -145,3 +147,4 @@ def main():
     del forwarder
     del sourceServer
     endOfRun(args)
+    return status

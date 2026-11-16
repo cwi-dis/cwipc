@@ -62,22 +62,21 @@ def main():
     visualizer = Visualizer(args=args)
 
     sourceServer = SourceServer(source, visualizer, args)
-    sourceThread = threading.Thread(target=sourceServer.run, args=(), name="cwipc_play.SourceServer")
+    pipeline = SourcePipeline("cwipc play", sourceServer, verbose=(args.verbose > 1))
+    sourceThread = pipeline.source_thread
     if visualizer:
         visualizer.set_producer(sourceThread)
         visualizer.set_source(source)
 
     #
-    # Run everything
+    # Run everything, until whatever happens first (#333). The visualizer needs the main thread.
     #
+    status = 1
     try:
-        sourceThread.start()
-
         if visualizer:
-            visualizer.run()
-            sourceServer.stop()
-            
-        sourceThread.join()
+            status = pipeline.run(main=visualizer.run, main_stop=visualizer.stop, main_name="visualizer")
+        else:
+            status = pipeline.run()
     except KeyboardInterrupt:
         print("Interrupted.")
         sourceServer.stop()
@@ -93,3 +92,4 @@ def main():
     del visualizer
     del sourceServer
     endOfRun(args)
+    return status

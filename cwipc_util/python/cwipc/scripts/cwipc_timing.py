@@ -176,20 +176,16 @@ def main():
     kwargs = {}
     writer = DropWriter(args=args)
     sourceServer = SourceServer(source, writer, args)
-    sourceThread = threading.Thread(target=sourceServer.run, args=(), name="cwipc_grab.SourceServer")
+    pipeline = SourcePipeline("cwipc timing", sourceServer, verbose=(args.verbose > 1))
+    sourceThread = pipeline.source_thread
     writer.set_producer(sourceThread)
 
     #
-    # Run everything
+    # Run everything, until whatever happens first (#333). The writer runs on the main thread.
     #
     ok = False
     try:
-        sourceThread.start()
-
-        ok = writer.run()
-            
-        sourceThread.join()
-        
+        ok = pipeline.run(main=writer.run, main_stop=writer.stop, main_name="writer") == 0
     except KeyboardInterrupt:
         print("Interrupted.")
         sourceServer.stop()

@@ -68,6 +68,10 @@ class _Sink_Passthrough(threading.Thread, cwipc_sink_abstract):
         
     def is_alive(self):
         return not self.stopped  
+
+    def failure(self) -> Optional[str]:
+        failure = getattr(self.sink, 'failure', None)
+        return failure() if failure else None
         
     def run(self):
         if self.verbose: print(f"passthrough: thread started")

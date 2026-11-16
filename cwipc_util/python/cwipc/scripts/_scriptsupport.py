@@ -5,7 +5,8 @@ import signal
 import argparse
 import traceback
 import warnings
-from typing import cast, Union, List, Callable
+import threading
+from typing import cast, Any, Union, List, Callable, Optional
 
 from cwipc.abstract import cwipc_tileinfo_dict
 
@@ -17,6 +18,7 @@ from ..net import source_lldplay
 from ..net import source_synchronizer
 from ..net.abstract import *
 from .. import filters
+from .._runloop import Runloop, Failure
 
 __all__ = [ 
     "SetupStackDumper",
@@ -24,6 +26,7 @@ __all__ = [
     "ArgumentParser",
     "activesource_factory_from_args",
     "SourceServer",
+    "SourcePipeline",
     "beginOfRun",
     "endOfRun"
 ]
@@ -299,10 +302,13 @@ class SourceServer:
                 filter = filters.factory(fdesc)
                 self.pc_filters.append(filter)
         self.owns_grabber = owns_grabber
+        self._source = grabber      # kept for failure(), also after stop
+        self._failure : Optional[str] = None
         if self.owns_grabber:
             ok = self.grabber.start()
             if not ok:
                 print("grab: failed to start() grabber", flush=True)
+                self._failure = "failed to start the source"
                 self.grabber = None
                 self.stopped = True
 
@@ -343,8 +349,16 @@ class SourceServer:
             print(f"grab: get() took {self.lastGrabTime-t_before:.3f}")
         return cast(cwipc_pointcloud_wrapper, pc)
         
+    def failure(self) -> Optional[str]:
+        """Why the source stopped, if it was not a normal end (#333)."""
+        if self._failure:
+            return self._failure
+        failure = getattr(self._source, 'failure', None)
+        return failure() if failure else None
+
     def run(self) -> None:
-        assert self.grabber
+        if not self.grabber:
+            return
         if self.inpoint:
             result = self.grabber.seek(self.inpoint)
             if result:
@@ -414,7 +428,102 @@ class SourceServer:
 
     def get_latencies(self) -> List[float]:
         return self.latency_grab
-    
+
+
+class SourcePipeline:
+    """Runs a SourceServer and its consumers, and ends the run on whatever happens first (#333).
+
+    The source runs in its own thread (source_thread, to give to consumers' set_producer()).
+    Consumers that are threads themselves (the forwarder, for example) are watched with
+    watch(); a consumer that needs the main thread (the visualizer, a file writer) is
+    passed to run().
+
+    - The source ending normally (end of the recording, --count reached) ends nothing else:
+      the consumers end by themselves when their producer is gone, or stay (view --endpaused).
+    - Any failure (a lost connection, an exception), or a consumer ending, stops everything.
+    - Whoever doesn't end within the grace period after that is abandoned: the process exits.
+
+    run() returns the exit status: 0, or 1 after a failure.
+    """
+    GRACE = 10.0
+
+    def __init__(self, name : str, sourceServer : SourceServer, verbose : bool = False):
+        self.name = name
+        self.sourceServer = sourceServer
+        self.runloop = Runloop(name, verbose=verbose)
+        self.source_thread = self.runloop.add_thread("source", self._run_source, stop=sourceServer.stop)
+        self.interrupted = False
+
+    def _run_source(self) -> None:
+        self.sourceServer.run()
+        failure = self.sourceServer.failure()
+        if failure:
+            raise Failure(f"source: {failure}")
+
+    def watch(self, who : str, consumer : Any) -> None:
+        """Watch a consumer that runs its own thread(s) and has is_alive() and stop()."""
+        failure = getattr(consumer, 'failure', None)
+        self.runloop.add_polled(who, consumer.is_alive, consumer.stop, failure)
+
+    def start_source(self) -> None:
+        """Start the source thread. Do this before starting consumers that stop as soon as
+        their producer isn't alive."""
+        self.source_thread.start()
+
+    def run(self, main : Optional[Callable[[], Any]] = None, main_stop : Optional[Callable[[], None]] = None, main_name : str = "main") -> int:
+        """Wait for the run to end. main, if given, runs on this (the main) thread, and its
+        returning False counts as a failure. Starts the source if that wasn't done yet."""
+        if not self.source_thread.is_alive() and self.source_thread.ident is None:
+            self.start_source()
+        if main is None:
+            self._monitor()
+        else:
+            self.runloop.add_participant(main_name, main_stop)
+            monitor = threading.Thread(target=self._monitor, name=f"{self.name}.monitor", daemon=True)
+            monitor.start()
+            try:
+                ok = main()
+            except KeyboardInterrupt:
+                self.interrupted = True
+                self.runloop.post(main_name, 0, "interrupted")
+            except Failure as e:
+                self.runloop.post(main_name, 1, str(e))
+            except BaseException as e:
+                traceback.print_exc()
+                self.runloop.post(main_name, 1, f"{type(e).__name__}: {e}")
+            else:
+                self.runloop.post(main_name, 0 if ok is not False else 1, "ended" if ok is not False else "failed")
+            while monitor.is_alive():
+                try:
+                    monitor.join()
+                except KeyboardInterrupt:
+                    self.interrupted = True
+                    self.runloop.stop_all()
+        failure = self.runloop.first_failure()
+        if failure:
+            print(f"{self.name}: {failure.who}: {failure.reason}", file=sys.stderr, flush=True)
+            return 1
+        return 0
+
+    def _monitor(self) -> None:
+        stopping = False
+        while self.runloop.running():
+            try:
+                ending = self.runloop.next_ending(timeout=self.GRACE if stopping else None)
+            except KeyboardInterrupt:
+                print("Interrupted.", flush=True)
+                self.interrupted = True
+                stopping = True
+                self.runloop.stop_all()
+                continue
+            if ending is None:
+                left = ", ".join(self.runloop.running())
+                print(f"{self.name}: still running {self.GRACE:g} s after being stopped: {left}; exiting", file=sys.stderr, flush=True)
+                os._exit(1)
+            if not stopping and (ending.status != 0 or ending.who != "source"):
+                stopping = True
+                self.runloop.stop_all()
+
 def BaseArgumentParser(*args, **kwargs) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(*args, **kwargs)
     parser.add_argument("--version", action="store_true", help="Print version and exit")

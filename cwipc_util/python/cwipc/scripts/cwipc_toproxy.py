@@ -71,21 +71,16 @@ def main():
     source = sourceFactory()
     sender = Sender(args.host, args.port)
     sourceServer = SourceServer(source, sender, args)
-    sourceThread = threading.Thread(target=sourceServer.run, args=())
-    if sender:
-        sender.set_producer(sourceThread)
+    pipeline = SourcePipeline("cwipc toproxy", sourceServer, verbose=(args.verbose > 1))
+    sourceThread = pipeline.source_thread
+    sender.set_producer(sourceThread)
 
     #
-    # Run everything
+    # Run everything, until whatever happens first (#333). The sender runs on the main thread.
     #
+    status = 1
     try:
-        sourceThread.start()
-
-        if sender:
-            sender.run()
-            sourceServer.stop()
-            
-        sourceThread.join()
+        status = pipeline.run(main=sender.run, main_stop=sender.stop, main_name="sender")
     except KeyboardInterrupt:
         print("Interrupted.")
         sourceServer.stop()
@@ -98,3 +93,4 @@ def main():
     sourceServer.stop()
     sourceThread.join()
     sourceServer.statistics()
+    return status

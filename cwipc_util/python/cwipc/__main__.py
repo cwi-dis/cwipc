@@ -1,7 +1,6 @@
 import sys
 import os
 import subprocess
-import time
 from typing import List, Tuple
 import pkgutil
 from . import scripts, cwipc_get_version
@@ -88,52 +87,97 @@ def run_python() -> int:
     execv(sys.executable, [sys.executable] + sys.argv[2:])
     assert 0, "execv failed"
 
+PARALLEL_GRACE = 30.0     # seconds the others get after the first child ends
+PARALLEL_TIMEOUT = 300.0  # seconds before the first child must have ended
+
 def run_parallel() -> int:
+    """Run commands in parallel, for tests: cwipc parallel [options] cmd [arg ...] -- cmd [arg ...] [-- ...]
+
+    Each command is a cwipc subcommand (view, forward, ...), run as `cwipc <subcommand> ...`,
+    or `! command ...` for any other command, found on PATH (a server from another package,
+    for example). The `!` is a separate word, so interactive shells don't take it for history
+    expansion. A command that cannot be started fails with status 127.
+    All children are started at once (clients retry connecting until their server is up).
+    The run ends when the first child ends: the others get a grace period to end by
+    themselves, and are killed after it. The result is the status of the first child that
+    failed, or 1 if a child had to be killed (cwi-dis/cwipc#333).
+    """
+    from ._runloop import Runloop
+    usage = "Usage: cwipc parallel [--grace SECONDS] [--timeout SECONDS] cmd [arg ...] -- cmd [arg ...] [-- cmd [arg ...] ...]\n  cmd is a cwipc subcommand (view, forward, ...), or ! followed by any other command"
     cmd = sys.argv[0]
     args = sys.argv[2:]
-    try:
-        sep_loc = args.index('--')
-    except ValueError:
-        print("Usage: parallel cmd [arg ...] -- cmd [arg ...] [-- cmd [arg ...]]", file=sys.stderr)
+    grace = PARALLEL_GRACE
+    timeout = PARALLEL_TIMEOUT
+    while args and args[0] in ('--grace', '--timeout'):
+        if len(args) < 2:
+            print(usage, file=sys.stderr)
+            return 1
+        try:
+            value = float(args[1])
+        except ValueError:
+            print(usage, file=sys.stderr)
+            return 1
+        if args[0] == '--grace':
+            grace = value
+        else:
+            timeout = value
+        args = args[2:]
+    commands : List[List[str]] = [[]]
+    for a in args:
+        if a == '--':
+            commands.append([])
+        else:
+            commands[-1].append(a)
+    if len(commands) < 2 or any(not c for c in commands) or any(c == ['!'] for c in commands):
+        print(usage, file=sys.stderr)
         return 1
-    args1 = args[:sep_loc]
-    args2 = args[sep_loc+1:]
-    try:
-        sep_loc = args2.index('--')
-        args3 = args2[sep_loc+1:]
-        args2 = args2[:sep_loc]
-    except ValueError:
-        args3 = None
-    cmd1 = [cmd] + args1
-    proc1 = subprocess.Popen(cmd1)
-    print(f"parallel: started 1: {' '.join(cmd1)}", file=sys.stderr)
+    main_scripts, auxiliary_scripts = find_scripts()
+    subcommands = set(main_scripts) | set(auxiliary_scripts) | {'version', 'check', 'python', 'parallel'}
+    for c in commands:
+        if c[0] != '!' and c[0] not in subcommands:
+            print(f"parallel: unknown cwipc subcommand '{c[0]}' (use ! {c[0]} ... for another command)", file=sys.stderr)
+            return 1
 
-    time.sleep(10)
-    cmd2 = [cmd] + args2
-    proc2 = subprocess.Popen(cmd2)
-    print(f"parallel: started 2: {' '.join(cmd2)}", file=sys.stderr)
-    if args3:
-        cmd3 = [cmd] + args3
-        proc3 = subprocess.Popen(cmd3)
-        print(f"parallel: started 3: {' '.join(cmd3)}", file=sys.stderr)
-    else:
-        proc3 = None
-    sts1 = proc1.wait()
-    print(f"parallel: 1: exited with status {sts1}", file=sys.stderr)
-    sts2 = proc2.wait()
-    print(f"parallel: 2: exited with status {sts2}", file=sys.stderr)
-    if proc3:
-        sts3 = proc3.wait()
-        print(f"parallel: 3: exited with status {sts3}", file=sys.stderr)
-    else:
-        sts3 = 0
-    if sts1 < 0: return sts1
-    if sts2 < 0: return sts2
-    if sts3 < 0: return sts3
-    if sts1 > 0: return sts1
-    if sts2 > 0: return sts2
-    if sts3 > 0: return sts3
-    return 0
+    runloop = Runloop("parallel")
+    killed : List[str] = []
+    try:
+        for i, c in enumerate(commands, start=1):
+            full_cmd = c[1:] if c[0] == '!' else [cmd] + c
+            try:
+                proc = subprocess.Popen(full_cmd)
+            except OSError as e:
+                runloop.add_participant(str(i))
+                runloop.post(str(i), 127, f"cannot start {full_cmd[0]}: {e}")
+                continue
+            runloop.add_process(str(i), proc)
+            print(f"parallel: started {i}: {' '.join(full_cmd)}", file=sys.stderr, flush=True)
+        first = runloop.next_ending(timeout=timeout)
+        if first is None:
+            print(f"parallel: no command ended within {timeout:g} s, killing all", file=sys.stderr, flush=True)
+            killed = runloop.running()
+        else:
+            print(f"parallel: {first.who}: {first.reason}", file=sys.stderr, flush=True)
+            if runloop.running():
+                if first.status == 0:
+                    print(f"parallel: waiting up to {grace:g} s for the others to end", file=sys.stderr, flush=True)
+                else:
+                    print(f"parallel: giving the others {grace:g} s to end", file=sys.stderr, flush=True)
+                killed = runloop.wait_for_rest(grace)
+            for e in runloop.endings[1:]:
+                print(f"parallel: {e.who}: {e.reason}", file=sys.stderr, flush=True)
+        for who in killed:
+            print(f"parallel: {who}: still running, killed", file=sys.stderr, flush=True)
+            runloop.stop(who)
+        # Collect the exits of the killed ones, so no zombies are left.
+        runloop.wait_for_rest(10)
+    except KeyboardInterrupt:
+        print("parallel: interrupted, killing all", file=sys.stderr, flush=True)
+        runloop.stop_all()
+        return 130
+    for e in runloop.endings:
+        if e.status != 0 and e.who not in killed:
+            return e.status
+    return 1 if killed else 0
     
 def main():
     if len(sys.argv) < 2 or sys.argv[1] in ('-h', '--help', 'help'):

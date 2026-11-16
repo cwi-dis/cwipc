@@ -51,7 +51,12 @@ class cwipc_source_abstract(ABC):
     def statistics(self) -> None:
         """Print statistics about this source to stdout"""
         ...
-        
+
+    def failure(self) -> Optional[str]:
+        """Why this source stopped, if it was not a normal end (a lost or refused connection,
+        for example); None otherwise. Not abstract: the default is None (cwi-dis/cwipc#333)."""
+        return None
+
 cwipc_tileinfo_dict = dict[str, Any]
 
 class cwipc_activesource_abstract(cwipc_source_abstract):

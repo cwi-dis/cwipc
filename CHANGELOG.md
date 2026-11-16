@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - macOS: no more `-built-` release archives, they broke with every Homebrew update; use Homebrew (#356)
 - OrbbecSDK 2.10.6; building from source also installs OrbbecViewer; udev rules for USB Orbbec cameras in the Debian package (#351)
 - The `cwipc_view`, `cwipc_register`, ... launchers are deprecated and will go away: use `cwipc view`, `cwipc register`, ... (#376)
+- `cwipc parallel` and the scripts stop on whatever happens first: no more hanging tests or forwarders; clients retry connecting (#333, #206)
 
 ## [8.1.0] - 2026-08-24
 

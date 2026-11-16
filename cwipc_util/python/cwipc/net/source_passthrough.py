@@ -62,6 +62,10 @@ class _NetPassthrough(threading.Thread, cwipc_activesource_abstract):
     @override
     def eof(self) -> bool:
         return not self.running or self.output_queue.empty() and self.source.eof()
+
+    def failure(self) -> Optional[str]:
+        failure = getattr(self.source, 'failure', None)
+        return failure() if failure else None
     
     @override
     def available(self, wait : bool=False) -> bool:

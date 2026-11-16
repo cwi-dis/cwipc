@@ -59,6 +59,11 @@ class cwipc_rawsource_abstract(ABC):
         """Print statistics."""
         ...
 
+    def failure(self) -> Optional[str]:
+        """Why this source stopped, if it was not a normal end (a lost or refused connection,
+        for example); None otherwise. Not abstract: the default is None (cwi-dis/cwipc#333)."""
+        return None
+
 class cwipc_activerawsource_abstract(cwipc_rawsource_abstract):
     """An active source of raw data blocks.
     Subclass of cwipc_rawsource_abstract that adds start and stop methods.
@@ -165,6 +170,11 @@ class cwipc_rawsink_abstract(ABC):
         """Print statistics."""
         ...
 
+    def failure(self) -> Optional[str]:
+        """Why this sink stopped, if it was not a normal end (a lost or refused connection,
+        for example); None otherwise. Not abstract: the default is None (cwi-dis/cwipc#333)."""
+        return None
+
 
 class cwipc_sink_abstract(ABC):
     """A sink for pointclouds. They could be shown on-screen, transmitted over the network, etc.
@@ -195,6 +205,11 @@ class cwipc_sink_abstract(ABC):
     def statistics(self) -> None:
         """Print statistics."""
         ...
+
+    def failure(self) -> Optional[str]:
+        """Why this sink stopped, if it was not a normal end (a lost or refused connection,
+        for example); None otherwise. Not abstract: the default is None (cwi-dis/cwipc#333)."""
+        return None
 
 
 # Type declarations for the factories of the various sources

@@ -333,19 +333,16 @@ def main():
             params[k] = eval(v)
         writer.setup_encoder(params)
     sourceServer = SourceServer(source, writer, args)
-    sourceThread = threading.Thread(target=sourceServer.run, args=(), name="cwipc_copy.SourceServer")
+    pipeline = SourcePipeline("cwipc copy", sourceServer, verbose=(args.verbose > 1))
+    sourceThread = pipeline.source_thread
     writer.set_producer(sourceThread)
 
     #
-    # Run everything
+    # Run everything, until whatever happens first (#333). The writer runs on the main thread.
     #
     ok = False
     try:
-        sourceThread.start()
-
-        ok = writer.run()
-            
-        sourceThread.join()
+        ok = pipeline.run(main=writer.run, main_stop=writer.stop, main_name="writer") == 0
     except KeyboardInterrupt:
         print("Interrupted.")
         sourceServer.stop()
