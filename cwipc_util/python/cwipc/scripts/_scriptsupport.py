@@ -183,7 +183,7 @@ def activesource_factory_from_args(args : argparse.Namespace, autoConfig : bool=
 
                 source = lambda : cwipc_capturer(configfile)
             else:
-                playback_type = _guess_playback_type(os.listdir(dirname))
+                playback_type = _guess_playback_type([fn for fn in os.listdir(dirname) if not fn.startswith('.')])
                 if not playback_type:
                     print(f'{sys.argv[0]}: {dirname}: should contain only one of .ply, .cwipcdump or .cwicpc files')
                     sys.exit(-1)

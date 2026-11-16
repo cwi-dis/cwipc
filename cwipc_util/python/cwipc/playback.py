@@ -123,11 +123,10 @@ def cwipc_playback(dir_or_files : Union[str, List[str]], ext : str='.ply', loop 
     tileInfo = None
     filenames : Iterable[str]
     if isinstance(dir_or_files, str):
-        filenames = filter(lambda fn : fn.lower().endswith(ext), os.listdir(dir_or_files))
+        # Skip hidden files, such as the ._name.ply files macOS leaves on some volumes (#311).
+        filenames = sorted(fn for fn in os.listdir(dir_or_files) if fn.lower().endswith(ext) and not fn.startswith('.'))
         if not filenames:
             raise cwipc.CwipcError(f"No {ext} files in {dir_or_files}")
-        filenames = sorted(filenames)
-        filenames = list(filenames)
                 
         #remove files based on inpoint and/or outpoint
         if inpoint:
