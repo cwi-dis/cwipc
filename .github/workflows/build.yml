@@ -55,7 +55,7 @@ jobs:
           with:
             python-version: '3.12'
         - name: Install NSIS
-          uses: repolevedavaj/install-nsis@v1.2.1
+          uses: repolevedavaj/install-nsis@v1.3.0
           with:
             nsis-version: '3.11'
 
@@ -129,7 +129,7 @@ jobs:
                 ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v7
           with:
                 name: windows-ctest-output
                 path: build/Testing/Temporary/LastTest.log
@@ -139,7 +139,7 @@ jobs:
           run: tar cfz build.tar.gz build
         - name: Upload build folder
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v7
           with:
                 name: windows-build-folder
                 path: build.tar.gz
@@ -149,12 +149,12 @@ jobs:
                 ls -lR installed
                 7z a cwipc-windows-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.zip installed
         - name: Upload installed folder
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v7
           with:
                 name: cwipc-windows-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.zip
                 path: cwipc-windows-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.zip
         - name: Upload nsis installer
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v7
           with:
                 name: cwipc-windows-intel-installer-${{ env.GITHUB_REF_NAME_SAFE }}.exe
                 path: build/package/*.exe
@@ -235,7 +235,7 @@ jobs:
                 ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v7
           with:
                 name: macos-arm64-ctest-output
                 path: build/Testing/Temporary/LastTest.log
@@ -245,7 +245,7 @@ jobs:
           run: tar cfz build.tar.gz build
         - name: Upload build folder
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v7
           with:
                 name: macos-arm64-build-folder
                 path: build.tar.gz
@@ -314,7 +314,7 @@ jobs:
                 ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v7
           with:
                 name: macos-intel-ctest-output
                 path: build/Testing/Temporary/LastTest.log
@@ -324,7 +324,7 @@ jobs:
           run: tar cfz build.tar.gz build
         - name: Upload build folder
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v7
           with:
                 name: macos-intel-build-folder
                 path: build.tar.gz
@@ -440,13 +440,13 @@ jobs:
           run: tar cfz build.tar.gz build
         - name: Upload build folder
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v7
           with:
                 name: android-build-folder
                 path: build.tar.gz
         
         - name: Upload installer package
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v7
           with:
             name: cwipc-android-arm64-package-${{ env.GITHUB_REF_NAME_SAFE }}
             path: build/package/*.tar.gz
@@ -518,7 +518,7 @@ jobs:
                 ls -l build/package
         - name: upload CTest output in case of failure
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v7
           with:
                 name: ubuntu2404-ctest-output
                 path: build/Testing/Temporary/LastTest.log
@@ -528,13 +528,13 @@ jobs:
           run: tar cfz build.tar.gz build
         - name: Upload build folder
           if: ${{ failure() }}
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v7
           with:
                 name: ubuntu2404-build-folder
                 path: build.tar.gz
 
         - name: Upload cached git version
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v7
           with:
                 name: cached-git-version
                 path: .cachedgitversion.txt
@@ -547,12 +547,12 @@ jobs:
                 tar cvfz cwipc-ubuntu2404-amd64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz -C installed .
                 ls -la
         - name: Upload installed folder
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v7
           with:
                 name: cwipc-ubuntu2404-amd64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
                 path: cwipc-ubuntu2404-amd64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
         - name: Upload debian package
-          uses: actions/upload-artifact@v4
+          uses: actions/upload-artifact@v7
           with:
                 name: debian-package-2404.deb
                 path: build/package/*.deb
@@ -579,7 +579,7 @@ jobs:
           with:
                 sparse-checkout: .github
         - name: Download the installer
-          uses: actions/download-artifact@v4
+          uses: actions/download-artifact@v8
           with:
                 name: cwipc-windows-intel-installer-${{ env.GITHUB_REF_NAME_SAFE }}.exe
                 path: package
@@ -597,7 +597,7 @@ jobs:
           with:
                 sparse-checkout: .github
         - name: Download the Debian package
-          uses: actions/download-artifact@v4
+          uses: actions/download-artifact@v8
           with:
                 name: debian-package-2404.deb
                 path: package
@@ -643,7 +643,7 @@ jobs:
                     .github
                     scripts
         - name: Download the archive
-          uses: actions/download-artifact@v4
+          uses: actions/download-artifact@v8
           with:
                 name: cwipc-${{ matrix.platform }}-built-${{ env.GITHUB_REF_NAME_SAFE }}.${{ matrix.ext }}
                 path: archive
@@ -700,7 +700,7 @@ jobs:
                 git log -40
                 git describe
         - name: Download cached git version
-          uses: actions/download-artifact@v4
+          uses: actions/download-artifact@v8
           with:
                 name: cached-git-version
                 path: .
@@ -710,12 +710,12 @@ jobs:
                 mkdir ../Assets
                 awk '/^## /{if(flag){exit}; flag=1} flag' CHANGELOG.md > ../Assets/changes.md
         - name: Download Windows intelinstalled folder
-          uses: actions/download-artifact@v4
+          uses: actions/download-artifact@v8
           with:
                 name: cwipc-windows-intel-built-${{ env.GITHUB_REF_NAME_SAFE }}.zip
                 path: ../Assets/
         - name: Download Windows intel installer
-          uses: actions/download-artifact@v4
+          uses: actions/download-artifact@v8
           with:
                 name: cwipc-windows-intel-installer-${{ env.GITHUB_REF_NAME_SAFE }}.exe
                 path: ../Assets/
@@ -724,17 +724,17 @@ jobs:
           run: |
                 mv ../Assets/*.exe ../Assets/cwipc-windows-intel-installer-${{ env.GITHUB_REF_NAME_SAFE }}.exe
         - name: Download Ubuntu 24.04 amd64 installed folder
-          uses: actions/download-artifact@v4
+          uses: actions/download-artifact@v8
           with:
                 name: cwipc-ubuntu2404-amd64-built-${{ env.GITHUB_REF_NAME_SAFE }}.tar.gz
                 path: ../Assets/
         - name: Download debian package for 24.04
-          uses: actions/download-artifact@v4
+          uses: actions/download-artifact@v8
           with:
                 name: debian-package-2404.deb
                 path: ../Assets/
         - name: Download Android installer
-          uses: actions/download-artifact@v4
+          uses: actions/download-artifact@v8
           with:
                 name: cwipc-android-arm64-package-${{ env.GITHUB_REF_NAME_SAFE }}
                 path: ../Assets/
