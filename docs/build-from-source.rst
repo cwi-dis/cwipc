@@ -8,7 +8,7 @@ dependency tree.
 Prerequisites
 -------------
 
-* A recent CMake (3.31+).
+* CMake 3.28 or newer (what the presets need; Ubuntu 24.04's apt has 3.28).
 * A C++17 compiler (clang, gcc, MSVC).
 * Git toolchain.
 * Python 3.12 (``PYTHON_VERSION_MIN`` up to ``PYTHON_VERSION`` in ``scripts/versions.env``).
