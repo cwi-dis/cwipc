@@ -102,6 +102,17 @@ else()
 		PUBLIC_HEADER DESTINATION "include/cwipc_orbbec"
 	)
 	install_orbbec_extensions(${CMAKE_INSTALL_LIBDIR})
+	# The SDK's udev rules, which a USB Orbbec camera needs to be usable by non-root
+	# users (cwi-dis/cwipc#351). Literally lib/udev/rules.d, not CMAKE_INSTALL_LIBDIR
+	# (which can be lib/x86_64-linux-gnu): for the Debian package (prefix /usr) that is
+	# where udev reads them; in other trees install-deps-ubuntu2404.sh copies them to
+	# /etc/udev/rules.d.
+	set(_orbbec_udev_rules "${OrbbecSDK_DIR}/../shared/99-obsensor-libusb.rules")
+	if(EXISTS "${_orbbec_udev_rules}")
+		install(FILES "${_orbbec_udev_rules}" DESTINATION lib/udev/rules.d)
+	else()
+		message(WARNING "OrbbecSDK udev rules not found (${_orbbec_udev_rules}): USB Orbbec cameras will need root")
+	endif()
 endif()
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/cwipc_orbbec

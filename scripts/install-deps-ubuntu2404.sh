@@ -76,3 +76,32 @@ sudo apt-get install -y "${packages[@]}"
 if [ "$level" = build ]; then
     bash "$scriptdir/install-orbbecsdk.sh" $orbbec_viewer
 fi
+
+# The udev rules a USB Orbbec camera needs to be usable by non-root users
+# (cwi-dis/cwipc#351), into /etc/udev/rules.d. From an installed tree
+# (<prefix>/lib/udev/rules.d, not needed for the Debian package, which has them in
+# /usr/lib/udev/rules.d already) or a source tree (the OrbbecSDK in 3rdparty_installed).
+rules=99-obsensor-libusb.rules
+tree=$(cd "$scriptdir/../../.." 2>/dev/null && pwd || true)
+repo=$(dirname "$scriptdir")
+rulesfile=""
+for candidate in "$tree/lib/udev/rules.d/$rules" "$repo/3rdparty_installed/orbbecsdk/shared/$rules"; do
+    if [ -f "$candidate" ]; then
+        rulesfile="$candidate"
+        break
+    fi
+done
+if [ "$rulesfile" = "/usr/lib/udev/rules.d/$rules" ]; then
+    : # the Debian package's own
+elif [ -n "$rulesfile" ]; then
+    if ! cmp -s "$rulesfile" "/etc/udev/rules.d/$rules"; then
+        echo "$(basename "$0"): installing the udev rules for Orbbec cameras: /etc/udev/rules.d/$rules"
+        sudo install -m 644 "$rulesfile" "/etc/udev/rules.d/$rules"
+        if command -v udevadm >/dev/null 2>&1 && [ -d /run/udev ]; then
+            sudo udevadm control --reload-rules || true
+            sudo udevadm trigger --subsystem-match=usb || true
+        fi
+    fi
+else
+    echo "$(basename "$0"): no udev rules for Orbbec cameras found in this tree; USB Orbbec cameras will need root"
+fi
