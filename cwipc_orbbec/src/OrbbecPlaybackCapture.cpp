@@ -25,6 +25,7 @@ bool OrbbecPlaybackCapture::_apply_config(const char* configFilename) {
 }
 
 bool OrbbecPlaybackCapture::_create_cameras() {
+    _disable_orbbec_file_logging();
     for (OrbbecCameraConfig& cd : configuration.all_camera_configs) {
         // Ensure we have a serial
         if (cd.serial == "") {
