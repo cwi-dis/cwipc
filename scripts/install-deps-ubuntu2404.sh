@@ -2,10 +2,12 @@
 #
 # install-deps-ubuntu2404.sh - install cwipc's dependencies on Ubuntu 24.04 with apt.
 #
-# Usage: install-deps-ubuntu2404.sh [--runtime | --build]
+# Usage: install-deps-ubuntu2404.sh [--runtime | --build] [--no-orbbec-viewer]
 #   --runtime   What an installed cwipc tree needs to run (default).
 #   --build     Also what is needed to build cwipc from source, including OrbbecSDK
-#               (into <repo>/3rdparty_installed; only meaningful in a source tree).
+#               and OrbbecViewer (into <repo>/3rdparty_installed, with
+#               install-orbbecsdk.sh; only meaningful in a source tree).
+#   --no-orbbec-viewer  With --build: without OrbbecViewer.
 #
 # Uses sudo. Adds the RealSense apt repository (librealsense.realsenseai.com) if it
 # isn't there yet. No "apt-get upgrade": that made CI slow and unpredictable.
@@ -18,12 +20,17 @@ scriptdir=$(cd "$(dirname "$0")" && pwd)
 source "$scriptdir/versions.env"
 
 level=runtime
-case "${1:-}" in
-"" | --runtime) level=runtime ;;
---build) level=build ;;
---help | -h) sed -n '3,15p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
-*) echo "$(basename "$0"): unknown argument: $1 (try --help)" >&2; exit 1 ;;
-esac
+orbbec_viewer=--viewer
+while [ $# -gt 0 ]; do
+    case "$1" in
+    --runtime) level=runtime ;;
+    --build) level=build ;;
+    --no-orbbec-viewer) orbbec_viewer="" ;;
+    --help | -h) sed -n '3,17p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    *) echo "$(basename "$0"): unknown argument: $1 (try --help)" >&2; exit 1 ;;
+    esac
+    shift
+done
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -67,5 +74,5 @@ sudo apt-get update
 sudo apt-get install -y "${packages[@]}"
 
 if [ "$level" = build ]; then
-    bash "$scriptdir/install-orbbecsdk-ubuntu2404.sh"
+    bash "$scriptdir/install-orbbecsdk.sh" $orbbec_viewer
 fi

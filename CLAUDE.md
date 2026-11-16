@@ -120,8 +120,9 @@ Exceptions — safe to run without asking:
   `build/libexec/cwipc/venv` (source tree) or `<prefix>/libexec/cwipc/venv`, installs the
   Python modules there, writes the per-tree files next to it; nothing system-wide (pip may
   download packages).
-- `scripts/install-orbbecsdk-*` — installs the Orbbec SDK locally under `3rdparty_installed/`,
-  inside the repo checkout, nothing system-wide. Skips if the pinned version is there.
+- `scripts/install-orbbecsdk.sh` and `install-orbbecsdk-windows.ps1` — install the Orbbec SDK
+  (and with `--viewer`/`-Viewer` OrbbecViewer) locally under `3rdparty_installed/`, inside the
+  repo checkout, nothing system-wide. Skip what is there in the pinned version.
 
 The design of these scripts (source tree vs installed tree, prefix, per-tree files,
 runtime and build dependency levels, `versions.env`): cwi-dis/cwipc#354 and #355.

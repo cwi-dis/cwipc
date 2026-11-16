@@ -66,7 +66,7 @@ jobs:
 
         - name: Install dependencies (build level, including OrbbecSDK and the vcpkg bootstrap)
           shell: pwsh
-          run: ./scripts/install-deps-windows.ps1 -Build
+          run: ./scripts/install-deps-windows.ps1 -Build -NoOrbbecViewer
 
         - name: Add NuGet sources
           shell: pwsh
@@ -195,7 +195,7 @@ jobs:
                 git describe
         - name: Install dependencies (build level, including OrbbecSDK)
           shell: bash
-          run: ./scripts/install-deps-macos.sh --build
+          run: ./scripts/install-deps-macos.sh --build --no-orbbec-viewer
           env:
             HOMEBREW_NO_VERIFY_ATTESTATIONS: "1"
         - name: Install CMake
@@ -276,7 +276,7 @@ jobs:
                 git describe
         - name: Install dependencies (build level, including OrbbecSDK)
           shell: bash
-          run: ./scripts/install-deps-macos.sh --build
+          run: ./scripts/install-deps-macos.sh --build --no-orbbec-viewer
           env:
             HOMEBREW_NO_VERIFY_ATTESTATIONS: "1"
         - name: Install CMake
@@ -478,7 +478,7 @@ jobs:
                 git describe --tags --debug
         - name: Install dependencies (build level, including OrbbecSDK)
           shell: bash
-          run: ./scripts/install-deps-ubuntu2404.sh --build
+          run: ./scripts/install-deps-ubuntu2404.sh --build --no-orbbec-viewer
         - name: Install CMake
           uses: lukka/get-cmake@latest
           with:
