@@ -91,9 +91,11 @@ Dependencies of cwipc
 Build tools
 ^^^^^^^^^^^
 
-- CMake: ``cmakeVersion`` of the ``lukka/get-cmake`` steps in ``.github/workflows/build.yml`` (per
-  job), and ``cmakeMinimumRequired`` in ``CMakePresets.json`` (which decides what developers
-  need: Ubuntu 24.04's apt has 3.28).
+- CMake: ``cmakeMinimumRequired`` in ``CMakePresets.json`` decides what developers need; it must
+  not exceed what the Ubuntu we target has in apt (24.04: 3.28; 26.04: 4.2). In CI the Ubuntu job
+  pins exactly that version (``cmakeVersion`` of its ``lukka/get-cmake`` step in
+  ``.github/workflows/build.yml``), so the minimum is tested; the other jobs use the newest CMake,
+  as developers on those platforms get it.
 - NSIS: ``nsis-version`` in ``.github/workflows/build.yml``. Check whether the slurped and modified
   ``cpack`` config files for NSIS (in ``CMakeFiles``) need to be updated too.
 - Android: the NDK (``ndk-version`` in ``.github/workflows/build.yml``) and
