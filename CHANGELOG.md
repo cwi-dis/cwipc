@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Windows and Android: dependencies updated to vcpkg 2026.10.16 (OpenCV 4.14, librealsense 2.58.4, glfw 3.5.1) (#348)
 - macOS: no more `-built-` release archives, they broke with every Homebrew update; use Homebrew (#356)
 - OrbbecSDK 2.10.6; building from source also installs OrbbecViewer; udev rules for USB Orbbec cameras in the Debian package (#351)
+- The `cwipc_view`, `cwipc_register`, ... launchers are deprecated and will go away: use `cwipc view`, `cwipc register`, ... (#376)
 
 ## [8.1.0] - 2026-08-24
 
