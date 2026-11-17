@@ -119,11 +119,14 @@ try {
         $pyMax = [version]$versions["PYTHON_VERSION"]
         $pyRange = if ($pyMin -eq $pyMax) { "$pyMax" } else { "$pyMin to $pyMax" }
         if (-not (Get-Command $pyExe -ErrorAction SilentlyContinue)) { Fail "no Python $pyRange found (use -Deps to install it, or -Python)" }
-        $pyFound = (& $pyExe @pyArgs -c "import sys; print('%d.%d' % sys.version_info[:2])" 2>$null) -join ""
+        # Not just "is there a python command": Windows' Microsoft Store alias python.exe
+        # exists without any Python behind it, and only says how to install one.
+        $pyFound = Get-PythonVersion $pythonCmd
+        if ($pyFound -eq "") { Fail "no Python $pyRange found: $($pythonCmd -join ' ') is not a working Python (perhaps the Microsoft Store alias). Use -Deps to install Python, or -Python" }
         $pyOk = $false
         try { $pyOk = ([version]$pyFound -ge $pyMin) -and ([version]$pyFound -le $pyMax) } catch { }
         if (-not $pyOk) { Fail "Python $pyRange needed, but $($pythonCmd -join ' ') is $pyFound (use -Deps to install it, or -Python)" }
-        Write-Output "${progname}: creating venv $venv with $(& $pyExe @pyArgs --version 2>&1)"
+        Write-Output "${progname}: creating venv $venv with $($pythonCmd -join ' ') (Python $pyFound)"
         & $pyExe @pyArgs -m venv --clear $venv
         if ($LASTEXITCODE -ne 0) { Fail "creating the venv failed" }
         & $venvPython -m pip install --quiet --upgrade pip
