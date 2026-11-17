@@ -42,6 +42,22 @@ function Fail([string]$message) {
     exit 1
 }
 
+# The version a Python command reports, such as "3.12", or "" if it doesn't run or doesn't
+# report one. Looks at the output, not the exit status: a py launcher left behind after
+# Python was uninstalled only says "No installed Python found". With ErrorActionPreference
+# Stop, a program's error output would abort the script in Windows PowerShell 5.1, so
+# Continue here (local to this function).
+function Get-PythonVersion([string[]]$command) {
+    $ErrorActionPreference = "Continue"
+    $out = ""
+    try {
+        $out = (& $command[0] @($command | Select-Object -Skip 1) --version 2>&1 | ForEach-Object { "$_" }) -join " "
+    } catch { }
+    if ($out -match "Python (\d+\.\d+)\.") { return $Matches[1] }
+    return ""
+}
+
+
 try {
     $versions = @{}
     Get-Content (Join-Path $PSScriptRoot "versions.env") | Where-Object { $_ -match '^\s*[A-Z_]+=' } | ForEach-Object {
@@ -92,8 +108,7 @@ try {
             $pythonCmd = @("python")
             if (Get-Command py -ErrorAction SilentlyContinue) {
                 foreach ($pyVersion in @($versions["PYTHON_VERSION"], $versions["PYTHON_VERSION_MIN"])) {
-                    & py "-$pyVersion" --version *> $null
-                    if ($LASTEXITCODE -eq 0) { $pythonCmd = @("py", "-$pyVersion"); break }
+                    if ((Get-PythonVersion @("py", "-$pyVersion")) -eq $pyVersion) { $pythonCmd = @("py", "-$pyVersion"); break }
                 }
             }
         }

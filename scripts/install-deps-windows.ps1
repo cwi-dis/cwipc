@@ -46,22 +46,33 @@ function Test-IsAdmin {
     return (New-Object Security.Principal.WindowsPrincipal $identity).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
+# The version a Python command reports, such as "3.12", or "" if it doesn't run or doesn't
+# report one. Looks at the output, not the exit status: a py launcher left behind after
+# Python was uninstalled only says "No installed Python found". With ErrorActionPreference
+# Stop, a program's error output would abort the script in Windows PowerShell 5.1, so
+# Continue here (local to this function).
+function Get-PythonVersion([string[]]$command) {
+    $ErrorActionPreference = "Continue"
+    $out = ""
+    try {
+        $out = (& $command[0] @($command | Select-Object -Skip 1) --version 2>&1 | ForEach-Object { "$_" }) -join " "
+    } catch { }
+    if ($out -match "Python (\d+\.\d+)\.") { return $Matches[1] }
+    return ""
+}
+
 # Is a Python between $pythonVersionMin and $pythonVersion available? Use the py launcher
 # if there is one ("python" may be the Microsoft Store alias that only tells you how to
 # install Python).
 function Test-Python {
+    $candidates = @()
     if (Test-Command "py") {
-        foreach ($v in @($pythonVersion, $pythonVersionMin)) {
-            & py "-$v" --version *> $null
-            if ($LASTEXITCODE -eq 0) { return $true }
-        }
+        foreach ($v in @($pythonVersion, $pythonVersionMin)) { $candidates += ,@("py", "-$v") }
     }
-    if (Test-Command "python") {
-        $v = (& python --version 2>&1) -join ""
-        if ($v -match "^Python (\d+\.\d+)\.") {
-            $found = [version]$Matches[1]
-            if ($found -ge [version]$pythonVersionMin -and $found -le [version]$pythonVersion) { return $true }
-        }
+    if (Test-Command "python") { $candidates += ,@("python") }
+    foreach ($c in $candidates) {
+        $found = Get-PythonVersion $c
+        if ($found -and [version]$found -ge [version]$pythonVersionMin -and [version]$found -le [version]$pythonVersion) { return $true }
     }
     return $false
 }
