@@ -92,14 +92,15 @@ This installs the modules of the cwipc that the ``cwipc`` command belongs to int
 ``python`` on your ``PATH`` (or the Python given with ``--python PYTHON``), with their
 dependencies (numpy, open3d, ...), and *binds* that Python to that cwipc: a file
 ``cwipc.pth`` in its ``site-packages`` sets ``CWIPC_LIBRARY_DIR`` to the directory with
-that cwipc's native libraries, every time that Python starts. That Python needs to be one
-cwipc supports (``PYTHON_VERSION_MIN`` up to ``PYTHON_VERSION`` in
-``scripts/versions.env``; 3.12 for this release).
+that cwipc's native libraries, every time that Python starts. That Python must be at least
+``PYTHON_VERSION_MIN`` (``scripts/versions.env``; 3.12 for this release). cwipc itself is
+built and tested with ``PYTHON_VERSION`` (also 3.12); newer versions work as long as all
+dependencies have them, which pip checks: open3d supports up to Python 3.14, except on Intel
+Macs, where it stops at 3.12.
 
 - It only installs into a virtual environment (a venv or a conda environment), so a
   Python used for other things isn't bound to cwipc by accident. ``--force`` installs
-  into any Python, and into a Python version cwipc doesn't support; a Python marked as
-  externally managed (Homebrew's, Ubuntu's ``/usr/bin/python3``) still refuses.
+  into any Python, also one older than cwipc needs; a Python marked as externally managed (Homebrew's, Ubuntu's ``/usr/bin/python3``) still refuses.
 - To bind it to another cwipc (a newer installation, or a build of your own), run
   ``cwipc pipinstall`` of that cwipc.
 - ``cwipc pipinstall --uninstall`` removes the cwipc modules and the binding again.

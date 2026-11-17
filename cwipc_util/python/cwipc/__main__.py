@@ -190,7 +190,7 @@ def run_pipinstall() -> int:
     parser = argparse.ArgumentParser(prog="cwipc pipinstall", description="Install the Python modules of this cwipc into another Python (by default the python on PATH, such as your own activated venv), and bind that Python to this cwipc's native libraries (with a cwipc.pth file in its site-packages).")
     parser.add_argument("--python", metavar="PYTHON", help="The Python to install into (default: python, or python3, on PATH)")
     parser.add_argument("--editable", action="store_true", help="Source tree only: install the modules editable from the source tree, instead of the wheels")
-    parser.add_argument("--force", action="store_true", help="Also install into a Python that is not a virtual environment (venv or conda), or of a version this cwipc doesn't support")
+    parser.add_argument("--force", action="store_true", help="Also install into a Python that is not a virtual environment (venv or conda), or that is older than this cwipc needs")
     parser.add_argument("--uninstall", action="store_true", help="Remove the cwipc modules and the binding from that Python")
     args = parser.parse_args(sys.argv[2:])
     me = "cwipc pipinstall"
@@ -243,7 +243,11 @@ def run_pipinstall() -> int:
     srcdir = os.path.dirname(tree)
     is_source_tree = os.path.isfile(os.path.join(srcdir, "CMakeLists.txt")) and os.path.isdir(os.path.join(srcdir, "cwipc_util", "python"))
 
-    # The Python versions cwipc supports (versions.env of the tree, or of the source tree).
+    # The Python versions (versions.env of the tree, or of the source tree): PYTHON_VERSION_MIN
+    # is the oldest cwipc works with; PYTHON_VERSION the one its own venv is built and tested
+    # with. Newer Pythons are fine if all dependencies (open3d, ...) have wheels for them,
+    # which pip decides: open3d supports newer Pythons on most platforms, but on Intel Macs
+    # only up to 3.12 (cwi-dis/cwipc#378).
     for candidate in (os.path.join(tree, "libexec", "cwipc", "scripts", "versions.env"), os.path.join(srcdir, "scripts", "versions.env")):
         if os.path.isfile(candidate):
             versions = {}
@@ -252,13 +256,15 @@ def run_pipinstall() -> int:
                     if "=" in line and not line.lstrip().startswith("#"):
                         k, v = line.strip().split("=", 1)
                         versions[k] = v
-            vmin, vmax = versions.get("PYTHON_VERSION_MIN"), versions.get("PYTHON_VERSION")
+            vmin, vtested = versions.get("PYTHON_VERSION_MIN"), versions.get("PYTHON_VERSION")
             as_tuple = lambda v: tuple(int(x) for x in v.split("."))
-            if vmin and vmax and not (as_tuple(vmin) <= as_tuple(target_version) <= as_tuple(vmax)):
+            if vmin and as_tuple(target_version) < as_tuple(vmin):
                 if not args.force:
-                    print(f"{me}: {target} is Python {target_version}, but this cwipc needs Python {vmin} up to {vmax} (--force to try anyway)", file=sys.stderr)
+                    print(f"{me}: {target} is Python {target_version}, but this cwipc needs Python {vmin} or newer (--force to try anyway)", file=sys.stderr)
                     return 1
-                print(f"{me}: warning: {target} is Python {target_version}, this cwipc supports {vmin} up to {vmax}; trying anyway (--force)", file=sys.stderr)
+                print(f"{me}: warning: {target} is Python {target_version}, this cwipc needs {vmin} or newer; trying anyway (--force)", file=sys.stderr)
+            elif vtested and as_tuple(target_version) > as_tuple(vtested):
+                print(f"{me}: note: this cwipc is built and tested with Python {vtested}; Python {target_version} should work if all its dependencies support it (pip will tell)")
             break
 
     if args.editable:
