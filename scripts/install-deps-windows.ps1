@@ -1,10 +1,12 @@
 #
 # install-deps-windows.ps1 - install or check cwipc's dependencies on Windows.
 #
-# Usage: install-deps-windows.ps1 [-Runtime | -Build] [-NoOrbbecViewer]
+# Usage: install-deps-windows.ps1 [-Runtime | -Build] [-PythonTarget DIR] [-NoOrbbecViewer]
 #   -Runtime   What an installed cwipc tree needs to run (default): Python. The native
-#              DLLs come with the installer or archive. Installs Python if missing
-#              and running as administrator; otherwise reports what to do.
+#              DLLs come with the installer or archive.
+#   -PythonTarget DIR  Where to install cwipc's own Python if there is no suitable one
+#              (setup-cwipc.ps1 passes <prefix>\libexec\cwipc\python). Without it a
+#              missing Python is only reported. See "Python" below.
 #   -Build     Also what is needed to build cwipc from source. Checks and reports
 #              Visual Studio (C++), CMake, git, git-lfs and NSIS (installing those
 #              needs admin rights and takes long, so this script doesn't), and does
@@ -21,6 +23,7 @@
 param(
     [switch]$Runtime,
     [switch]$Build,
+    [string]$PythonTarget = "",
     [switch]$NoOrbbecViewer
 )
 $ErrorActionPreference = "Stop"
@@ -33,7 +36,7 @@ Get-Content (Join-Path $PSScriptRoot "versions.env") | Where-Object { $_ -match 
 }
 $pythonVersion = $versions["PYTHON_VERSION"]
 $pythonVersionMin = $versions["PYTHON_VERSION_MIN"]
-$pythonInstallerVersion = $versions["PYTHON_WINDOWS_INSTALLER_VERSION"]
+$pythonManagerVersion = $versions["PYTHON_MANAGER_VERSION"]
 
 $missing = @()
 
@@ -61,11 +64,12 @@ function Get-PythonVersion([string[]]$command) {
     return ""
 }
 
-# Is a Python between $pythonVersionMin and $pythonVersion available? Use the py launcher
-# if there is one ("python" may be the Microsoft Store alias that only tells you how to
-# install Python).
+# Is a Python between $pythonVersionMin and $pythonVersion available? cwipc's own Python
+# (-PythonTarget) from an earlier run counts too. Use the py launcher if there is one
+# ("python" may be the Microsoft Store alias that only tells you how to install Python).
 function Test-Python {
     $candidates = @()
+    if ($PythonTarget -ne "") { $candidates += ,@((Join-Path $PythonTarget "python.exe")) }
     if (Test-Command "py") {
         foreach ($v in @($pythonVersion, $pythonVersionMin)) { $candidates += ,@("py", "-$v") }
     }
@@ -77,21 +81,53 @@ function Test-Python {
     return $false
 }
 
+# Reload PATH from the registry: something installed just now is on the machine's PATH,
+# not yet on ours.
+function Update-Path {
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User") + ";" + $env:Path
+}
+
 #
-# Runtime level: Python.
+# Runtime level: Python (cwi-dis/cwipc#380, decision of 2026-11-18).
+#   1. A suitable Python exists: use it (setup-cwipc.ps1 builds the venv from it).
+#   2. Otherwise, with the Python install manager (its unambiguous command is pymanager;
+#      the old py launcher has only py): install cwipc's own Python into -PythonTarget.
+#      Not a normal "py install": that is per user, for the account this runs as (the
+#      administrator, for the installer), so other users couldn't use it (#312).
+#   3. No install manager either: download its MSI from python.org and install it (all
+#      users, needs administrator), then 2.
+# The classic python.org installer is not used: deprecated since 3.14, none after 3.12.10
+# for 3.12.
 #
+$pythonInstallHint = "Python $pythonVersion (install the Python install manager from https://www.python.org/downloads/windows/ and run: py install $pythonVersion)"
 if (Test-Python) {
     Write-Output "${progname}: Python ${pythonVersion}: found"
-} elseif (Test-IsAdmin) {
-    $installer = Join-Path $env:TEMP "python-$pythonInstallerVersion-amd64.exe"
-    Write-Output "${progname}: Python ${pythonVersion}: downloading $pythonInstallerVersion"
-    (New-Object System.Net.WebClient).DownloadFile("https://www.python.org/ftp/python/$pythonInstallerVersion/python-$pythonInstallerVersion-amd64.exe", $installer)
-    Write-Output "${progname}: Python ${pythonVersion}: installing"
-    Start-Process -FilePath $installer -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1' -Wait
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
-    if (-not (Test-Python)) { $missing += "Python $pythonVersion (installation failed)" }
+} elseif ($PythonTarget -eq "") {
+    $missing += $pythonInstallHint
 } else {
-    $missing += "Python $pythonVersion (run this script as administrator to install it, or: winget install Python.Python.$pythonVersion)"
+    if (-not (Test-Command "pymanager")) {
+        if (Test-IsAdmin) {
+            $msi = Join-Path $env:TEMP "python-manager-$pythonManagerVersion.msi"
+            Write-Output "${progname}: Python install manager: downloading $pythonManagerVersion"
+            (New-Object System.Net.WebClient).DownloadFile("https://www.python.org/ftp/python/pymanager/python-manager-$pythonManagerVersion.msi", $msi)
+            Write-Output "${progname}: Python install manager: installing"
+            $p = Start-Process -FilePath "msiexec.exe" -ArgumentList "/i `"$msi`" /qn /norestart" -Wait -PassThru
+            if ($p.ExitCode -ne 0) { Write-Output "${progname}: Python install manager: msiexec exit status $($p.ExitCode)" }
+            Update-Path
+        } else {
+            Write-Output "${progname}: Python install manager: not found, and installing it needs administrator rights"
+        }
+    }
+    if (Test-Command "pymanager") {
+        # No questions: under the Windows installer nobody can answer them. Continue: in
+        # Windows PowerShell 5.1 a program's error output must not abort the script.
+        $env:PYTHON_MANAGER_CONFIRM = "false"
+        if (Test-Path $PythonTarget) { Remove-Item -Recurse -Force $PythonTarget }
+        Write-Output "${progname}: Python ${pythonVersion}: installing into $PythonTarget"
+        & { $ErrorActionPreference = "Continue"; & pymanager install -y "--target=$PythonTarget" $pythonVersion }
+        if ($LASTEXITCODE -ne 0) { Write-Output "${progname}: Python ${pythonVersion}: pymanager exit status $LASTEXITCODE" }
+    }
+    if (-not (Test-Python)) { $missing += $pythonInstallHint }
 }
 
 #

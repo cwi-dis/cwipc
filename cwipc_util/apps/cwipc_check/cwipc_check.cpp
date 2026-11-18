@@ -147,6 +147,46 @@ static fs::path venv_bin() {
 #endif
 }
 
+// The Python the venv is based on: "home" in its pyvenv.cfg. A venv refers to that Python,
+// it doesn't contain one. If it is gone, or this user can't use it (a Python installed for
+// one user only, under that user's profile), the venv doesn't work: say why, instead of
+// letting the checks fail with only an exit status (cwi-dis/cwipc#312, #380). Returns ""
+// if there is nothing to report; sets not_for_you if the Python is there but this user
+// can't use it.
+static std::string venv_base_problem(bool& not_for_you) {
+    not_for_you = false;
+    fs::path cfg = venv_bin().parent_path() / "pyvenv.cfg";
+    std::ifstream f(cfg);
+    if (!f) return "";
+    std::string line, home;
+    while (std::getline(f, line)) {
+        size_t eq = line.find('=');
+        if (eq == std::string::npos) continue;
+        std::string key = line.substr(0, eq);
+        key.erase(key.find_last_not_of(" \t") + 1);
+        if (key != "home") continue;
+        home = line.substr(eq + 1);
+        home.erase(0, home.find_first_not_of(" \t"));
+        home.erase(home.find_last_not_of(" \t\r") + 1);
+        break;
+    }
+    if (home.empty()) return "";
+    std::error_code ec;
+#ifdef WIN32
+    fs::path base = fs::path(home) / "python.exe";
+#else
+    // The venv's python is a symlink to the base Python, in home.
+    fs::path base = fs::canonical(venv_bin() / "python", ec);
+    if (ec) return "the Python the venv is based on (in " + home + ") is gone";
+#endif
+    // Really open it: on Windows, a file in another user's profile may well "exist".
+    std::ifstream probe(base, std::ios::binary);
+    if (probe) return "";
+    if (!fs::exists(base, ec) && !ec) return "the Python the venv is based on (" + base.string() + ") is gone";
+    not_for_you = true;
+    return "the Python the venv is based on (" + base.string() + ") can't be used by you: it was probably installed for one user only";
+}
+
 #ifdef WIN32
 static const char PATH_SEP = ';';
 #else
@@ -309,6 +349,12 @@ static int check() {
         std::cerr << "python: no venv with the cwipc modules (" << python.string() << " not found): not ok" << std::endl;
         broken = true;
     }
+    bool base_not_for_you = false;
+    std::string base_problem = venv_base_problem(base_not_for_you);
+    if (!base_problem.empty()) {
+        std::cerr << "python: " << base_problem << ": not ok" << std::endl;
+        broken = true;
+    }
     CheckResults results = run_checks(checks);
 
     // What this environment leads to.
@@ -361,6 +407,11 @@ static int check() {
     std::cerr << std::endl;
     for (const Check& c : unavailable) {
         std::cerr << c.name << " is not available; it needs " << c.optional_needs << " (optional)." << std::endl;
+    }
+    if (base_not_for_you) {
+        std::cerr << "The cwipc Python modules don't work for you: " << base_problem << "." << std::endl;
+        std::cerr << "cwipc needs a Python that all its users can use; see https://github.com/cwi-dis/cwipc/issues/312" << std::endl;
+        return 1;
     }
     if (broken) {
         std::cerr << "The installation itself is broken; see the messages above." << std::endl;

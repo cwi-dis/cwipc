@@ -25,7 +25,7 @@ Dependencies of cwipc
     - Especially watch out for ``opencv`` and ``open3d`` which can some times lag 2 Python versions
 
 	- Add the Python package dependency specifiers again for the currently selected versions.
-	- Update ``PYTHON_VERSION`` (preferred: installed, built and tested with), ``PYTHON_VERSION_MIN`` (that version or the one before it, accepted if already there) and ``PYTHON_WINDOWS_INSTALLER_VERSION`` in ``scripts/versions.env``. ``CMakeLists.txt`` reads them from there.
+	- Update ``PYTHON_VERSION`` (preferred: installed, built and tested with), ``PYTHON_VERSION_MIN`` (that version or the one before it, accepted if already there) and ``PYTHON_MANAGER_VERSION`` (the Windows Python install manager) in ``scripts/versions.env``. ``CMakeLists.txt`` reads them from there.
 	- Ubuntu uses its system Python (3.12 on 24.04): check that it is still within the range.
 	- Check ``.github/workflows/build.yml`` for the Python versions used.
 - ``nlohmann_json``: the minimum version in ``find_package(nlohmann_json ...)`` in ``CMakeLists.txt``.

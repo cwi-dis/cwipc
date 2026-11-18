@@ -16,7 +16,9 @@
 #                   cwipc_view.exe etc., #376) into <prefix>\bin, listed in
 #                   <prefix>\libexec\cwipc\launchers.
 #   -Python PY      Python to create the venv with, between PYTHON_VERSION_MIN and
-#                   PYTHON_VERSION (versions.env). Default: "py -<PYTHON_VERSION>" or
+#                   PYTHON_VERSION (versions.env). Default: cwipc's own Python
+#                   (<prefix>\libexec\cwipc\python, installed by -Deps if there was no
+#                   suitable one, cwi-dis/cwipc#380), else "py -<PYTHON_VERSION>" or
 #                   "py -<PYTHON_VERSION_MIN>" if the py launcher has it, else "python".
 #   -PauseOnError   Wait for Enter before closing if something failed (used when this
 #                   runs in its own elevated window).
@@ -83,6 +85,7 @@ try {
     $venvScripts = Join-Path $venv "Scripts"
     $venvPython = Join-Path $venvScripts "python.exe"
     $wheelDir = Join-Path $Prefix "share\cwipc\python"
+    $ownPython = Join-Path $libexec "python"
     New-Item -ItemType Directory -Force -Path $libexec | Out-Null
 
     #
@@ -90,7 +93,7 @@ try {
     #
     if ($Deps) {
         Write-Output "${progname}: installing dependencies (runtime level)"
-        & (Join-Path $PSScriptRoot "install-deps-windows.ps1") -Runtime
+        & (Join-Path $PSScriptRoot "install-deps-windows.ps1") -Runtime -PythonTarget $ownPython
         if ($LASTEXITCODE -ne 0) { Fail "install-deps-windows.ps1 failed" }
         # A Python installed just now is on the machine's PATH, not yet on ours.
         $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User") + ";" + $env:Path
@@ -104,9 +107,13 @@ try {
         if ($Python -ne "") {
             $pythonCmd = @($Python)
         } else {
-            # The preferred version first, then the oldest accepted (versions.env).
+            # cwipc's own Python if there is one, then the preferred version, then the
+            # oldest accepted (versions.env).
             $pythonCmd = @("python")
-            if (Get-Command py -ErrorAction SilentlyContinue) {
+            $ownPythonExe = Join-Path $ownPython "python.exe"
+            if (Test-Path $ownPythonExe) {
+                $pythonCmd = @($ownPythonExe)
+            } elseif (Get-Command py -ErrorAction SilentlyContinue) {
                 foreach ($pyVersion in @($versions["PYTHON_VERSION"], $versions["PYTHON_VERSION_MIN"])) {
                     if ((Get-PythonVersion @("py", "-$pyVersion")) -eq $pyVersion) { $pythonCmd = @("py", "-$pyVersion"); break }
                 }

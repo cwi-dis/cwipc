@@ -39,6 +39,13 @@ Download the ``.exe`` installer from the `releases page
 installer refuses to run, install the **Microsoft VC++ Redistributable
 (x64)** first.
 
+The installer uses a Python 3.12 that is already on the machine. If there is none,
+it installs one of its own inside the cwipc installation, with the Python install
+manager (which it first downloads from python.org if needed). A Python that was
+installed for one user only works for that user alone: if cwipc was set up with
+one, ``cwipc_check`` tells other users so (`#312
+<https://github.com/cwi-dis/cwipc/issues/312>`_).
+
 After installation, use the Start menu entries to run **Check cwipc
 installation** and optionally **Attempt to fix cwipc installation**. 
 

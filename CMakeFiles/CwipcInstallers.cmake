@@ -43,9 +43,10 @@ elseif(WIN32)
     set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "")
     # Remove what setup-cwipc.ps1 created (cwi-dis/cwipc#355): the launchers it copied into bin
     # (cwipc*.exe, so including cwipc.exe, which cwipc_*.exe missed and left the install
-    # directory behind), the venv and the other per-tree files.
+    # directory behind), the venv, cwipc's own Python (#380) and the other per-tree files.
     string(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "Delete $INSTDIR\\\\bin\\\\cwipc*.exe\\n")
     string(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "RMDir /r $INSTDIR\\\\libexec\\\\cwipc\\\\venv\\n")
+    string(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "RMDir /r $INSTDIR\\\\libexec\\\\cwipc\\\\python\\n")
     foreach(_f activate activate.ps1 environment launchers)
         string(APPEND CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "Delete $INSTDIR\\\\libexec\\\\cwipc\\\\${_f}\\n")
     endforeach()
