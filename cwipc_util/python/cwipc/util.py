@@ -1101,8 +1101,6 @@ def cwipc_read(filename : str, timestamp : int) -> cwipc_pointcloud_wrapper:
     rv = cwipc_util_dll_load().cwipc_read(filename.encode('utf8'), timestamp, ctypes.byref(errorString), CWIPC_API_VERSION)
     if errorString and errorString.value and not rv:
         raise CwipcError(errorString.value.decode('utf8'))
-    if errorString and errorString.value:
-        warnings.warn(errorString.value.decode('utf8'))
     if rv:
         return cwipc_pointcloud_wrapper(rv)
     raise CwipcError("cwipc_read: no pointcloud read, but no specific error returned from C library")
@@ -1223,8 +1221,6 @@ def cwipc_capturer(conffile : Optional[str]=None) -> cwipc_activesource_wrapper:
     rv = cwipc_util_dll_load().cwipc_capturer(cconffile, ctypes.byref(errorString), CWIPC_API_VERSION)
     if errorString and errorString.value and not rv:
         raise CwipcError(errorString.value.decode('utf8'))
-    if errorString and errorString.value:
-        warnings.warn(errorString.value.decode('utf8'))
     if rv:
         return cwipc_activesource_wrapper(rv)
     raise CwipcError("cwipc_capturer: cannot create capturer, but no specific error returned from C library")
