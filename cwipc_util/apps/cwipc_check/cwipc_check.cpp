@@ -17,10 +17,15 @@
 #include <fstream>
 #include <cstdlib>
 #include <cstring>
+#include <cstdio>
 
 #ifdef WIN32
 #include <windows.h>
 #include <shlobj.h>
+#include <io.h>
+#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
+#define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
+#endif
 #elif defined(__APPLE__)
 #include <mach-o/dyld.h>
 #include <unistd.h>
@@ -306,24 +311,63 @@ static std::vector<Check> all_checks() {
     return rv;
 }
 
+// Reporting (cwi-dis/cwipc#381). The checks are verbose, which helps developers, but end
+// users lose the errors in it: every "not ok" is also collected for the summary at the end,
+// with the same text. On a terminal, "ok" is green and "not ok" red.
+static bool use_colour = false;
+static std::vector<std::string> problems;
+
+static void init_colour() {
+    if (std::getenv("NO_COLOR") != nullptr) return;
+#ifdef WIN32
+    if (!_isatty(_fileno(stderr))) return;
+    // Windows 10 and later understand ANSI colours once the console is asked to.
+    HANDLE h = GetStdHandle(STD_ERROR_HANDLE);
+    DWORD mode = 0;
+    if (h == INVALID_HANDLE_VALUE || !GetConsoleMode(h, &mode)) return;
+    if (!SetConsoleMode(h, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING)) return;
+    use_colour = true;
+#else
+    use_colour = isatty(fileno(stderr));
+#endif
+}
+
+static std::string green(const std::string& s) { return use_colour ? "\033[32m" + s + "\033[0m" : s; }
+static std::string red(const std::string& s) { return use_colour ? "\033[1;31m" + s + "\033[0m" : s; }
+
+static void say_ok(const std::string& what) {
+    std::cerr << what << ": " << green("ok") << std::endl;
+}
+
+// Report a problem; with record, also in the summary.
+static void say_not_ok(const std::string& what, bool record = true) {
+    std::cerr << what << ": " << red("not ok") << std::endl;
+    if (record) problems.push_back(what);
+}
+
 struct CheckResults {
     std::vector<Check> failed;
+    std::vector<std::string> failed_what;   // the same, as reported
     std::vector<Check> unavailable;   // optional, and a library it needs is missing
 };
 
+// Failed checks are not recorded for the summary here: check() runs them again with the
+// tree's environment, and only then knows what the problem is.
 static CheckResults run_checks(const std::vector<Check>& checks) {
     CheckResults rv;
     for (const Check& c : checks) {
         std::cerr << c.name << ": checking" << std::endl;
         int status = run(c.cmd);
         if (status == 0) {
-            std::cerr << c.name << ": ok" << std::endl;
+            say_ok(c.name);
         } else if (!c.optional_needs.empty() && library_missing(status)) {
             std::cerr << c.name << ": not available (a library it needs is missing; it needs " << c.optional_needs << ")" << std::endl;
             rv.unavailable.push_back(c);
         } else {
-            std::cerr << c.name << ": not ok (exit status " << status << ")" << std::endl;
+            std::string what = c.name + " (exit status " + std::to_string(status) + ")";
+            say_not_ok(what, false);
             rv.failed.push_back(c);
+            rv.failed_what.push_back(what);
         }
     }
     return rv;
@@ -341,18 +385,18 @@ static int check() {
 
     std::vector<Check> checks = all_checks();
     if (install_check_programs().empty()) {
-        std::cerr << progName << ": no *_install_check programs found in " << (prefix / "libexec" / "cwipc").string() << " or " << exeDir.string() << std::endl;
+        say_not_ok("no *_install_check programs found in " + (prefix / "libexec" / "cwipc").string() + " or " + exeDir.string());
         broken = true;
     }
     fs::path python = venv_bin() / (std::string("python") + EXE_SUFFIX);
     if (!fs::exists(python, ec)) {
-        std::cerr << "python: no venv with the cwipc modules (" << python.string() << " not found): not ok" << std::endl;
+        say_not_ok("python: no venv with the cwipc modules (" + python.string() + " not found)");
         broken = true;
     }
     bool base_not_for_you = false;
     std::string base_problem = venv_base_problem(base_not_for_you);
     if (!base_problem.empty()) {
-        std::cerr << "python: " << base_problem << ": not ok" << std::endl;
+        say_not_ok("python: " + base_problem);
         broken = true;
     }
     CheckResults results = run_checks(checks);
@@ -365,27 +409,27 @@ static int check() {
     bool env_problem = false;
     if (found_cmd.empty()) {
         if (system_install) {
-            std::cerr << "environment: the cwipc command is not on PATH: not ok" << std::endl;
+            say_not_ok("environment: the cwipc command is not on PATH");
             env_problem = true;
         } else {
             std::cerr << "environment: the cwipc command is not on PATH (normal for this kind of installation: use " << (prefix / "libexec" / "cwipc" / "activate").string() << ")" << std::endl;
         }
     } else if (same_file_as_one_of(found_cmd, { exeDir / cwipc_cmd, venv_bin() / cwipc_cmd })) {
-        std::cerr << "environment: the cwipc command is " << found_cmd.string() << ", from this installation: ok" << std::endl;
+        say_ok("environment: the cwipc command is " + found_cmd.string() + ", from this installation");
     } else {
-        std::cerr << "environment: the cwipc command is " << found_cmd.string() << ", from another installation: not ok" << std::endl;
+        say_not_ok("environment: the cwipc command is " + found_cmd.string() + ", from another installation");
         env_problem = true;
     }
 #ifdef WIN32
     // Windows finds the DLLs through PATH, for the programs and for Python.
     fs::path found_dll = find_on_path("cwipc_util.dll");
     if (found_dll.empty()) {
-        std::cerr << "environment: cwipc_util.dll is not on PATH: not ok" << std::endl;
+        say_not_ok("environment: cwipc_util.dll is not on PATH");
         env_problem = true;
     } else if (same_file_as_one_of(found_dll, { exeDir / "cwipc_util.dll" })) {
-        std::cerr << "environment: cwipc_util.dll is " << found_dll.string() << ", from this installation: ok" << std::endl;
+        say_ok("environment: cwipc_util.dll is " + found_dll.string() + ", from this installation");
     } else {
-        std::cerr << "environment: cwipc_util.dll is " << found_dll.string() << ", from another installation: not ok" << std::endl;
+        say_not_ok("environment: cwipc_util.dll is " + found_dll.string() + ", from another installation");
         env_problem = true;
     }
 #endif
@@ -400,21 +444,37 @@ static int check() {
         set_tree_environment();
         CheckResults results2 = run_checks(again);
         if (!results2.failed.empty()) broken = true;
+        for (const std::string& what : results2.failed_what) problems.push_back(what);
         // Something that works with the tree's environment but didn't in the caller's.
-        if (results2.failed.size() + results2.unavailable.size() < again.size()) env_problem = true;
+        for (const Check& c : again) {
+            auto same = [&c](const Check& d) { return d.name == c.name; };
+            if (std::none_of(results2.failed.begin(), results2.failed.end(), same) &&
+                std::none_of(results2.unavailable.begin(), results2.unavailable.end(), same)) {
+                problems.push_back(c.name + " works with the environment of this installation, but not with yours");
+                env_problem = true;
+            }
+        }
         unavailable = results2.unavailable;
     }
+
+    // The summary.
     std::cerr << std::endl;
+    if (problems.empty()) {
+        std::cerr << "Summary: " << green("everything ok") << "." << std::endl;
+    } else {
+        std::cerr << "Summary:" << std::endl;
+        for (const std::string& p : problems) std::cerr << "  " << red("not ok") << ": " << p << std::endl;
+    }
     for (const Check& c : unavailable) {
-        std::cerr << c.name << " is not available; it needs " << c.optional_needs << " (optional)." << std::endl;
+        std::cerr << "  not available (optional): " << c.name << ", it needs " << c.optional_needs << std::endl;
     }
     if (base_not_for_you) {
-        std::cerr << "The cwipc Python modules don't work for you: " << base_problem << "." << std::endl;
-        std::cerr << "cwipc needs a Python that all its users can use; see https://github.com/cwi-dis/cwipc/issues/312" << std::endl;
+        std::cerr << "The cwipc Python modules don't work for you. cwipc needs a Python that all its users can use;" << std::endl;
+        std::cerr << "see https://github.com/cwi-dis/cwipc/issues/312" << std::endl;
         return 1;
     }
     if (broken) {
-        std::cerr << "The installation itself is broken; see the messages above." << std::endl;
+        std::cerr << "The installation itself is broken." << std::endl;
 #ifdef WIN32
         std::cerr << "Running \"cwipc_check install\", or \"Attempt to fix cwipc installation\" from the Start menu, may fix it." << std::endl;
 #else
@@ -423,7 +483,7 @@ static int check() {
         return 1;
     }
     if (env_problem) {
-        std::cerr << "The installation itself works, but not from this environment (see \"environment:\" above)." << std::endl;
+        std::cerr << "The installation itself works, but not from this environment." << std::endl;
 #ifdef WIN32
         std::cerr << "If you have just installed cwipc: open a new terminal window. Otherwise, check PATH," << std::endl;
         std::cerr << "or use: & \"" << (prefix / "libexec" / "cwipc" / "activate.ps1").string() << "\"" << std::endl;
@@ -432,6 +492,7 @@ static int check() {
 #endif
         return 1;
     }
+    std::cerr << "Your cwipc installation appears to be fully functional." << std::endl;
     return 0;
 }
 
@@ -502,13 +563,10 @@ int main(int argc, char** argv) {
     }
     std::cerr << progName << ": cwipc in " << prefix.string() << std::endl;
 
+    init_colour();
     std::string command = argc >= 2 ? argv[1] : "check";
     if (command == "check") {
-        int sts = check();
-        if (sts == 0) {
-            std::cerr << "Your cwipc installation appears to be fully functional." << std::endl;
-        }
-        return sts;
+        return check();
     }
     if (command == "install") {
         int sts = install();
