@@ -237,11 +237,10 @@ cwipc_activesource* cwipc_synthetic(int fps, int npoints, char **errorMessage, u
 
         return NULL;
     }
-    cwipc_log_set_errorbuf(errorMessage);
+    cwipc_errorbuf_scope errorbuf_scope(errorMessage);
     cwipc_activesource *rv = new cwipc_source_synthetic_impl(fps, npoints);
     if (rv == nullptr && errorMessage && *errorMessage == NULL) {
         cwipc_log(CWIPC_LOG_LEVEL_ERROR, "cwipc_synthetic", "unspecified error");
     }
-    cwipc_log_set_errorbuf(nullptr);
     return rv;
 }

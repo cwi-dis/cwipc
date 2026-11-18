@@ -277,7 +277,7 @@ cwipc_activesource* cwipc_proxy(const char *host, int port, char **errorMessage,
 
         return NULL;
     }
-    cwipc_log_set_errorbuf(errorMessage);
+    cwipc_errorbuf_scope errorbuf_scope(errorMessage);
     struct addrinfo hints;
     struct addrinfo *result = NULL;
 
@@ -299,7 +299,6 @@ cwipc_activesource* cwipc_proxy(const char *host, int port, char **errorMessage,
 
     if (status != 0) {
         cwipc_log(CWIPC_LOG_LEVEL_ERROR, "cwipc_proxy", std::string("getaddrinfo: ") + gai_strerror(status));
-        cwipc_log_set_errorbuf(nullptr);
         return NULL;
     }
 
@@ -307,7 +306,6 @@ cwipc_activesource* cwipc_proxy(const char *host, int port, char **errorMessage,
 
     if (sock < 0) {
         cwipc_log(CWIPC_LOG_LEVEL_ERROR, "cwipc_proxy", std::string("socket: ") + strerror(errno));
-        cwipc_log_set_errorbuf(nullptr);
 
         return NULL;
     }
@@ -316,7 +314,6 @@ cwipc_activesource* cwipc_proxy(const char *host, int port, char **errorMessage,
 
     if (status < 0) {
         cwipc_log(CWIPC_LOG_LEVEL_ERROR, "cwipc_proxy", std::string("bind: ") + strerror(errno));
-        cwipc_log_set_errorbuf(nullptr);
 
         closesocket(sock);
         return NULL;
@@ -326,7 +323,6 @@ cwipc_activesource* cwipc_proxy(const char *host, int port, char **errorMessage,
 
     if (status < 0) {
         cwipc_log(CWIPC_LOG_LEVEL_ERROR, "cwipc_proxy", std::string("listen: ") + strerror(errno));
-        cwipc_log_set_errorbuf(nullptr);
 
         closesocket(sock);
         return NULL;
@@ -336,6 +332,5 @@ cwipc_activesource* cwipc_proxy(const char *host, int port, char **errorMessage,
     if (rv == nullptr && errorMessage && *errorMessage == NULL) {
         cwipc_log(CWIPC_LOG_LEVEL_ERROR, "cwipc_proxy", "proxy allocation failed without error message");
     }
-    cwipc_log_set_errorbuf(nullptr);
     return rv;
 }

@@ -38,7 +38,7 @@ cwipc_activesource *cwipc_capturer(const char *configFilename, char **errorMessa
 
         return NULL;
     }
-    cwipc_log_set_errorbuf(errorMessage);
+    cwipc_errorbuf_scope errorbuf_scope(errorMessage);
     
     if (configFilename == nullptr || *configFilename == '\0') {
         configFilename = "cameraconfig.json";
@@ -56,7 +56,6 @@ cwipc_activesource *cwipc_capturer(const char *configFilename, char **errorMessa
                         candidate = &c;
                     } else {
                         cwipc_log(CWIPC_LOG_LEVEL_ERROR, "cwipc_capturer", "auto: multiple supported cameras found");
-                        cwipc_log_set_errorbuf(nullptr);
                         return nullptr;
                     }
                 }
@@ -65,7 +64,6 @@ cwipc_activesource *cwipc_capturer(const char *configFilename, char **errorMessa
 
         if (candidate == nullptr) {
             cwipc_log(CWIPC_LOG_LEVEL_ERROR, "cwipc_capturer", "auto: no supported cameras found");
-            cwipc_log_set_errorbuf(nullptr);
 
             return nullptr;
         }

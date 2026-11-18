@@ -146,17 +146,15 @@ cwipc_activesource* cwipc_realsense2(const char *configFilename, char **errorMes
         return NULL;
     }
 
-    cwipc_log_set_errorbuf(errorMessage);
+    cwipc_errorbuf_scope errorbuf_scope(errorMessage);
     cwipc_source_realsense2_impl *rv = new cwipc_source_realsense2_impl(configFilename);
 
     // If the grabber found cameras everything is fine
     if (rv && rv->can_start()) {
-        cwipc_log_set_errorbuf(nullptr);
         return rv;
     }
 
     delete rv;
-    cwipc_log_set_errorbuf(nullptr);
     if (errorMessage && *errorMessage == NULL) {
         *errorMessage = (char *)"cwipc_realsense2: unspecified error";
     }
@@ -172,17 +170,15 @@ cwipc_activesource* cwipc_realsense2_playback(const char *configFilename, char *
     if (!_rs2_versioncheck(errorMessage)) {
         return NULL;
     }
-    cwipc_log_set_errorbuf(errorMessage);
+    cwipc_errorbuf_scope errorbuf_scope(errorMessage);
     cwipc_source_realsense2_playback_impl *rv = new cwipc_source_realsense2_playback_impl(configFilename);
 
     // If the grabber found cameras everything is fine
     if (rv && rv->can_start()) {
-        cwipc_log_set_errorbuf(nullptr);
         return rv;
     }
 
     delete rv;
-    cwipc_log_set_errorbuf(nullptr);
     if (errorMessage && *errorMessage == NULL) {
         *errorMessage = (char *)"cwipc_realsense2_playback: unspecified error";
     }

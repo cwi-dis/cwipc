@@ -115,14 +115,12 @@ cwipc_activesource* cwipc_orbbec(const char *configFilename, char **errorMessage
     if (!_api_versioncheck(errorMessage, apiVersion)) {
         return NULL;
     }
-    cwipc_log_set_errorbuf(errorMessage);
+    cwipc_errorbuf_scope errorbuf_scope(errorMessage);
     cwipc_source_orbbec_impl *rv = new cwipc_source_orbbec_impl(configFilename);
     if (rv && rv->can_start()) {
-        cwipc_log_set_errorbuf(nullptr);
         return rv;
     }
     delete rv;
-    cwipc_log_set_errorbuf(nullptr);
     if (errorMessage && *errorMessage == NULL) {
         *errorMessage = (char *)"cwipc_orbbec: unspecified error";
     }
@@ -135,14 +133,12 @@ cwipc_activesource* cwipc_orbbec_playback(const char* configFilename, char** err
     if (!_api_versioncheck(errorMessage, apiVersion)) {
         return NULL;
     }
-    cwipc_log_set_errorbuf(errorMessage);
+    cwipc_errorbuf_scope errorbuf_scope(errorMessage);
     cwipc_source_orbbec_playback_impl* rv = new cwipc_source_orbbec_playback_impl(configFilename);
     if (rv && rv->can_start()) {
-        cwipc_log_set_errorbuf(nullptr);
         return rv;
     }
     delete rv;
-    cwipc_log_set_errorbuf(nullptr);
     if (errorMessage && *errorMessage == nullptr) {
         static char *tmp = (char *)"cwipc_orbbec_playback: unspecified error";
         *errorMessage = tmp;

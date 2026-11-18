@@ -36,7 +36,7 @@ bool K4ACapture::_apply_auto_config() {
         if (k4a_device_get_serialnum(handle, serial_buf, &serial_buf_size) != K4A_BUFFER_RESULT_SUCCEEDED) {
             _log_error("k4a_device_get_serialnum failed");
             any_failure = true;
-
+            k4a_device_close(handle);
             continue;
         }
 

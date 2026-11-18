@@ -15,7 +15,7 @@
 
 #include <cwipc_util/internal/logging.hpp>
 
-static char **currentErrorBuf = nullptr; //<! Pointer to pointer to error buffer string, used during calls that have an error return string.
+static thread_local char **currentErrorBuf = nullptr; //<! Pointer to pointer to error buffer string, used during calls that have an error return string. Per thread: an error buffer belongs to the call that activated it (#384).
 static cwipc_log_level currentLogLevel = CWIPC_LOG_LEVEL_WARNING;
 static bool initialized = false;    //<! Whether logging has been initialized.
 static std::ostream* logStream(nullptr); //<! if logger has been set from the CWIPC_LOGGING env var, this is the stream to log to.
@@ -135,6 +135,13 @@ void _cwipc_log_emit(int level, const char* module, const char* message) {
 void cwipc_log_set_errorbuf(char **errorBuf) {
     initialize();
     currentErrorBuf = errorBuf;
+}
+
+char **cwipc_log_exchange_errorbuf(char **errorBuf) {
+    initialize();
+    char **previous = currentErrorBuf;
+    currentErrorBuf = errorBuf;
+    return previous;
 }
 
 cwipc_log_level cwipc_log_get_level() {
