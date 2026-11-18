@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cwipc parallel` and the scripts stop on whatever happens first: no more hanging tests or forwarders; clients retry connecting (#333, #206)
 - Windows: the installer installs Python with the Python install manager, as cwipc's own Python for all users; `cwipc_check` says so when the Python it uses is for one user only (#380, #312)
 - `cwipc_check` ends with a summary of what is not ok, and shows ok/not ok in colour (#381)
+- `setup-cwipc.sh --deps` and `get-cwipc.sh --deps` work in a Docker image build on Ubuntu 24.04: no `sudo` needed as root, no udev rules without `/etc/udev` (#383)
 - `cwipc pipinstall` installs the cwipc Python modules into your own Python and binds it to that cwipc's native libraries; replaces `cwipc_pymodules_install.*`. Importing cwipc warns if modules and libraries don't match (#377)
 
 ## [8.1.0] - 2026-08-24

@@ -9,8 +9,10 @@
 #               install-orbbecsdk.sh; only meaningful in a source tree).
 #   --no-orbbec-viewer  With --build: without OrbbecViewer.
 #
-# Uses sudo. Adds the RealSense apt repository (librealsense.realsenseai.com) if it
-# isn't there yet. No "apt-get upgrade": that made CI slow and unpredictable.
+# Uses sudo, unless already running as root (as in a Docker image build, where there
+# often is no sudo; cwi-dis/cwipc#383). Adds the RealSense apt repository
+# (librealsense.realsenseai.com) if it isn't there yet. No "apt-get upgrade": that made
+# CI slow and unpredictable.
 # Python packages are not installed here: setup-cwipc.sh installs them into the venv.
 # What goes in which level, and why: cwi-dis/cwipc#355 (decision of 2026-11-13).
 # Versions: versions.env.
@@ -26,7 +28,7 @@ while [ $# -gt 0 ]; do
     --runtime) level=runtime ;;
     --build) level=build ;;
     --no-orbbec-viewer) orbbec_viewer="" ;;
-    --help | -h) sed -n '3,17p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    --help | -h) sed -n '3,18p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "$(basename "$0"): unknown argument: $1 (try --help)" >&2; exit 1 ;;
     esac
     shift
@@ -34,16 +36,25 @@ done
 
 export DEBIAN_FRONTEND=noninteractive
 
+# Run a command as root: directly when we are root already, otherwise with sudo (#383).
+as_root() {
+    if [ "$(id -u)" = 0 ]; then
+        "$@"
+    else
+        sudo "$@"
+    fi
+}
+
 # The RealSense apt repository.
 realsense_key=/etc/apt/keyrings/librealsenseai.gpg
 realsense_list=/etc/apt/sources.list.d/librealsense.list
 if [ ! -f "$realsense_key" ] || [ ! -f "$realsense_list" ]; then
     echo "$(basename "$0"): adding the RealSense apt repository"
-    sudo apt-get update
-    sudo apt-get install -y curl gpg lsb-release ca-certificates
-    sudo mkdir -p /etc/apt/keyrings
-    curl -sSf https://librealsense.realsenseai.com/Debian/librealsenseai.asc | gpg --dearmor | sudo tee "$realsense_key" > /dev/null
-    echo "deb [signed-by=$realsense_key] https://librealsense.realsenseai.com/Debian/apt-repo $(lsb_release -cs) main" | sudo tee "$realsense_list" > /dev/null
+    as_root apt-get update
+    as_root apt-get install -y curl gpg lsb-release ca-certificates
+    as_root mkdir -p /etc/apt/keyrings
+    curl -sSf https://librealsense.realsenseai.com/Debian/librealsenseai.asc | gpg --dearmor | as_root tee "$realsense_key" > /dev/null
+    echo "deb [signed-by=$realsense_key] https://librealsense.realsenseai.com/Debian/apt-repo $(lsb_release -cs) main" | as_root tee "$realsense_list" > /dev/null
 fi
 
 # The same as the Debian package's dependencies (CMakeFiles/CwipcInstallers.cmake), plus
@@ -70,8 +81,8 @@ if [ "$level" = build ]; then
     packages+=("${build_packages[@]}")
 fi
 echo "$(basename "$0"): installing ($level level): ${packages[*]}"
-sudo apt-get update
-sudo apt-get install -y "${packages[@]}"
+as_root apt-get update
+as_root apt-get install -y "${packages[@]}"
 
 if [ "$level" = build ]; then
     bash "$scriptdir/install-orbbecsdk.sh" $orbbec_viewer
@@ -93,13 +104,16 @@ for candidate in "$tree/lib/udev/rules.d/$rules" "$repo/3rdparty_installed/orbbe
 done
 if [ "$rulesfile" = "/usr/lib/udev/rules.d/$rules" ]; then
     : # the Debian package's own
+elif [ -n "$rulesfile" ] && [ ! -d /etc/udev ]; then
+    # No udev here (a container, for example): the rules would be useless (#383).
+    echo "$(basename "$0"): no /etc/udev on this system: not installing the udev rules for Orbbec cameras"
 elif [ -n "$rulesfile" ]; then
     if ! cmp -s "$rulesfile" "/etc/udev/rules.d/$rules"; then
         echo "$(basename "$0"): installing the udev rules for Orbbec cameras: /etc/udev/rules.d/$rules"
-        sudo install -m 644 "$rulesfile" "/etc/udev/rules.d/$rules"
+        as_root install -m 644 "$rulesfile" "/etc/udev/rules.d/$rules"
         if command -v udevadm >/dev/null 2>&1 && [ -d /run/udev ]; then
-            sudo udevadm control --reload-rules || true
-            sudo udevadm trigger --subsystem-match=usb || true
+            as_root udevadm control --reload-rules || true
+            as_root udevadm trigger --subsystem-match=usb || true
         fi
     fi
 else
