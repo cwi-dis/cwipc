@@ -3,10 +3,11 @@ import sys
 from typing import Dict, Any
 import time
 import subprocess
+import shutil
 import argparse
 import queue
 from .. import cwipc_window, cwipc_tilefilter, cwipc_write, cwipc_pointcloud_wrapper
-from ..util import cwipc_sink_wrapper
+from ..util import cwipc_sink_wrapper, cwipc_activesource_wrapper
 from ..net.abstract import *
 from ..filters.abstract import cwipc_abstract_filter
 from ..filters.colorize import ColorizeFilter
@@ -389,20 +390,38 @@ q,ESC         Quit
     def reload_cameraconfig(self) -> None:
         """Reload the cameras. Call after changing cameraconfig.json."""
         assert self.source
-        assert hasattr(self.source, "reload_config")
+        if not isinstance(self.source, cwipc_activesource_wrapper):
+            print("reload_cameraconfig: this source has no cameraconfig to reload")
+            return
+        # The capturers refuse to reload their configuration while running, so stop the
+        # capturer first and restart it afterwards (also when the reload failed).
         try:
-            ok = self.source.reload_config(self.args.cameraconfig) # type: ignore
+            self.source.stop()
+            ok = self.source.reload_config(self.args.cameraconfig)
             if not ok:
                 print("reload_cameraconfig: failed to reload cameraconfig")
         except Exception as e:
             print(f"reload_cameraconfig: Exception: {e}")
+        finally:
+            if not self.source.start():
+                print("reload_cameraconfig: failed to restart the capturer")
     
     def edit_cameraconfig(self) -> None:
         editor = os.environ.get("EDITOR", "code")
         cameraconfig = self.args.cameraconfig or "cameraconfig.json"
-        print(f"edit_cameraconfig: run: {editor} {cameraconfig}")
-        subprocess.run([editor, cameraconfig])
-        print(f"edit_cameraconfig: don't forget to use 'c' command to reload cameraconfig.json when done")
+        # EDITOR is one program name or full path, without arguments. shutil.which() also
+        # finds code.cmd on Windows, where subprocess.run() would only look for code.exe.
+        editor_path = shutil.which(editor)
+        if not editor_path:
+            print(f"edit_cameraconfig: editor {editor!r} not found; set EDITOR to its name or full path")
+            return
+        print(f"edit_cameraconfig: run: {editor_path} {cameraconfig}")
+        try:
+            subprocess.run([editor_path, cameraconfig])
+            print(f"edit_cameraconfig: don't forget to use 'c' command to reload cameraconfig.json when done")
+        except Exception as e:
+            print(f"edit_cameraconfig: Exception: {e}")
+
     
     def select_mode(self, newmode):
         self.filter_mode = newmode
