@@ -51,6 +51,26 @@ installation** and optionally **Attempt to fix cwipc installation**.
 
 The top-level readme file has some more Windows Installation troubleshooting tips.
 
+**The** ``-built-`` **zip archive instead of the installer:** if you downloaded it
+with a browser, first unblock the zip file (Properties, tick "Unblock"; or
+``Unblock-File <zip file>`` in PowerShell), then unpack it. Run
+``libexec\cwipc\scripts\setup-cwipc.ps1`` in PowerShell (``-Deps`` also installs
+the runtime dependencies), and afterwards ``libexec\cwipc\activate.ps1`` in every
+new PowerShell. Windows may refuse to run the scripts, in two ways:
+
+- "running scripts is disabled on this system": PowerShell runs no scripts at all,
+  the default on Windows. Allow local scripts for your account, once::
+
+      Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+
+  You need this for ``activate.ps1`` too.
+- "... is not digitally signed": the zip file was not unblocked before unpacking.
+  Windows marks a downloaded file, and everything unpacked from it, as coming from
+  the internet. Delete the unpacked folder, unblock the zip file and unpack it
+  again, or remove the mark from the unpacked files::
+
+      Get-ChildItem -Recurse <unpacked folder> | Unblock-File
+
 Ubuntu 24.04
 ------------
 
