@@ -744,7 +744,7 @@ jobs:
           with:
                 draft: false
                 prerelease: true
-                name: ${{ github.ref }}
+                name: ${{ github.ref_name }}
                 tag_name: ${{ github.ref }}
                 body_path: ../Assets/changes.md
                 token: ${{ github.token }}
