@@ -65,7 +65,7 @@ def main():
         f1, f2 = s.split(',')
         return float(f1), float(f2)
     parser.add_argument("--guided", action="store_true", help="Guide me through the whole registration procedure")
-    parser.add_argument("--tabletop", action="store_true", help="Do static registration of one camera, 1m away at 1m height")
+    parser.add_argument("--tabletop", action="store_true", help="Do static registration of one camera, 0.6m away at 1m height, looking at the origin")
     parser.add_argument("--noregister", action="store_true", help="Don't do any registration, only create cameraconfig.json if needed")
     parser.add_argument("--clean", action="store_true", help=f"Remove old {DEFAULT_FILENAME} and calibrate from scratch")
 
@@ -227,7 +227,17 @@ class Registrator:
         if self.args.tabletop:
             assert self.cameraconfig.camera_count() == 1
             t = self.cameraconfig.get_transform(0)
-            matrix = transformation_identity()
+            # Not the identity: camera coordinates have Y down and the camera looking along +Z.
+            # This flips Y and Z (so Y is up and the camera looks back at the origin) and puts
+            # the camera 1 m up and 0.6 m from the origin. The identity, which replaced this
+            # by accident in 2025, gave an upside-down point cloud.
+            matrix : RegistrationTransformation = numpy.array(
+                [
+                    [1.0, 0.0, 0.0, 0.0],
+                    [0.0, -1.0, 0.0, 1.0],
+                    [0.0, 0.0, -1.0, 0.60],
+                    [0.0, 0.0, 0.0, 1.0]
+                ])
             t.set_matrix(matrix)
             self.cameraconfig.save()
             return True
