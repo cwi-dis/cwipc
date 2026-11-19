@@ -1,9 +1,11 @@
 Installation
 =============
 
-The simplest way to install **cwipc** is to use one of the pre‑built
-installers.  Installers are provided for macOS, Windows and Ubuntu and bundle
-all of the runtime libraries, command‑line tools and language bindings.
+The simplest way to install **cwipc** is with the installer for your platform:
+Homebrew on macOS, the ``.exe`` installer on Windows and the Debian package on
+Ubuntu. They install all of the runtime libraries, command‑line tools and language
+bindings. On Windows and Linux there is also a ``-built-`` archive, a complete cwipc
+in one folder that you can put anywhere (see `The -built- archives`_).
 
 .. note::
    After installing, running ``cwipc view --synthetic`` should open a window
@@ -51,25 +53,8 @@ installation** and optionally **Attempt to fix cwipc installation**.
 
 The top-level readme file has some more Windows Installation troubleshooting tips.
 
-**The** ``-built-`` **zip archive instead of the installer:** if you downloaded it
-with a browser, first unblock the zip file (Properties, tick "Unblock"; or
-``Unblock-File <zip file>`` in PowerShell), then unpack it. Run
-``libexec\cwipc\scripts\setup-cwipc.ps1`` in PowerShell (``-Deps`` also installs
-the runtime dependencies), and afterwards ``libexec\cwipc\activate.ps1`` in every
-new PowerShell. Windows may refuse to run the scripts, in two ways:
-
-- "running scripts is disabled on this system": PowerShell runs no scripts at all,
-  the default on Windows. Allow local scripts for your account, once::
-
-      Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-
-  You need this for ``activate.ps1`` too.
-- "... is not digitally signed": the zip file was not unblocked before unpacking.
-  Windows marks a downloaded file, and everything unpacked from it, as coming from
-  the internet. Delete the unpacked folder, unblock the zip file and unpack it
-  again, or remove the mark from the unpacked files::
-
-      Get-ChildItem -Recurse <unpacked folder> | Unblock-File
+Instead of the installer you can use the ``-built-`` zip archive, see
+`The -built- archives`_.
 
 Ubuntu 24.04
 ------------
@@ -96,6 +81,60 @@ the rules must be on the *host*, which owns the USB devices: copy that file to t
 host's ``/etc/udev/rules.d/`` and run ``sudo udevadm control --reload-rules`` and
 ``sudo udevadm trigger`` there. For an unpacked ``-built-`` archive or a source
 tree, ``install-deps-ubuntu2404.sh`` installs the rules into ``/etc/udev/rules.d``.
+
+The -built- archives
+--------------------
+
+For Windows and Ubuntu 24.04, every release also has a ``-built-`` archive
+(``cwipc-windows-intel-built-<version>.zip`` and ``cwipc-ubuntu2404-amd64-built-<version>.tar.gz``
+on the `releases page <https://github.com/cwi-dis/cwipc/releases/latest>`_):
+a complete cwipc in one folder, which you can unpack anywhere and use without an
+installer and without administrator rights (except for installing the dependencies).
+Several versions can live side by side. There is no archive for macOS: it only worked
+as long as Homebrew still had the exact library versions it was built against
+(`#356 <https://github.com/cwi-dis/cwipc/issues/356>`_); use Homebrew.
+
+After unpacking, set the folder up once. This creates a Python venv with the cwipc
+modules in ``libexec/cwipc/venv`` and writes the ``activate`` files. Then activate it
+in every new shell, which puts the folder's ``bin`` on ``PATH`` and sets up the venv.
+
+**Linux**, from the unpacked folder::
+
+    libexec/cwipc/scripts/setup-cwipc.sh --deps
+    source libexec/cwipc/activate
+    cwipc_check
+
+``--deps`` also installs the runtime dependencies (with ``apt``, so it asks for your
+``sudo`` password), including the RealSense apt repository and the Orbbec udev rules;
+leave it out if they are already there.
+
+**Windows**, in PowerShell, from the unpacked folder::
+
+    libexec\cwipc\scripts\setup-cwipc.ps1 -Deps
+    & libexec\cwipc\activate.ps1
+    cwipc_check
+
+If you downloaded the zip file with a browser, first unblock it (Properties, tick
+"Unblock"; or ``Unblock-File <zip file>`` in PowerShell), then unpack it. Windows may
+refuse to run the scripts, in two ways:
+
+- "running scripts is disabled on this system": PowerShell runs no scripts at all,
+  the default on Windows. Allow local scripts for your account, once::
+
+      Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
+
+  You need this for ``activate.ps1`` too.
+- "... is not digitally signed": the zip file was not unblocked before unpacking.
+  Windows marks a downloaded file, and everything unpacked from it, as coming from
+  the internet. Delete the unpacked folder, unblock the zip file and unpack it
+  again, or remove the mark from the unpacked files::
+
+      Get-ChildItem -Recurse <unpacked folder> | Unblock-File
+
+To remove an archive installation, delete the folder. That does not undo what
+``--deps`` installed. ``setup-cwipc.sh --help`` and the comment at the top of
+``setup-cwipc.ps1`` list all options; to install an archive from a script or in CI, see
+`Scripted installs and CI`_.
 
 Android
 -------
