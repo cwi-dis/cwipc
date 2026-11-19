@@ -32,6 +32,9 @@ name taps ``cwi-dis/cwipc`` and trusts only the ``cwipc`` formula (see
 `Tap Trust <https://docs.brew.sh/Tap-Trust>`_). If you prefer the short name
 ``brew install cwipc``, first run ``brew trust --formula cwi-dis/cwipc/cwipc``.
 
+On macOS, RealSense cameras only work as root, just as with librealsense's own
+``realsense-viewer``: for example ``sudo /opt/homebrew/bin/cwipc view``.
+
 
 Windows
 -------
