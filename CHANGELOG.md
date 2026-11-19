@@ -9,26 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- PLY files are read and written by cwipc itself, no longer by PCL (#66)
-- PLY files store the tile number as `tile` (was `alpha`); cwipc before 8.3.0 reads it as 0 (#66)
-- PLY files store timestamp and cellsize, and binary ones load much faster (#66, #338)
-- One set of setup and dependency scripts for source trees and installations; `install-3rdparty-*` and `activate-win.sh` are gone (#354, #355)
-- `cwipc_check` tells a broken installation from a PATH problem, and `cwipc_check install` repairs installations on all platforms (#355)
-- The Debian package installs on a clean Ubuntu 24.04 and sets up the Python modules itself (#355)
-- The Windows uninstaller removes everything (#355)
-- Windows and Android: dependencies updated to vcpkg 2026.10.16 (OpenCV 4.14, librealsense 2.58.4, glfw 3.5.1) (#348)
-- macOS: no more `-built-` release archives, they broke with every Homebrew update; use Homebrew (#356)
-- OrbbecSDK 2.10.6; building from source also installs OrbbecViewer; udev rules for USB Orbbec cameras in the Debian package (#351)
-- The `cwipc_view`, `cwipc_register`, ... launchers are deprecated and will go away: use `cwipc view`, `cwipc register`, ... (#376)
-- `cwipc parallel` and the scripts stop on whatever happens first: no more hanging tests or forwarders; clients retry connecting (#333, #206)
-- Windows: the installer installs Python with the Python install manager, as cwipc's own Python for all users; `cwipc_check` says so when the Python it uses is for one user only (#380, #312)
-- `cwipc_check` ends with a summary of what is not ok, and shows ok/not ok in colour (#381)
-- `setup-cwipc.sh --deps` and `get-cwipc.sh --deps` work in a Docker image build on Ubuntu 24.04: no `sudo` needed as root, no udev rules without `/etc/udev` (#383)
-- Fixed possible memory corruption: some API calls left their error buffer active after returning (`cwipc_from_points`, `cwipc_read_debugdump`, failed `cwipc_capturer`); the error buffer is now per thread (#384)
-- `cwipc register --tabletop` no longer produces an upside-down point cloud (regression since 2025-08) (#386)
-- `cwipc register` floor registration works with a single camera (#266)
-- Viewer: `c` reloads cameraconfig.json again (stops and restarts the capturer); `e` finds the editor on Windows too and no longer crashes if it is missing
-- `cwipc pipinstall` installs the cwipc Python modules into your own Python and binds it to that cwipc's native libraries; replaces `cwipc_pymodules_install.*`. Importing cwipc warns if modules and libraries don't match (#377)
+- `cwipc pipinstall` installs the cwipc Python modules into your own venv or Python (3.12-3.14) (#377)
+- PLY files are read and written by cwipc itself: much faster, no longer needs VTK, can record timestamps (#66, #338, #357, #362)
+- Installing and setting up cwipc simplified, and now works the same everywhere (#353, #354, #355, #352, #383, #356)
+- `cwipc_check` improved (#355, #381)
+- Windows: the installer installs Python through the Python Install Manager (#355, #380, #312)
+- Dependencies updated to current versions: vcpkg, OpenCV, librealsense, OrbbecSDK, opencv-python, open3d (#348, #349, #350, #351)
+- Various bugs fixed (#384, #386, #266, #164, #311, #313, #333, #206)
 
 ## [8.1.0] - 2026-08-24
 
