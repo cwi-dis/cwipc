@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `setup-cwipc.sh --deps` and `get-cwipc.sh --deps` work in a Docker image build on Ubuntu 24.04: no `sudo` needed as root, no udev rules without `/etc/udev` (#383)
 - Fixed possible memory corruption: some API calls left their error buffer active after returning (`cwipc_from_points`, `cwipc_read_debugdump`, failed `cwipc_capturer`); the error buffer is now per thread (#384)
 - `cwipc register --tabletop` no longer produces an upside-down point cloud (regression since 2025-08) (#386)
+- `cwipc register` floor registration works with a single camera (#266)
 - `cwipc pipinstall` installs the cwipc Python modules into your own Python and binds it to that cwipc's native libraries; replaces `cwipc_pymodules_install.*`. Importing cwipc warns if modules and libraries don't match (#377)
 
 ## [8.1.0] - 2026-08-24

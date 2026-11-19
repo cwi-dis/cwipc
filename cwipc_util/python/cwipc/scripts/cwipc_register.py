@@ -556,7 +556,8 @@ class Registrator:
         new_pc = aligner.get_result_pointcloud_full()
         if self.check_coarse_alignment:
             correspondence = self.check_alignment(new_pc, "after coarse registration")
-            self.cameraconfig["correspondence"] = correspondence
+            if correspondence is not None:
+                self.cameraconfig["correspondence"] = correspondence
         return new_pc
 
     def ask_aligner_class(self, default: type[MulticamAlignmentAlgorithm]) -> Optional[type[MulticamAlignmentAlgorithm]]:
@@ -640,10 +641,15 @@ class Registrator:
             matrix = transformations[cam_num]
             t = self.cameraconfig.get_transform(cam_num)
             t.set_matrix(matrix)
-        self.cameraconfig["correspondence"] = correspondence
+        if correspondence is not None:
+            self.cameraconfig["correspondence"] = correspondence
         return new_pc
 
-    def check_alignment(self, pc : cwipc_pointcloud_wrapper, label : str, analyzer_class = None) -> float:
+    def check_alignment(self, pc : cwipc_pointcloud_wrapper, label : str, analyzer_class = None) -> Optional[float]:
+        """Check how well each camera aligns with the other cameras. Returns None if there is only one camera."""
+        if self.cameraconfig.camera_count() < 2:
+            print(f"cwipc_register: {label}: only one camera, no alignment between cameras to check")
+            return None
         if analyzer_class is None:
             assert self.analyzer_class
             analyzer_class = self.analyzer_class
