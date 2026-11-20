@@ -190,7 +190,7 @@ image or in the CI of another project, use ``get-cwipc.sh`` (bash; on Windows
 Git Bash). It gets cwipc onto the machine and sets it up::
 
     curl -sSfL -o get-cwipc.sh https://raw.githubusercontent.com/cwi-dis/cwipc/<tag or commit>/scripts/get-cwipc.sh
-    bash get-cwipc.sh v8.1.0 /opt/cwipc
+    bash get-cwipc.sh v8.3.0 /opt/cwipc
     source /opt/cwipc/libexec/cwipc/activate
 
 - On Linux and Windows it downloads the ``-built-`` archive of that release for
@@ -233,7 +233,7 @@ and makes the environment available to the following steps of the job::
     - uses: cwi-dis/cwipc/.github/actions/install-cwipc@<tag or commit>
       id: cwipc
       with:
-        version: v8.1.0
+        version: v8.3.0
     - run: cwipc view --synthetic --count 3 --nodisplay
 
 Pin the action to a tag or commit (the ``@...`` part, which version of the

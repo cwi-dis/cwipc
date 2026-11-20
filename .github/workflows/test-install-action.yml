@@ -16,7 +16,7 @@ on:
       version:
         description: 'cwipc release to install (on macOS also "master")'
         required: false
-        default: 'v8.1.0'
+        default: 'v8.3.0'
 
 jobs:
   install-and-smoke-test:
@@ -36,7 +36,7 @@ jobs:
       - id: cwipc
         uses: ./.github/actions/install-cwipc
         with:
-          version: ${{ inputs.version || 'v8.1.0' }}
+          version: ${{ inputs.version || 'v8.3.0' }}
 
       - name: Smoke test
         shell: bash

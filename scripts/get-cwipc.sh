@@ -4,7 +4,7 @@
 # See cwi-dis/cwipc#354.
 #
 # Usage: get-cwipc.sh [options] VERSION [PREFIX]
-#   VERSION         Release tag, for example v8.1.0. With the brew method also
+#   VERSION         Release tag, for example v8.3.0. With the brew method also
 #                   "master", for the current master branch (brew --HEAD).
 #   PREFIX          Directory to install into (created if needed). Needed for the
 #                   archive method; the brew method installs where brew does.
@@ -22,7 +22,7 @@
 #
 # Can be fetched and run without a cwipc checkout, for example:
 #   curl -sSfL https://raw.githubusercontent.com/cwi-dis/cwipc/<tag or commit>/scripts/get-cwipc.sh -o get-cwipc.sh
-#   bash get-cwipc.sh v8.1.0 /opt/cwipc
+#   bash get-cwipc.sh v8.3.0 /opt/cwipc
 # With the archive method it then needs the setup script from inside the archive,
 # so it only works for releases that include setup-cwipc.sh (8.3.0 and later).
 # Run from a checkout (or the install action) it falls back to the setup script

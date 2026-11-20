@@ -7,7 +7,7 @@ description: >
 
 inputs:
   version:
-    description: 'cwipc release tag, for example v8.1.0. On macOS also "master" (brew --HEAD).'
+    description: 'cwipc release tag, for example v8.3.0. On macOS also "master" (brew --HEAD).'
     required: true
   method:
     description: '"archive" or "brew". Default: brew on macOS, archive elsewhere.'
