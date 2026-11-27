@@ -499,15 +499,11 @@ protected:
             }
 
             if (configuration.debug) _log_debug("creating pc with ts=" + std::to_string(timestamp));
-            // step 2 : create pointcloud, and save rgb/depth frames if wanted
+            // step 2 : create pointcloud
 
             cwipc_pcl_pointcloud pcl_pointcloud = new_cwipc_pcl_pointcloud();
             cwipc_pointcloud* newPC = cwipc_from_pcl(pcl_pointcloud, timestamp, NULL, CWIPC_API_VERSION);
 
-            for (auto cam : cameras) {
-                cam->save_frameset_metadata(newPC);
-            }
-            
             if (stopped) {
                 newPC->free();
                 break;
@@ -548,6 +544,12 @@ protected:
             } else {
                 if (configuration.debug) _log_debug("merged pointcloud is empty");
             }
+
+            // step 6: save rgb / depth frames if wanted
+            for (auto cam : cameras) {
+                cam->save_frameset_metadata(newPC);
+            }
+
             // Signal that a new mergedPC is available. (Note that we acquired the mutex earlier)
             mergedPC_is_fresh = true;
             mergedPC_want_new = false;

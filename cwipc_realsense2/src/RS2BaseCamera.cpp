@@ -372,7 +372,10 @@ void RS2BaseCamera::save_frameset_metadata(cwipc_pointcloud *pc)
     if (!metadata.want_depth && !metadata.want_rgb && !metadata.want_timestamps && !metadata.want_camera_specs) return;
     std::unique_lock<std::mutex> lock(processing_mutex);
 
-    auto aligned_frameset = current_processed_frameset;
+    // @todo: this should use current_captured_frameset to be consistent with Kinect and Orbbec cameras.
+    // Which one is more useful as meta-data, the raw or the processed images?
+    const auto aligned_frameset = current_processed_frameset;
+
     if (aligned_frameset.size() == 0) return;
     rs2::video_frame color_image = aligned_frameset.get_color_frame();
     rs2::video_frame depth_image = aligned_frameset.get_depth_frame();
